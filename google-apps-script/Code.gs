@@ -72,6 +72,7 @@ function doPost(e) {
   try { d = JSON.parse(e.postData.contents); } catch (err) { return json_({ ok: false, error: 'bad_request' }); }
   if (d.action === 'report') return hisobot_(d);
   if (d.action === 'guruhlar') return json_({ ok: true, groups: guruhlar_() });
+  if (d.action === 'kontent') return kontentOchiq_();
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
@@ -87,6 +88,11 @@ function doPost(e) {
     if (d.action === 'ochirish') return ochirish_(d);
     if (d.action === 'guruh_royxat') return guruhRoyxat_(d);
     if (d.action === 'guruh_ozgartir') return guruhOzgartir_(d);
+    if (d.action === 'xabar') return xabarYoz_(d);
+    if (d.action === 'admin_royxat') return adminRoyxat_(d);
+    if (d.action === 'admin_saqlash') return adminSaqlash_(d);
+    if (d.action === 'admin_ochirish') return adminOchirish_(d);
+    if (d.action === 'admin_xabar') return adminXabar_(d);
     if (!d.sid) return json_({ ok: false });
     yozish_(d);
     return json_({ ok: true });
@@ -365,6 +371,115 @@ function guruhOzgartir_(d) {
     if (i >= 0) sh.getRange(i + 2, 3).setValue(g);
   }
   return json_({ ok: true, group: g });
+}
+
+/* ---------- Boshqaruv sayti: kontent, e’lonlar, xabarlar ----------
+   «Kontent» varag‘i: sayt egasi boshqaruv sahifasidan yoki Claude Google jadval orqali yozadi.
+   Turlar: yangilik, test, masala, topshiriq, elon, sozlama (saytda ko‘rinadi); mavzu, sorov (faqat boshqaruvda). */
+const KONTENT = 'Kontent';
+const K_USTUN = ['ID', 'Turi', 'Holat', 'Sana', 'Sarlavha', 'Ma’lumot (JSON)', 'Asl', 'Yangilangan', 'Muallif'];
+const XABARLAR = 'Xabarlar';
+const X_USTUN = ['ID', 'Vaqt', 'Ism', 'Email', 'Mavzu', 'Xabar', 'Holat'];
+const OCHIQ_TURLAR = ['yangilik', 'test', 'masala', 'topshiriq', 'elon', 'sozlama'];
+const BARCHA_TURLAR = OCHIQ_TURLAR.concat(['mavzu', 'sorov']);
+
+function egami_(d) { const e = ustozKim_(d); return !!e && e === egasi_(); }
+function sanaStr_(v) {
+  if (v instanceof Date) return Utilities.formatDate(v, TZ, 'yyyy-MM-dd');
+  return String(v || '').slice(0, 10);
+}
+function kontentQatorlar_() {
+  const sh = varaq_(KONTENT, K_USTUN);
+  const n = sh.getLastRow() - 1;
+  if (n < 1) return [];
+  return sh.getRange(2, 1, n, K_USTUN.length).getValues().map((r, i) => {
+    let data = {};
+    try { data = JSON.parse(r[5] || '{}'); } catch (e) { data = { xato: 'JSON o‘qilmadi' }; }
+    return { row: i + 2, id: String(r[0]), turi: String(r[1]).trim().toLowerCase(), holat: String(r[2] || 'faol').trim().toLowerCase(),
+      sana: sanaStr_(r[3]), sarlavha: String(r[4] || ''), data: data, asl: String(r[6] || ''),
+      yangilangan: r[7] ? new Date(r[7]).toISOString() : '', muallif: String(r[8] || '') };
+  }).filter(x => x.id && x.turi);
+}
+function kontentOchiq_() {
+  const c = CacheService.getScriptCache(), k = 'kontent_v2';
+  const bor = c.get(k);
+  if (bor) return ContentService.createTextOutput(bor).setMimeType(ContentService.MimeType.JSON);
+  const items = kontentQatorlar_().filter(x => OCHIQ_TURLAR.indexOf(x.turi) >= 0 && (x.holat === 'faol' || x.holat === 'yashirin'))
+    .map(x => ({ id: x.id, turi: x.turi, holat: x.holat, sana: x.sana, asl: x.asl, data: x.data }));
+  const out = JSON.stringify({ ok: true, items: items, v: Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, JSON.stringify(items))).slice(0, 12) });
+  if (out.length < 90000) c.put(k, out, 60);
+  return ContentService.createTextOutput(out).setMimeType(ContentService.MimeType.JSON);
+}
+function kontentKeshTozala_() { CacheService.getScriptCache().remove('kontent_v2'); }
+
+function adminRoyxat_(d) {
+  if (!egami_(d)) return json_({ ok: false, error: 'egasi_emas' });
+  const xs = varaq_(XABARLAR, X_USTUN);
+  const xn = xs.getLastRow() - 1;
+  const xabarlar = xn > 0 ? xs.getRange(2, 1, xn, X_USTUN.length).getValues().map(r => ({
+    id: String(r[0]), vaqt: r[1] ? new Date(r[1]).toISOString() : '', ism: r[2], email: r[3], mavzu: r[4], matn: r[5], holat: r[6] || 'yangi'
+  })).reverse() : [];
+  const items = kontentQatorlar_().map(x => { delete x.row; return x; });
+  const oq = varaq_(OQUVCHILAR, USTUNLAR);
+  const on = oq.getLastRow() - 1;
+  const bugun = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
+  let faol = 0;
+  if (on > 0) oq.getRange(2, 5, on, 1).getValues().forEach(r => { if (r[0] && Utilities.formatDate(new Date(r[0]), TZ, 'yyyy-MM-dd') === bugun) faol++; });
+  return json_({ ok: true, items: items, xabarlar: xabarlar.slice(0, 300), groups: guruhlar_(),
+    stat: { oquvchilar: Math.max(0, on), bugunFaol: faol }, jadval: 'https://docs.google.com/spreadsheets/d/' + JADVAL_ID + '/edit', bugun: bugun });
+}
+function adminSaqlash_(d) {
+  if (!egami_(d)) return json_({ ok: false, error: 'egasi_emas' });
+  const it = d.item || {};
+  const turi = String(it.turi || '').toLowerCase();
+  if (BARCHA_TURLAR.indexOf(turi) < 0) return json_({ ok: false, error: 'turi' });
+  const data = it.data && typeof it.data === 'object' ? it.data : {};
+  const json = JSON.stringify(data);
+  if (json.length > 40000) return json_({ ok: false, error: 'katta' });
+  const sh = varaq_(KONTENT, K_USTUN);
+  let id = String(it.id || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 40);
+  const vaqt = new Date();
+  const qator = [null, turi, String(it.holat || 'faol').slice(0, 20), String(it.sana || '').slice(0, 10),
+    String(it.sarlavha || data.t || data.q || '').slice(0, 200), json, String(it.asl || '').slice(0, 200), vaqt, ustozKim_(d)];
+  let row = 0;
+  if (id) row = (kontentQatorlar_().find(x => x.id === id) || {}).row || 0;
+  else id = turi.slice(0, 2) + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  qator[0] = id;
+  if (row) sh.getRange(row, 1, 1, K_USTUN.length).setValues([qator]);
+  else sh.appendRow(qator);
+  sh.getRange(2, 4, Math.max(1, sh.getLastRow() - 1), 1).setNumberFormat('@');
+  kontentKeshTozala_();
+  return json_({ ok: true, id: id });
+}
+function adminOchirish_(d) {
+  if (!egami_(d)) return json_({ ok: false, error: 'egasi_emas' });
+  const x = kontentQatorlar_().find(y => y.id === String(d.id || ''));
+  if (!x) return json_({ ok: false, error: 'topilmadi' });
+  varaq_(KONTENT, K_USTUN).deleteRow(x.row);
+  kontentKeshTozala_();
+  return json_({ ok: true });
+}
+/** Aloqa formasi: o‘quvchi yoki mehmon xabari. */
+function xabarYoz_(d) {
+  const ism = toza_(d.ism).trim(), email = toza_(d.email).trim(), matn = String(d.matn || '').trim().slice(0, 3000);
+  if (ism.length < 2 || !/^\S+@\S+\.\S+$/.test(email) || matn.length < 3) return json_({ ok: false, error: 'malumot' });
+  if (urinish_('xabar:' + email, false) >= 5) return json_({ ok: false, error: 'kop' });
+  urinish_('xabar:' + email, true);
+  const id = 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  varaq_(XABARLAR, X_USTUN).appendRow([id, new Date(), ism, email, toza_(d.mavzu), matn, 'yangi']);
+  return json_({ ok: true });
+}
+function adminXabar_(d) {
+  if (!egami_(d)) return json_({ ok: false, error: 'egasi_emas' });
+  const sh = varaq_(XABARLAR, X_USTUN);
+  const n = sh.getLastRow() - 1;
+  if (n < 1) return json_({ ok: false, error: 'topilmadi' });
+  const ids = sh.getRange(2, 1, n, 1).getValues().map(r => String(r[0]));
+  const i = ids.indexOf(String(d.id || ''));
+  if (i < 0) return json_({ ok: false, error: 'topilmadi' });
+  if (d.op === 'ochir') sh.deleteRow(i + 2);
+  else sh.getRange(i + 2, 7).setValue(d.op === 'yangi' ? 'yangi' : 'o‘qildi');
+  return json_({ ok: true });
 }
 
 /** Ustoz o‘quvchi parolini tiklaydi: vaqtinchalik 6 xonali parol qaytaradi. */

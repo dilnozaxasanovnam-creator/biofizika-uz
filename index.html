@@ -302,6 +302,13 @@ aside.tside{display:grid;gap:12px;align-content:start;min-width:0}
 .field input,.field select,.field textarea{font:400 .98rem var(--f-body);padding:.6em .75em;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
 .field textarea{min-height:130px;resize:vertical}
 .grhint{font-size:.76rem;color:var(--muted)}
+.elonlar{display:grid;gap:8px;padding-top:14px}
+.elon{display:flex;gap:12px;align-items:flex-start;background:var(--teal-soft);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.93rem}
+.elon.muhim{background:var(--warn-soft)}
+.elon .eic{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--teal);color:var(--on-accent);font:700 .85rem var(--f-display)}
+.elon.muhim .eic{background:var(--warn)}
+.elon .etx{flex:1;display:grid;gap:4px;min-width:0;overflow-wrap:anywhere}
+.elon .ex{flex:none;background:none;border:0;color:var(--muted);font-size:1.2rem;line-height:1;cursor:pointer;padding:2px 4px}
 .field.full{grid-column:1/-1}
 .result{background:var(--surface-2);border-radius:12px;padding:18px;display:grid;gap:12px;align-content:start}
 .result output{font:800 2.4rem var(--f-display);color:var(--teal);font-variant-numeric:tabular-nums}
@@ -428,6 +435,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 </header>
 
 <main>
+<div class="wrap elonlar" id="elonlar" hidden></div>
 <!-- ================= BOSH SAHIFA ================= -->
 <section class="page" data-page="bosh">
   <div class="hero">
@@ -709,13 +717,13 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
       </form>
       <div class="block" style="align-content:start">
         <h2 style="font-size:1.2rem">Bizning manzillar</h2>
-        <ul class="clist">
+        <ul class="clist" id="clist">
           <li><span><small>Elektron pochta</small><code>info@biofizika.uz</code></span><button class="linkbtn" type="button" data-copy="info@biofizika.uz">Nusxa olish</button></li>
           <li><span><small>Telegram</small><code>@biofizika_uz</code></span><button class="linkbtn" type="button" data-copy="@biofizika_uz">Nusxa olish</button></li>
           <li><span><small>Instagram</small><code>@biofizika.uz</code></span><button class="linkbtn" type="button" data-copy="@biofizika.uz">Nusxa olish</button></li>
           <li><span><small>YouTube</small><code>Biofizika.uz</code></span><button class="linkbtn" type="button" data-copy="Biofizika.uz">Nusxa olish</button></li>
         </ul>
-        <p style="font-size:.84rem;color:var(--muted)">Manzillar namuna sifatida berilgan – o‘zingizning haqiqiy manzillaringiz bilan almashtiring.</p>
+        <p style="font-size:.84rem;color:var(--muted)" id="clistNote">Manzillar namuna sifatida berilgan – o‘zingizning haqiqiy manzillaringiz bilan almashtiring.</p>
       </div>
     </div>
   </div>
@@ -1476,9 +1484,9 @@ const NEWS=[
  p:'2021-yilda fiziologiya yoki tibbiyot bo‘yicha Nobel mukofoti David Julius va Ardem Patapoutianga issiqlik va teginishni sezuvchi retseptorlarni (TRPV1 va Piezo ion kanallarini) kashf etgani uchun berilgan.',
  w:'Biofizikaga aloqasi: mexanik va issiqlik ta’sirlari ion kanallari orqali elektr signaliga aylanadi.',u:'https://www.nobelprize.org/prizes/medicine/2021/summary/',s:'nobelprize.org'}
 ];
-const newsHTML=n=>`<article><div class="tags"><span class="tag t">${n.c}</span><time>${n.d}</time></div><h3>${n.t}</h3><p>${n.p}</p><p class="why">${n.w}</p><a class="src" href="${n.u}" target="_blank" rel="noopener">Manba: ${n.s} ↗</a></article>`;
-$('#newsList').innerHTML=NEWS.map(newsHTML).join('');
-$('#homeNews').innerHTML=NEWS.slice(0,2).map(n=>`<article><div class="tags"><span class="tag t">${n.c}</span><time>${n.d}</time></div><h3>${n.t}</h3><p style="color:var(--muted)">${n.w}</p><a class="src" href="#yangiliklar">Batafsil →</a></article>`).join('');
+const newsHTML=n=>`<article><div class="tags"><span class="tag t">${n.c}</span><time>${n.d}</time></div><h3>${n.t}</h3><p>${n.p}</p>${n.w?`<p class="why">${n.w}</p>`:''}${n.u?`<a class="src" href="${n.u}" target="_blank" rel="noopener">Manba: ${n.s||'havola'} ↗</a>`:''}</article>`;
+function renderNews(){$('#newsList').innerHTML=NEWS.map(newsHTML).join('');
+$('#homeNews').innerHTML=NEWS.slice(0,2).map(n=>`<article><div class="tags"><span class="tag t">${n.c}</span><time>${n.d}</time></div><h3>${n.t}</h3><p style="color:var(--muted)">${n.w}</p><a class="src" href="#yangiliklar">Batafsil →</a></article>`).join('')}
 
 const ARCH=[
 ['30.10.2026','Puazeyl qonuni: tomir radiusi va qon oqimi','y','t6'],
@@ -1507,17 +1515,92 @@ function updateProg(){
 $('#cForm').addEventListener('submit',e=>{e.preventDefault();const out=$('#cOut');out.hidden=false;
   const n=$('#cName').value.trim(),m=$('#cMail').value.trim(),t=$('#cMsg').value.trim();
   if(!n||!t||!/^\S+@\S+\.\S+$/.test(m)){out.className='formmsg no';out.textContent='Iltimos, ismingizni, to‘g‘ri elektron pochtani va xabarni kiriting.';return}
+  if(ENDPOINT){const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;out.className='formmsg';out.textContent='Yuborilmoqda…';
+    api({action:'xabar',ism:n,email:m,mavzu:$('#cTopic').value,matn:t}).then(r=>{if(r.ok){out.className='formmsg ok';out.textContent=`Rahmat, ${n}! Xabaringiz ustozga yetib bordi.`;$('#cMsg').value=''}
+      else{out.className='formmsg no';out.textContent=r.error==='kop'?'Juda ko‘p xabar yuborildi. Birozdan keyin qayta urinib ko‘ring.':'Xabarni yuborib bo‘lmadi. Ma’lumotlarni tekshiring.'}})
+      .catch(()=>{out.className='formmsg no';out.textContent='Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.'}).finally(()=>{btn.disabled=false});return}
   out.className='formmsg ok';out.textContent=`Rahmat, ${n}! Forma to‘g‘ri to‘ldirildi. Eslatma: bu namuna forma, xabar hozircha hech qayerga yuborilmaydi. Saytni joylaganda uni Google Forms yoki pochta xizmatiga ulang.`});
-$$('[data-copy]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.copy,ok=()=>{b.textContent='Nusxa olindi';setTimeout(()=>b.textContent='Nusxa olish',1600)};
-  try{navigator.clipboard.writeText(v).then(ok,()=>{selectTxt(b)})}catch(e){selectTxt(b)}}));
+$$('[data-copy]').forEach(b=>{b.dataset.bound='1';b.addEventListener('click',()=>{const v=b.dataset.copy,ok=()=>{b.textContent='Nusxa olindi';setTimeout(()=>b.textContent='Nusxa olish',1600)};
+  try{navigator.clipboard.writeText(v).then(ok,()=>{selectTxt(b)})}catch(e){selectTxt(b)}})});
 function selectTxt(b){const c=b.parentElement.querySelector('code'),r=document.createRange();r.selectNodeContents(c);const s=getSelection();s.removeAllRanges();s.addRange(r)}
 
 /* ---------- motivatsiya ---------- */
 const QUOTES=['Har bir katta kashfiyot kichik savoldan boshlanadi.','Xato – o‘rganishning bir qismi. Yana urinib ko‘ring!','Bugun bitta formulani tushunsangiz, ertaga butun mavzuni tushunasiz.','Fizika qonunlari sizning hujayralaringizda ham ishlaydi.','Muntazamlik iqtidordan kuchliroq.'];
 $('#footQ').textContent=QUOTES[new Date().getDate()%QUOTES.length];
 
+/* ---------- boshqaruv saytidan kelgan kontent ----------
+   Sayt egasi boshqaruv sahifasida (boshqaruv.html) yoki Claude Google jadvalning «Kontent» varag‘ida qo‘shadi.
+   «asl» – saytdagi asl elementni almashtirish yoki yashirish uchun (yangilik sarlavhasi, test/masala/topshiriq ID si). */
+const BASE={};
+const OYLAR=['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+const isoUz=iso=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso||'');return m?(+m[3])+'-'+OYLAR[+m[2]-1]+', '+m[1]:(iso||'')};
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const H=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const okUrl=u=>/^https?:\/\//i.test(String(u||''))?H(u):'';
+const okTopic=t=>TOPICS.some(x=>x.id===t)?t:'';
+const okLvl=l=>LVL[l]?l:'o';
+function mkQuiz(d,id){const o=(Array.isArray(d.o)?d.o:[]).map(H).slice(0,6);const a=parseInt(d.a,10);
+  if(!d.q||o.length<2||!(a>=0&&a<o.length))return null;return {id,l:okLvl(d.l),q:H(d.q),o,a,x:H(d.x||'')}}
+function mkProb(d,id){const a=parseFloat(String(d.a).replace(',','.'));if(!d.q||isNaN(a))return null;
+  return {id,l:okLvl(d.l),t:H(d.t||'Masala'),q:H(d.q),u:H(d.u||''),a,tol:Math.min(.5,Math.max(.001,parseFloat(d.tol)||.02)),h:H(d.h||'Formulani va birliklarni tekshiring.'),s:H(d.s||'')}}
+function mkVer(d){const go=okTopic(d.m)||'blkQuiz';
+  if(d.tek==='n'){const n=d.n||{};const a=parseFloat(String(n.a).replace(',','.'));if(!n.q||isNaN(a))return null;
+    return {type:'n',go,q:H(n.q),a,tol:Math.abs(parseFloat(n.tol))||Math.max(Math.abs(a)*.02,.01),unit:H(n.unit||'')}}
+  const qs=(Array.isArray(d.qs)?d.qs:[]).map(x=>{const o=(Array.isArray(x[1])?x[1]:[]).map(H);const a=parseInt(x[2],10);return x[0]&&o.length>=2&&a>=0&&a<o.length?[H(x[0]),o,a]:null}).filter(Boolean);
+  return qs.length?{type:'q',go,qs}:null}
+function applyKontent(k){
+  if(!BASE.news){BASE.news=NEWS.slice();BASE.quiz=QUIZ.slice();BASE.probs=PROBS.slice();BASE.today=TODAY.items.slice();BASE.bank=BANK.slice();BASE.ver=Object.assign({},VER);BASE.qt=Object.assign({},QTOPIC);BASE.pt=Object.assign({},PTOPIC)}
+  const items=k&&Array.isArray(k.items)?k.items:[], today=todayISO();
+  const live=x=>x.holat!=='yashirin', of=t=>items.filter(x=>x.turi===t&&x.data&&typeof x.data==='object');
+  const ovr=t=>{const m={};of(t).forEach(x=>{if(x.asl)m[x.asl]=x});return m};
+  const reset=(arr,base)=>{arr.length=0;base.forEach(x=>arr.push(x))};
+  Object.keys(VER).forEach(key=>{if(!(key in BASE.ver))delete VER[key]});Object.assign(VER,BASE.ver);
+  Object.keys(QTOPIC).forEach(key=>{if(!(key in BASE.qt))delete QTOPIC[key]});Object.keys(PTOPIC).forEach(key=>{if(!(key in BASE.pt))delete PTOPIC[key]});
+  /* yangiliklar */
+  const nO=ovr('yangilik'), mkNews=(d,sana)=>({d:H(d.d||isoUz(sana)),c:H(d.c||'Yangilik'),t:H(d.t||''),p:H(d.p||''),w:H(d.w||''),u:okUrl(d.u),s:H(d.s||'')});
+  const added=of('yangilik').filter(x=>!x.asl&&live(x)&&x.data.t).sort((a,b)=>String(b.sana).localeCompare(String(a.sana))).map(x=>mkNews(x.data,x.sana));
+  const base=BASE.news.map(n=>{const o=nO[n.t];return o?(live(o)?mkNews(Object.assign({},n,o.data),o.sana):null):n}).filter(Boolean);
+  reset(NEWS,[...added,...base]);
+  /* testlar */
+  const qO=ovr('test');
+  reset(QUIZ,[...BASE.quiz.map(q=>{const o=qO[q.id];if(!o)return q;if(!live(o))return null;const m=mkQuiz(Object.assign({},q,o.data),q.id);if(m&&o.data.m)QTOPIC[q.id]=okTopic(o.data.m)||QTOPIC[q.id];return m||q}).filter(Boolean),
+    ...of('test').filter(x=>!x.asl&&live(x)).map(x=>{const q=mkQuiz(x.data,'x'+x.id);if(q&&okTopic(x.data.m))QTOPIC[q.id]=x.data.m;return q}).filter(Boolean)]);
+  QUIZ.sort((a,b)=>'boy'.indexOf(a.l)-'boy'.indexOf(b.l));
+  /* masalalar */
+  const pO=ovr('masala');
+  reset(PROBS,[...BASE.probs.map(p=>{const o=pO[p.id];if(!o)return p;if(!live(o))return null;return mkProb(Object.assign({},p,o.data),p.id)||p}).filter(Boolean),
+    ...of('masala').filter(x=>!x.asl&&live(x)).map(x=>{const p=mkProb(x.data,'x'+x.id);if(p&&okTopic(x.data.m))PTOPIC[p.id]=x.data.m;return p}).filter(Boolean)]);
+  PROBS.sort((a,b)=>'boy'.indexOf(a.l)-'boy'.indexOf(b.l));
+  /* topshiriqlar: asl topshiriqni yashirish yoki yangisini qo‘shish (har doim tekshiruv savoli bilan) */
+  const tO=ovr('topshiriq'), hid=id=>tO[id]&&!live(tO[id]);
+  const tToday=[],tBank=[];
+  of('topshiriq').filter(x=>!x.asl&&live(x)).forEach(x=>{const d=x.data,v=mkVer(d),id='x'+x.id;if(!v||!d.t)return;VER[id]=v;
+    if(d.joy==='bank')tBank.push([id,H(d.t),H(d.s||''),okTopic(d.m)||'t1',okLvl(d.l)]);
+    else if(!x.sana||x.sana===today)tToday.push([id,H(d.t),H(d.s||'')])});
+  reset(TODAY.items,[...BASE.today.filter(i=>!hid(i[0])),...tToday]);
+  reset(BANK,[...BASE.bank.filter(i=>!hid(i[0])),...tBank]);
+  /* e’lonlar */
+  let yop=[];try{yop=JSON.parse(localStorage.getItem('bf_elonYopiq')||'[]')}catch(e){}
+  const el=of('elon').filter(x=>live(x)&&x.data.t&&(!x.sana||x.sana<=today)&&(!x.data.tugash||x.data.tugash>=today)&&!yop.includes(x.id));
+  $('#elonlar').hidden=!el.length;
+  $('#elonlar').innerHTML=el.map(x=>{const d=x.data;return `<div class="elon ${d.rang==='muhim'?'muhim':''}" role="note"><span class="eic" aria-hidden="true">${d.rang==='muhim'?'!':'i'}</span><span class="etx"><span>${H(d.t)}</span>${okUrl(d.link)?`<a href="${okUrl(d.link)}" target="_blank" rel="noopener" style="color:var(--teal);font-weight:500">${H(d.linkT||'Batafsil')} →</a>`:''}</span><button class="ex" type="button" data-elon="${H(x.id)}" aria-label="E’lonni yopish">×</button></div>`}).join('');
+  /* aloqa ma’lumotlari */
+  const al=of('sozlama').find(x=>x.asl==='aloqa'&&live(x));
+  if(al){const d=al.data,rows=[['Elektron pochta',d.email],['Telefon',d.telefon],['Telegram',d.telegram],['Instagram',d.instagram],['YouTube',d.youtube],['Manzil',d.manzil]].filter(r=>r[1]);
+    if(rows.length){$('#clist').innerHTML=rows.map(r=>`<li><span><small>${r[0]}</small><code>${H(r[1])}</code></span><button class="linkbtn" type="button" data-copy="${H(r[1])}">Nusxa olish</button></li>`).join('');$('#clistNote').hidden=true}}
+}
+$('#elonlar').addEventListener('click',e=>{const b=e.target.closest('[data-elon]');if(!b)return;let y=[];try{y=JSON.parse(localStorage.getItem('bf_elonYopiq')||'[]')}catch(x){}
+  y.push(b.dataset.elon);try{localStorage.setItem('bf_elonYopiq',JSON.stringify(y.slice(-50)))}catch(x){}b.closest('.elon').remove();if(!$('#elonlar').children.length)$('#elonlar').hidden=true});
+$('#clist').addEventListener('click',e=>{const b=e.target.closest('[data-copy]');if(!b||b.dataset.bound)return;const v=b.dataset.copy;
+  try{navigator.clipboard.writeText(v).then(()=>{b.textContent='Nusxa olindi';setTimeout(()=>b.textContent='Nusxa olish',1600)},()=>selectTxt(b))}catch(x){selectTxt(b)}});
+async function loadKontent(){if(!ENDPOINT)return;
+  try{const r=await api({action:'kontent'});if(!r||!r.ok)return;const old=store.get('kontent',null);
+    if(old&&old.v===r.v)return;store.set('kontent',{v:r.v,items:r.items});applyKontent(r);
+    renderNews();renderQuiz();renderProbs();updateProg()}catch(e){}}
+try{applyKontent(store.get('kontent',null))}catch(e){}
+
 /* ---------- start ---------- */
-renderQuiz();renderProbs();renderMatch();calc();updateProg();route();initIdentity();
+renderNews();renderQuiz();renderProbs();renderMatch();calc();updateProg();route();initIdentity();loadKontent();
 })();
 </script>
 </body>

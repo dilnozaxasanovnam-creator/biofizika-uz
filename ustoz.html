@@ -143,6 +143,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
       <span class="updated" id="updated"></span>
       <button class="btn btn-ghost" id="refresh" type="button">Yangilash</button>
       <button class="btn btn-ghost" id="csv" type="button">CSV yuklab olish</button>
+      <a class="btn btn-ghost" id="adminLink" href="boshqaruv.html" hidden>Saytni boshqarish</a>
       <button class="btn btn-ghost" id="groupsBtn" type="button">Guruhlar</button>
       <button class="btn btn-ghost" id="teachersBtn" type="button" hidden>Ustozlar</button>
       <button class="btn btn-ghost" id="pwBtn" type="button">Parol</button>
@@ -305,7 +306,7 @@ async function refresh(){
   }catch(e){$('#updated').textContent='Ulanib bo‘lmadi – internetni tekshirib, «Yangilash»ni bosing.'}
   finally{$('#refresh').disabled=false}
 }
-function showPanel(){$('#teachersBtn').hidden=!(auth&&(auth.owner||auth.key));$('#pwBtn').hidden=!(auth&&auth.token);$('#login').hidden=true;$('#panel').hidden=false;$('#hdActions').hidden=false;$('#demo').hidden=!!ENDPOINT;if(ENDPOINT)store.set('teacher',true);refresh();clearInterval(timer);timer=setInterval(refresh,60000)}
+function showPanel(){$('#teachersBtn').hidden=!(auth&&(auth.owner||auth.key));$('#adminLink').hidden=!(auth&&(auth.owner||auth.key));$('#pwBtn').hidden=!(auth&&auth.token);$('#login').hidden=true;$('#panel').hidden=false;$('#hdActions').hidden=false;$('#demo').hidden=!!ENDPOINT;if(ENDPOINT)store.set('teacher',true);refresh();clearInterval(timer);timer=setInterval(refresh,60000)}
 function logout(msg){auth=null;store.del('ustozAuth');store.del('ustozKey');store.del('teacher');clearInterval(timer);$('#panel').hidden=true;$('#hdActions').hidden=true;$('#login').hidden=false;
   const er=$('#loginErr');er.hidden=!msg;er.textContent=msg||'';gInitU()}
 const errL=m=>{const er=$('#loginErr');er.hidden=!m;er.textContent=m||''};
