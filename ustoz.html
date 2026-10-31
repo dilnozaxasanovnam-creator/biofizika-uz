@@ -235,7 +235,7 @@ function render(){
   const bar=(v,n)=>`<span class="mini">${v}/${n||'?'}<i><b style="width:${n?Math.min(100,v/n*100):0}%"></b></i></span>`;
   $('#rows').innerHTML=list.length?list.map(s=>`<tr data-id="${esc(s.id)}" tabindex="0">
     <td class="num"><span class="rank ${s.rank<=3?'r'+s.rank:''}">${s.rank}</span></td>
-    <td><span class="who"><b>${esc(s.name)}</b><small>${esc(s.group)}</small></span></td>
+    <td><span class="who"><b>${esc(s.name)}</b><small>${esc(s.group)}${s.login?' · '+esc(s.login):''}</small></span></td>
     <td class="num"><span class="pctc ${s.pct>=80?'hi':s.pct>=50?'mid':'lo'}">${s.pct}%<i><b style="width:${s.pct}%"></b></i></span></td>
     <td class="num"><span class="score">${s.ball}</span></td>
     <td class="num">${s.topshiriq}${s.today?.topshiriq?` <span class="pill on">+${s.today.topshiriq} bugun</span>`:''}</td>
@@ -254,11 +254,16 @@ function render(){
 function detail(id){
   const s=ranked().find(x=>String(x.id)===id);if(!s)return;
   const ev=data.events.filter(e=>String(e.id)===id).slice(0,30);
-  $('#dlgBody').innerHTML=`<div class="dlg-head"><div><h2 style="font-size:1.35rem">${esc(s.name)}</h2><p class="note">${esc(s.group)} · ${s.rank}-o‘rin · ro‘yxatdan o‘tgan: ${s.joined?new Date(s.joined).toLocaleDateString('uz-UZ'):'—'}</p></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
+  $('#dlgBody').innerHTML=`<div class="dlg-head"><div><h2 style="font-size:1.35rem">${esc(s.name)}</h2><p class="note">${esc(s.group)}${s.login?' · hisob: <b>'+esc(s.login)+'</b>':''} · ${s.rank}-o‘rin · ro‘yxatdan o‘tgan: ${s.joined?new Date(s.joined).toLocaleDateString('uz-UZ'):'—'}</p></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
     <div class="stats"><div><b>${s.pct}%</b><span>O‘zlashtirish</span></div><div><b>${s.ball}</b><span>Ball</span></div><div><b>${s.topshiriq}</b><span>Topshiriqlar</span></div><div><b>${s.xato}</b><span>Xato urinishlar</span></div>
     <div><b>${s.test}/${s.testN}</b><span>Testlar</span></div><div><b>${s.masala}/${s.masalaN}</b><span>Masalalar</span></div><div><b>${s.oyin}/${s.oyinN}</b><span>O‘yin</span></div></div>
     <h3 style="font-size:1rem">So‘nggi harakatlar</h3>
     <ul class="feed" style="max-height:300px">${ev.length?ev.map(e=>`<li><span class="dot ${e.result==='to‘g‘ri'?'ok':e.result==='xato'?'no':'new'}"></span><span>${typeName[e.type]||esc(e.type)}${e.result?' – '+esc(e.result):''}${e.title?`<small>${esc(e.title)}</small>`:''}<small>${new Date(e.ts).toLocaleString('uz-UZ')}</small></span></li>`).join(''):'<li style="display:block;color:var(--muted)">Yozuvlar yo‘q.</li>'}</ul>`;
+  if(ENDPOINT&&s.login){$('#dlgBody').insertAdjacentHTML('beforeend',`<div style="display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost" type="button" id="resetPw">Parolni tiklash</button><span class="note">O‘quvchi parolini unutgan bo‘lsa, yangi vaqtinchalik parol beriladi.</span></div><p class="msg" id="resetOut" hidden></p></div>`);
+    $('#resetPw').onclick=async()=>{const b=$('#resetPw'),o=$('#resetOut');if(!b.dataset.sure){b.dataset.sure='1';b.textContent='Tasdiqlash – eski parol ishlamay qoladi';return}
+      b.disabled=true;try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'reset',key:store.get('ustozKey',''),sid:s.id})}).then(x=>x.json());
+        o.hidden=false;if(r.ok){o.className='msg';o.style.background='var(--good-soft)';o.style.color='var(--good)';o.innerHTML='Yangi parol: <b style="font-size:1.2rem;letter-spacing:.08em">'+esc(r.password)+'</b> · hisob: <b>'+esc(r.login)+'</b>. Buni o‘quvchiga ayting – u shu parol bilan kiradi.'}else{o.className='msg no';o.textContent='Parolni tiklab bo‘lmadi. Qaytadan urinib ko‘ring.'}}
+      catch(e){o.hidden=false;o.className='msg no';o.textContent='Ulanib bo‘lmadi.'}finally{b.disabled=false}}}
   const d=$('#dlg');d.showModal();$('#dlgX').onclick=()=>d.close();
 }
 async function refresh(){

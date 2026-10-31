@@ -384,6 +384,9 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 .role:hover{border-color:var(--teal);transform:translateY(-2px);background:var(--teal-soft)}
 .role svg{color:var(--teal)}
 .role b{font:700 1.15rem var(--f-display)}
+.authtabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface-2);padding:4px;border-radius:12px}
+.authtabs button{border:0;background:transparent;color:var(--muted);font:500 .92rem var(--f-body);padding:.6em;border-radius:9px;cursor:pointer}
+.authtabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .role span{font-size:.85rem;color:var(--muted);line-height:1.4}
 .teacher{display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;background:var(--bright);color:var(--deep);font:600 .85rem var(--f-body);flex:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
@@ -725,16 +728,27 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
   </div>
   <form class="reg-card" id="regForm" novalidate hidden>
     <span class="eyebrow" style="color:var(--teal)">Biofizika.uz</span>
+    <div class="authtabs" id="authTabs" role="tablist">
+      <button type="button" role="tab" id="tabReg" aria-selected="true">Ro‘yxatdan o‘tish</button>
+      <button type="button" role="tab" id="tabLogin" aria-selected="false">Kirish</button>
+    </div>
     <h2 id="regT">Ro‘yxatdan o‘tish</h2>
-    <p class="lead" id="regLead">Boshlashdan oldin ism-familiyangiz va guruhingizni yozing. Topshiriqlar natijasi o‘qituvchingizga shu ism bilan yuboriladi.</p>
-    <div class="fields">
+    <p class="lead" id="regLead">Hisob oching: natijalaringiz saqlanadi va istalgan telefon yoki kompyuterdan qayta kira olasiz.</p>
+    <div class="fields" id="regFields">
       <div class="field"><label for="rIsm">Ism</label><input id="rIsm" autocomplete="given-name" placeholder="Aziza"></div>
       <div class="field"><label for="rFam">Familiya</label><input id="rFam" autocomplete="family-name" placeholder="Karimova"></div>
       <div class="field full"><label for="rGr">Guruh yoki sinf</label><input id="rGr" placeholder="Masalan: Biologiya, 2-kurs, 201-guruh"></div>
+      <div class="field full" data-acc><label for="rLogin">Gmail yoki nik</label><input id="rLogin" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="aziza@gmail.com yoki aziza_k"></div>
+      <div class="field" data-acc><label for="rPass">Parol</label><input id="rPass" type="password" autocomplete="new-password" placeholder="Kamida 6 belgi"></div>
+      <div class="field" data-acc><label for="rPass2">Parolni takrorlang</label><input id="rPass2" type="password" autocomplete="new-password"></div>
+    </div>
+    <div class="fields" id="loginFields" hidden>
+      <div class="field full"><label for="lLogin">Gmail yoki nik</label><input id="lLogin" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="aziza@gmail.com yoki aziza_k"></div>
+      <div class="field full"><label for="lPass">Parol</label><input id="lPass" type="password" autocomplete="current-password"></div>
     </div>
     <p class="formmsg no" id="regErr" hidden></p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-primary" type="submit" id="regBtn">Boshlash</button><button class="btn btn-ghost" type="button" id="regBack">Orqaga</button></div>
-    <p class="reg-note">Ism, guruh va topshiriqlar natijasi faqat o‘qituvchingizga ko‘rinadi. Boshqa o‘quvchilar ularni ko‘rmaydi.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-primary" type="submit" id="regBtn">Hisob ochish</button><button class="btn btn-ghost" type="button" id="regBack">Orqaga</button><button class="btn btn-ghost" type="button" id="logoutBtn" hidden>Hisobdan chiqish</button></div>
+    <p class="reg-note" id="regNote">Parolni unutsangiz, ustozingizga murojaat qiling – u yangi parol berib yuboradi. Ism, guruh va natijalar faqat ustozingizga ko‘rinadi.</p>
   </form>
 </div>
 
@@ -749,7 +763,8 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 (function(){
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const store={get(k,d){try{const v=localStorage.getItem('bf_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('bf_'+k,JSON.stringify(v))}catch(e){}}};
+const SYNC_KEYS=['quiz','qlock','plock','prob','match','tasks','cool'];
+const store={get(k,d){try{const v=localStorage.getItem('bf_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('bf_'+k,JSON.stringify(v))}catch(e){}if(SYNC_KEYS.includes(k)&&window.__bfSync)window.__bfSync()},del(k){try{localStorage.removeItem('bf_'+k)}catch(e){}}};
 const num=(n,d=1)=>n.toFixed(d).replace('.',',').replace('-','−');
 const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const LVL={b:['Boshlang‘ich','g'],o:['O‘rta','b'],y:['Yuqori','w']};
@@ -783,34 +798,101 @@ function showWho(){
   if(!prof){$('#who').hidden=true;return}
   $('#who').hidden=false;$('#whoI').textContent=(prof.ism[0]||'')+(prof.fam[0]||'');$('#whoN').textContent=prof.ism+' '+prof.fam;
 }
-function showRegForm(){$('#regChoice').hidden=true;$('#regForm').hidden=false;setTimeout(()=>$('#rIsm').focus(),30)}
-$('#roleStudent').addEventListener('click',showRegForm);
-$('#regBack').addEventListener('click',()=>{if(prof){$('#reg').hidden=true;return}$('#regForm').hidden=true;$('#regChoice').hidden=false});
-function openReg(edit){
-  $('#regChoice').hidden=!!edit;$('#regForm').hidden=!edit;
-  $('#regBack').textContent=edit?'Bekor qilish':'Orqaga';
-  $('#regT').textContent=edit?'Profilni o‘zgartirish':'Ro‘yxatdan o‘tish';
-  $('#regBtn').textContent=edit?'Saqlash':'Boshlash';
-  if(edit&&prof){$('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr}
-  $('#reg').hidden=false;if(edit)setTimeout(()=>$('#rIsm').focus(),30);
+let session=store.get('session',null), authMode='reg', editMode=false;
+const errBox=m=>{const e=$('#regErr');e.hidden=!m;e.textContent=m||''};
+async function api(body){
+  const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+  return await r.json();
 }
-$('#regForm').addEventListener('submit',e=>{e.preventDefault();
-  const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=$('#rGr').value.trim(),err=$('#regErr');
-  if(ism.length<2||fam.length<2||gr.length<2){err.hidden=false;err.textContent='Iltimos, ism, familiya va guruhni to‘liq yozing.';return}
-  err.hidden=true;const isNew=!prof;
-  prof={id:prof?.id||('s'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)),ism,fam,gr,at:prof?.at||new Date().toISOString()};
-  store.set('profile',prof);$('#reg').hidden=true;showWho();
-  sendEvent({type:isNew?'royxat':'profil'});
+const collectState=()=>{const o={};SYNC_KEYS.forEach(k=>{const v=store.get(k,null);if(v!==null)o[k]=v});return o};
+let syncTimer=null;
+window.__bfSync=()=>{if(!ENDPOINT||!session)return;clearTimeout(syncTimer);syncTimer=setTimeout(async()=>{
+  try{const r=await api({action:'sync',sid:session.sid,token:session.token,state:collectState()});
+    if(!r.ok&&r.error==='token'){store.del('session');session=null;openReg(false);setAuth('login');errBox('Hisobingizga boshqa qurilmadan kirildi yoki parol yangilandi. Qaytadan kiring.')}}catch(e){}},2500)};
+function setAuth(m){authMode=m;
+  $('#tabReg').setAttribute('aria-selected',m==='reg');$('#tabLogin').setAttribute('aria-selected',m==='login');
+  $('#regFields').hidden=m!=='reg';$('#loginFields').hidden=m!=='login';
+  $('#regT').textContent=m==='reg'?'Ro‘yxatdan o‘tish':'Hisobga kirish';
+  $('#regLead').textContent=m==='reg'?(ENDPOINT?'Hisob oching: natijalaringiz saqlanadi va istalgan telefon yoki kompyuterdan qayta kira olasiz.':'Ism-familiyangiz va guruhingizni yozing.'):'Gmail yoki nikingizni va parolingizni kiriting – natijalaringiz qayta tiklanadi.';
+  $('#regBtn').textContent=m==='reg'?(ENDPOINT?'Hisob ochish':'Boshlash'):'Kirish';
+  errBox('');setTimeout(()=>(m==='reg'?$('#rIsm'):$('#lLogin')).focus(),30)}
+$('#tabReg').addEventListener('click',()=>setAuth('reg'));
+$('#tabLogin').addEventListener('click',()=>setAuth('login'));
+function showRegForm(){$('#regChoice').hidden=true;$('#regForm').hidden=false;setAuth(authMode)}
+$('#roleStudent').addEventListener('click',showRegForm);
+$('#regBack').addEventListener('click',()=>{if(editMode||session||(prof&&!ENDPOINT)){$('#reg').hidden=true;return}$('#regForm').hidden=true;$('#regChoice').hidden=false});
+function openReg(edit){
+  editMode=!!edit;
+  $('#regChoice').hidden=editMode;$('#regForm').hidden=!editMode;
+  $('#authTabs').hidden=editMode||!ENDPOINT;
+  $$('#regFields [data-acc]').forEach(el=>el.hidden=editMode||!ENDPOINT);
+  $('#logoutBtn').hidden=!editMode;
+  $('#regBack').textContent=editMode?'Yopish':'Orqaga';
+  if(editMode){$('#regFields').hidden=false;$('#loginFields').hidden=true;$('#regT').textContent='Profil';
+    $('#regLead').textContent=session?'Hisob: '+session.login:'Ism, familiya va guruhni o‘zgartirishingiz mumkin.';$('#regBtn').textContent='Saqlash';errBox('');
+    if(prof){$('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr}}
+  else if(prof&&ENDPOINT&&!session){$('#regChoice').hidden=true;$('#regForm').hidden=false;setAuth('reg');
+    $('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr;
+    $('#regLead').textContent='Natijalaringiz yo‘qolmasligi uchun Gmail yoki nik va parol qo‘yib, hisobingizni saqlang.'}
+  $('#reg').hidden=false;
+}
+function splitName(full){const p=String(full||'').trim().split(/\s+/);return {ism:p[0]||'',fam:p.slice(1).join(' ')}}
+function applyLogin(r){
+  const n=splitName(r.name);
+  prof={id:r.sid,ism:n.ism,fam:n.fam,gr:r.group,at:prof?.at||new Date().toISOString()};
+  session={sid:r.sid,token:r.token,login:r.login};
+  store.set('profile',prof);store.set('session',session);
+}
+$('#regForm').addEventListener('submit',async e=>{e.preventDefault();
+  const btn=$('#regBtn');
+  if(editMode){
+    const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=$('#rGr').value.trim();
+    if(ism.length<2||fam.length<2||gr.length<2){errBox('Iltimos, ism, familiya va guruhni to‘liq yozing.');return}
+    prof=Object.assign({},prof,{ism,fam,gr});store.set('profile',prof);$('#reg').hidden=true;showWho();
+    if(session&&ENDPOINT)api({action:'sync',sid:session.sid,token:session.token,state:collectState(),name:ism+' '+fam,group:gr}).catch(()=>{});
+    sendEvent({type:'profil'});return}
+  if(authMode==='login'){
+    const login=$('#lLogin').value.trim().toLowerCase(),pass=$('#lPass').value;
+    if(!login||!pass){errBox('Gmail yoki nik va parolni kiriting.');return}
+    btn.disabled=true;errBox('');
+    try{const r=await api({action:'login',login,password:pass,snap:snapshot()});
+      if(!r.ok){errBox(r.error==='kop'?'Juda ko‘p urinish bo‘ldi. 10 daqiqadan keyin qayta urinib ko‘ring.':r.error==='topilmadi'?'Bunday Gmail yoki nik topilmadi. «Ro‘yxatdan o‘tish» bo‘limidan hisob oching.':'Parol noto‘g‘ri. Unutgan bo‘lsangiz, ustozingizga murojaat qiling.');return}
+      SYNC_KEYS.forEach(k=>store.del(k));
+      const st=r.state||{};Object.keys(st).forEach(k=>{if(SYNC_KEYS.includes(k))try{localStorage.setItem('bf_'+k,JSON.stringify(st[k]))}catch(x){}});
+      applyLogin(r);location.reload();
+    }catch(x){errBox('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
+    finally{btn.disabled=false}
+    return}
+  const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=$('#rGr').value.trim();
+  if(ism.length<2||fam.length<2||gr.length<2){errBox('Iltimos, ism, familiya va guruhni to‘liq yozing.');return}
+  if(!ENDPOINT){
+    const isNew=!prof;
+    prof={id:prof?.id||('s'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)),ism,fam,gr,at:prof?.at||new Date().toISOString()};
+    store.set('profile',prof);$('#reg').hidden=true;showWho();sendEvent({type:isNew?'royxat':'profil'});return}
+  const login=$('#rLogin').value.trim().toLowerCase(),p1=$('#rPass').value,p2=$('#rPass2').value;
+  if(!/^[a-z0-9._@+-]{3,80}$/.test(login)){errBox('Gmail manzilingizni yoki nik yozing (lotin harflari, raqamlar, nuqta, chiziqcha; kamida 3 belgi).');return}
+  if(p1.length<6){errBox('Parol kamida 6 belgidan iborat bo‘lsin.');return}
+  if(p1!==p2){errBox('Parollar bir xil emas.');return}
+  btn.disabled=true;errBox('');
+  try{const r=await api({action:'register',login,password:p1,name:ism+' '+fam,group:gr,sid:prof?.id||'',state:collectState(),snap:snapshot()});
+    if(!r.ok){errBox(r.error==='band'?'Bu Gmail yoki nik band. Boshqasini yozing yoki «Kirish» bo‘limidan kiring.':r.error==='login'?'Gmail yoki nik noto‘g‘ri yozilgan.':r.error==='parol'?'Parol kamida 6 belgidan iborat bo‘lsin.':'Ma’lumotlarni tekshirib, qayta urinib ko‘ring.');return}
+    applyLogin(r);$('#reg').hidden=true;showWho();
+  }catch(x){errBox('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
+  finally{btn.disabled=false}
 });
+$('#logoutBtn').addEventListener('click',()=>{
+  if(!session&&!confirmLogout())return;
+  ['session','profile','outbox',...SYNC_KEYS].forEach(k=>store.del(k));location.reload()});
+function confirmLogout(){const b=$('#logoutBtn');if(b.dataset.sure)return true;b.dataset.sure='1';b.textContent='Natijalar o‘chadi – yana bosing';errBox('Hisobingiz yo‘q: chiqsangiz, shu qurilmadagi natijalaringiz o‘chib ketadi.');return false}
 $('#who').addEventListener('click',()=>openReg(true));
-$('#teacherBadge').addEventListener('click',()=>{try{localStorage.removeItem('bf_teacher')}catch(e){}isTeacher=false;$('#teacherBadge').hidden=true;if(!prof)openReg(false);else showWho()});
+$('#teacherBadge').addEventListener('click',()=>{try{localStorage.removeItem('bf_teacher')}catch(e){}isTeacher=false;$('#teacherBadge').hidden=true;if(!prof||(ENDPOINT&&!session))openReg(false);else showWho()});
 async function initIdentity(){
   if(store.get('teacher',false)){isTeacher=true;$('#reg').hidden=true;showWho();return}
   if(window.claude&&window.claude.use){
     try{const u=await Promise.race([window.claude.use('user'),new Promise(r=>setTimeout(()=>r(null),4000))]);
       if(u&&u.isOwner&&u.isOwner()){isTeacher=true;$('#reg').hidden=true;showWho();return}}catch(e){}
   }
-  if(!prof) openReg(false); else {showWho();flush()}
+  if(!prof||(ENDPOINT&&!session)) openReg(false); else {showWho();flush()}
 }
 const titleOf=id=>{const all=[...TODAY.items,...WEEK.items,...BANK];const f=all.find(x=>x[0]===id);return f?f[1]:id};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -23,6 +23,7 @@ function sozlash() {
   ss.setSpreadsheetTimeZone(TZ);
   varaq_(OQUVCHILAR, USTUNLAR);
   varaq_(FAOLLIK, ['Vaqt', 'ID', 'Ism familiya', 'Guruh', 'Turi', 'Topshiriq ID', 'Nomi', 'Natija']);
+  varaq_(HISOBLAR, H_USTUN);
   const props = PropertiesService.getScriptProperties();
   let kalit = props.getProperty('USTOZ_KALITI');
   if (!kalit) {
@@ -64,7 +65,7 @@ function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
-/** Sayt shu manzilga natijalarni yuboradi; ustoz sahifasi esa hisobotni so‘raydi. */
+/** Sayt shu manzilga murojaat qiladi: hisob, natijalar va ustoz hisoboti. */
 function doPost(e) {
   let d;
   try { d = JSON.parse(e.postData.contents); } catch (err) { return json_({ ok: false, error: 'bad_request' }); }
@@ -72,31 +73,129 @@ function doPost(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
-    const toza = v => String(v == null ? '' : v).slice(0, 200);
-    const son = v => Math.max(0, Math.min(10000, Number(v) || 0));
+    if (d.action === 'register') return royxat_(d);
+    if (d.action === 'login') return kirish_(d);
+    if (d.action === 'sync') return sinx_(d);
+    if (d.action === 'reset') return tiklash_(d);
     if (!d.sid) return json_({ ok: false });
-    const vaqt = new Date();
-    const natija = d.ok === true ? 'to‘g‘ri' : d.ok === false ? 'xato' : '';
-    varaq_(FAOLLIK, []).appendRow([vaqt, toza(d.sid), toza(d.name), toza(d.group), toza(d.type),
-      toza(d.task), toza(d.title), natija]);
-
-    const sh = varaq_(OQUVCHILAR, USTUNLAR);
-    const ids = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues().map(r => r[0]) : [];
-    let qator = ids.indexOf(toza(d.sid)) + 2;
-    if (qator < 2) {
-      sh.appendRow([toza(d.sid), toza(d.name), toza(d.group), vaqt, vaqt, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-      qator = sh.getLastRow();
-    }
-    const old = sh.getRange(qator, 1, 1, USTUNLAR.length).getValues()[0];
-    const s = d.snap || {};
-    const t = son(s.test), m = son(s.masala), o = son(s.oyin), top = son(s.topshiriq);
-    const xato = Number(old[12] || 0) + (d.ok === false ? 1 : 0);
-    sh.getRange(qator, 2, 1, USTUNLAR.length - 1).setValues([[toza(d.name), toza(d.group), old[3] || vaqt, vaqt,
-      t, son(s.testN), m, son(s.masalaN), o, son(s.oyinN), top, xato, ball_(t, m, o, top)]]);
+    yozish_(d);
     return json_({ ok: true });
   } finally {
     lock.releaseLock();
   }
+}
+
+const toza_ = v => String(v == null ? '' : v).slice(0, 200);
+const son_ = v => Math.max(0, Math.min(10000, Number(v) || 0));
+
+/** Faollik jurnaliga yozish va o‘quvchi qatorini yangilash. */
+function yozish_(d) {
+  const vaqt = new Date();
+  const natija = d.ok === true ? 'to‘g‘ri' : d.ok === false ? 'xato' : '';
+  varaq_(FAOLLIK, []).appendRow([vaqt, toza_(d.sid), toza_(d.name), toza_(d.group), toza_(d.type),
+    toza_(d.task), toza_(d.title), natija]);
+  const sh = varaq_(OQUVCHILAR, USTUNLAR);
+  const ids = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues().map(r => r[0]) : [];
+  let qator = ids.indexOf(toza_(d.sid)) + 2;
+  if (qator < 2) {
+    sh.appendRow([toza_(d.sid), toza_(d.name), toza_(d.group), vaqt, vaqt, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    qator = sh.getLastRow();
+  }
+  const old = sh.getRange(qator, 1, 1, USTUNLAR.length).getValues()[0];
+  const s = d.snap || {};
+  const t = son_(s.test), m = son_(s.masala), o = son_(s.oyin), top = son_(s.topshiriq);
+  const xato = Number(old[12] || 0) + (d.ok === false ? 1 : 0);
+  sh.getRange(qator, 2, 1, USTUNLAR.length - 1).setValues([[toza_(d.name) || old[1], toza_(d.group) || old[2], old[3] || vaqt, vaqt,
+    t, son_(s.testN), m, son_(s.masalaN), o, son_(s.oyinN), top, xato, ball_(t, m, o, top)]]);
+}
+
+/* ---------- O‘quvchi hisoblari ---------- */
+const HISOBLAR = 'Hisoblar';
+const H_USTUN = ['Login', 'Salt', 'Parol xeshi', 'ID', 'Ism familiya', 'Guruh', 'Yaratilgan', 'Token', 'Natijalar (JSON)', 'Yangilangan'];
+
+function xesh_(salt, parol) {
+  const b = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + '|' + parol, Utilities.Charset.UTF_8);
+  return Utilities.base64Encode(b);
+}
+function loginToza_(v) { return String(v || '').trim().toLowerCase().slice(0, 80); }
+function hisobTop_(login) {
+  const sh = varaq_(HISOBLAR, H_USTUN);
+  const n = sh.getLastRow() - 1;
+  if (n < 1) return { sh: sh, qator: 0 };
+  const logins = sh.getRange(2, 1, n, 1).getValues().map(r => String(r[0]));
+  const i = logins.indexOf(login);
+  return { sh: sh, qator: i < 0 ? 0 : i + 2 };
+}
+function hisobId_(sid) {
+  const sh = varaq_(HISOBLAR, H_USTUN);
+  const n = sh.getLastRow() - 1;
+  if (n < 1) return { sh: sh, qator: 0 };
+  const ids = sh.getRange(2, 4, n, 1).getValues().map(r => String(r[0]));
+  const i = ids.indexOf(String(sid || ''));
+  return { sh: sh, qator: i < 0 ? 0 : i + 2 };
+}
+function yangiToken_() { return Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8); }
+function urinish_(login, xato) {
+  const c = CacheService.getScriptCache(), k = 'urinish_' + Utilities.base64EncodeWebSafe(login).slice(0, 200);
+  const n = Number(c.get(k) || 0);
+  if (xato) c.put(k, String(n + 1), 600);
+  return n;
+}
+
+function royxat_(d) {
+  const login = loginToza_(d.login), parol = String(d.password || '');
+  const ism = toza_(d.name), guruh = toza_(d.group);
+  if (!/^[a-z0-9._@+-]{3,80}$/.test(login)) return json_({ ok: false, error: 'login' });
+  if (parol.length < 6 || parol.length > 100) return json_({ ok: false, error: 'parol' });
+  if (ism.length < 3 || guruh.length < 2) return json_({ ok: false, error: 'ism' });
+  const h = hisobTop_(login);
+  if (h.qator) return json_({ ok: false, error: 'band' });
+  const sid = String(d.sid || '').match(/^s[a-z0-9]{6,30}$/) && !hisobId_(d.sid).qator ? String(d.sid) :
+    's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const salt = Utilities.getUuid(), token = yangiToken_(), vaqt = new Date();
+  const holat = JSON.stringify(d.state || {}).slice(0, 45000);
+  h.sh.appendRow([login, salt, xesh_(salt, parol), sid, ism, guruh, vaqt, token, holat, vaqt]);
+  yozish_({ sid: sid, name: ism, group: guruh, type: 'royxat', snap: d.snap || {} });
+  return json_({ ok: true, sid: sid, token: token, login: login, name: ism, group: guruh });
+}
+
+function kirish_(d) {
+  const login = loginToza_(d.login), parol = String(d.password || '');
+  if (urinish_(login, false) >= 8) return json_({ ok: false, error: 'kop' });
+  const h = hisobTop_(login);
+  if (!h.qator) { urinish_(login, true); return json_({ ok: false, error: 'topilmadi' }); }
+  const r = h.sh.getRange(h.qator, 1, 1, H_USTUN.length).getValues()[0];
+  if (xesh_(r[1], parol) !== r[2]) { urinish_(login, true); return json_({ ok: false, error: 'parol' }); }
+  const token = yangiToken_();
+  h.sh.getRange(h.qator, 8).setValue(token);
+  let holat = {};
+  try { holat = JSON.parse(r[8] || '{}'); } catch (err) { holat = {}; }
+  yozish_({ sid: r[3], name: r[4], group: r[5], type: 'kirish', snap: d.snap || {} });
+  return json_({ ok: true, sid: r[3], token: token, login: r[0], name: r[4], group: r[5], state: holat });
+}
+
+function sinx_(d) {
+  const h = hisobId_(d.sid);
+  if (!h.qator) return json_({ ok: false, error: 'topilmadi' });
+  const r = h.sh.getRange(h.qator, 1, 1, H_USTUN.length).getValues()[0];
+  if (!d.token || String(d.token) !== String(r[7])) return json_({ ok: false, error: 'token' });
+  const qiymat = [[JSON.stringify(d.state || {}).slice(0, 45000), new Date()]];
+  h.sh.getRange(h.qator, 9, 1, 2).setValues(qiymat);
+  if (d.name || d.group) h.sh.getRange(h.qator, 5, 1, 2).setValues([[toza_(d.name) || r[4], toza_(d.group) || r[5]]]);
+  return json_({ ok: true });
+}
+
+/** Ustoz o‘quvchi parolini tiklaydi: vaqtinchalik 6 xonali parol qaytaradi. */
+function tiklash_(d) {
+  const kalit = PropertiesService.getScriptProperties().getProperty('USTOZ_KALITI');
+  if (!kalit || String(d.key || '') !== kalit) return json_({ ok: false, error: 'kalit' });
+  const h = hisobId_(d.sid);
+  if (!h.qator) return json_({ ok: false, error: 'topilmadi' });
+  const yangi = String(Math.floor(100000 + Math.random() * 900000));
+  const salt = Utilities.getUuid();
+  h.sh.getRange(h.qator, 2, 1, 2).setValues([[salt, xesh_(salt, yangi)]]);
+  h.sh.getRange(h.qator, 8).setValue('');
+  return json_({ ok: true, password: yangi, login: h.sh.getRange(h.qator, 1).getValue() });
 }
 
 /** Ustoz sahifasi uchun: o‘quvchilar, reyting va so‘nggi faollik. */
@@ -117,8 +216,11 @@ function hisobot_(d) {
     if (r[7] === 'to‘g‘ri') k.ok++; else if (r[7] === 'xato') k.xato++;
     if (r[4] === 'topshiriq' && r[7] === 'to‘g‘ri') k.topshiriq++;
   });
+  const hs = varaq_(HISOBLAR, H_USTUN);
+  const loginlar = {};
+  if (hs.getLastRow() > 1) hs.getRange(2, 1, hs.getLastRow() - 1, 4).getValues().forEach(x => { loginlar[x[3]] = x[0]; });
   const students = rows.map(r => ({
-    id: r[0], name: r[1], group: r[2], joined: r[3] ? new Date(r[3]).toISOString() : '',
+    id: r[0], login: loginlar[r[0]] || '', name: r[1], group: r[2], joined: r[3] ? new Date(r[3]).toISOString() : '',
     last: r[4] ? new Date(r[4]).toISOString() : '', test: Number(r[5]) || 0, testN: Number(r[6]) || 0,
     masala: Number(r[7]) || 0, masalaN: Number(r[8]) || 0, oyin: Number(r[9]) || 0, oyinN: Number(r[10]) || 0,
     topshiriq: Number(r[11]) || 0, xato: Number(r[12]) || 0, ball: Number(r[13]) || 0,
