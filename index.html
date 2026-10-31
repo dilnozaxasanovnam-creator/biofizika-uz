@@ -13,12 +13,17 @@
 <meta property="og:url" content="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/">
 <meta property="og:locale" content="uz_UZ">
 <meta name="theme-color" content="#0B1D15">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Biofizika.uz", "alternateName": "Biofizika o‘zbek tilida", "url": "https://dilnozaxasanovnam-creator.github.io/biofizika-uz/", "inLanguage": "uz", "description": "Biofizikani o‘zbek tilida o‘rganish uchun bepul o‘quv sayti: nazariya, formulalar, testlar, masalalar, simulyatsiya va kundalik topshiriqlar."}, {"@type": "Course", "name": "Biofizika asoslari (o‘zbek tilida)", "description": "Molekulyar biofizika, hujayra biofizikasi, bioenergetika, bioelektrik hodisalar, tibbiy va optik biofizika bo‘yicha bepul onlayn kurs.", "inLanguage": "uz", "isAccessibleForFree": true, "provider": {"@type": "Organization", "name": "Biofizika.uz", "url": "https://dilnozaxasanovnam-creator.github.io/biofizika-uz/"}, "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT15M"}}]}</script>
 <style>:root{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
 <noscript><h1>Biofizika.uz – biofizika o‘zbek tilida</h1><p>Biofizikani o‘zbek tilida o‘rganish uchun bepul o‘quv sayti. Mavzular: biofizikaning asoslari, molekulyar biofizika, hujayra biofizikasi (membrana, diffuziya, ion nasoslari), bioenergetika (ATP, mitoxondriya), bioelektrik hodisalar (tinchlik va ta’sir potensiali, Nernst tenglamasi), tibbiy biofizika (EKG, UTT, rentgen, MRT) va optik biofizika. Saytda testlar, formula masalalari, Nernst kalkulyatori, simulyatsiya va kundalik topshiriqlar bor. Saytdan foydalanish uchun brauzerda JavaScript’ni yoqing.</p></noscript>
 <title>Biofizika.uz</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' rx='8' fill='%234ADE80'/%3E%3Cpath d='M3.5 17.5h6l2-4 2.5 9 3-17 2.5 12h7' fill='none' stroke='%230B1D15' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Lexend:wght@300;400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
@@ -296,6 +301,7 @@ aside.tside{display:grid;gap:12px;align-content:start;min-width:0}
 .field label{font-size:.82rem;color:var(--muted)}
 .field input,.field select,.field textarea{font:400 .98rem var(--f-body);padding:.6em .75em;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
 .field textarea{min-height:130px;resize:vertical}
+.grhint{font-size:.76rem;color:var(--muted)}
 .field.full{grid-column:1/-1}
 .result{background:var(--surface-2);border-radius:12px;padding:18px;display:grid;gap:12px;align-content:start}
 .result output{font:800 2.4rem var(--f-display);color:var(--teal);font-variant-numeric:tabular-nums}
@@ -739,7 +745,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
     <div class="fields" id="regFields">
       <div class="field"><label for="rIsm">Ism</label><input id="rIsm" autocomplete="given-name" placeholder="Aziza"></div>
       <div class="field"><label for="rFam">Familiya</label><input id="rFam" autocomplete="family-name" placeholder="Karimova"></div>
-      <div class="field full"><label for="rGr">Guruh yoki sinf</label><input id="rGr" placeholder="Masalan: Biologiya, 2-kurs, 201-guruh"></div>
+      <div class="field full"><label for="rGr" id="rGrLbl">Guruh yoki sinf</label><select id="rGrSel" hidden><option value="">Guruhingizni tanlang</option></select><input id="rGr" placeholder="Masalan: Biologiya, 2-kurs, 201-guruh"><small class="grhint" id="grHint" hidden>Guruhlar ro‘yxatini ustozingiz kiritgan. O‘z guruhingizni topa olmasangiz, ustozingizga ayting.</small></div>
       <div class="field full" data-acc><label for="rLogin">Gmail yoki nik</label><input id="rLogin" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="aziza@gmail.com yoki aziza_k"></div>
       <div class="field" data-acc><label for="rPass">Parol</label><input id="rPass" type="password" autocomplete="new-password" placeholder="Kamida 6 belgi"></div>
       <div class="field" data-acc><label for="rPass2">Parolni takrorlang</label><input id="rPass2" type="password" autocomplete="new-password"></div>
@@ -817,11 +823,12 @@ async function onGoogle(resp){
   try{const r=await api({action:'google',credential:gCred,sid:prof?.id||'',state:collectState(),snap:snapshot()});
     if(r.ok){finishLogin(r);return}
     if(r.error==='yangi'){
+      if(r.groups)setGroups(r.groups);
       setAuth('reg');$('#gWrap').hidden=true;$('#authTabs').hidden=true;
       const n=splitName(r.name);if(!$('#rIsm').value)$('#rIsm').value=n.ism;if(!$('#rFam').value)$('#rFam').value=n.fam;
       $$('#regFields [data-acc]').forEach(el=>el.hidden=true);
-      $('#regT').textContent='Deyarli tayyor';$('#regLead').textContent='Google hisobingiz: '+r.email+'. Ism-familiyangizni tekshiring va guruhingizni yozing.';
-      $('#regBtn').textContent='Davom etish';setTimeout(()=>$('#rGr').focus(),30);return}
+      $('#regT').textContent='Deyarli tayyor';$('#regLead').textContent='Google hisobingiz: '+r.email+'. Ism-familiyangizni tekshiring va guruhingizni '+(grList()?'tanlang.':'yozing.');
+      $('#regBtn').textContent='Davom etish';setTimeout(()=>grEl().focus(),30);return}
     errBox('Google orqali kirib bo‘lmadi. Qayta urinib ko‘ring yoki Gmail va parol bilan ro‘yxatdan o‘ting.');
   }catch(x){errBox('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
 }
@@ -834,6 +841,23 @@ function finishLogin(r){
   location.reload();
 }
 const errBox=m=>{const e=$('#regErr');e.hidden=!m;e.textContent=m||''};
+/* Guruhlar ro‘yxatini ustoz kiritadi; o‘quvchi undan tanlaydi. Ro‘yxat bo‘sh bo‘lsa – o‘zi yozadi. */
+let GROUPS=store.get('groups',[]);
+const grList=()=>Array.isArray(GROUPS)&&GROUPS.length>0;
+const grEl=()=>grList()?$('#rGrSel'):$('#rGr');
+const grGet=()=>grList()?$('#rGrSel').value:$('#rGr').value.trim();
+function grSet(v){$('#rGr').value=v||'';if(grList())$('#rGrSel').value=GROUPS.includes(v)?v:''}
+function grDraw(){
+  const on=grList(), cur=grGet()||$('#rGr').value||prof?.gr||'';
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  $('#rGrSel').innerHTML='<option value="">Guruhingizni tanlang</option>'+(on?GROUPS.map(g=>'<option>'+esc(g)+'</option>').join(''):'');
+  $('#rGrSel').hidden=!on;$('#rGr').hidden=on;$('#grHint').hidden=!on;
+  $('#rGrLbl').htmlFor=on?'rGrSel':'rGr';$('#rGrLbl').textContent=on?'Guruhingiz':'Guruh yoki sinf';
+  grSet(cur);
+}
+function setGroups(g){if(!Array.isArray(g))return;GROUPS=g.map(String);store.set('groups',GROUPS);grDraw()}
+async function loadGroups(){if(!ENDPOINT)return;try{const r=await api({action:'guruhlar'});if(r&&r.ok)setGroups(r.groups||[])}catch(e){}}
+const grMissing=()=>grList()?'Iltimos, ism va familiyani yozing hamda ro‘yxatdan guruhingizni tanlang.':'Iltimos, ism, familiya va guruhni to‘liq yozing.';
 async function api(body){
   const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
   return await r.json();
@@ -842,13 +866,16 @@ const collectState=()=>{const o={};SYNC_KEYS.forEach(k=>{const v=store.get(k,nul
 let syncTimer=null;
 window.__bfSync=()=>{if(!ENDPOINT||!session)return;clearTimeout(syncTimer);syncTimer=setTimeout(async()=>{
   try{const r=await api({action:'sync',sid:session.sid,token:session.token,state:collectState()});
-    if(!r.ok&&(r.error==='token'||r.error==='topilmadi'))kicked(r.error)}catch(e){}},2500)};
+    if(!r.ok&&(r.error==='token'||r.error==='topilmadi'))kicked(r.error);else if(r.ok)serverProfile(r)}catch(e){}},2500)};
 function kicked(why){
   ['session','profile','outbox',...SYNC_KEYS].forEach(k=>store.del(k));session=null;prof=null;showWho();
   openReg(false);setAuth(why==='topilmadi'?'reg':'login');
   errBox(why==='topilmadi'?'Hisobingiz ustoz tomonidan o‘chirildi. Kerak bo‘lsa, qaytadan ro‘yxatdan o‘ting yoki ustozingizga murojaat qiling.':'Hisobingizga boshqa qurilmadan kirildi yoki parol yangilandi. Qaytadan kiring.')}
 async function checkSession(){if(!ENDPOINT||!session)return;
-  try{const r=await api({action:'sync',sid:session.sid,token:session.token,state:collectState()});if(!r.ok&&(r.error==='token'||r.error==='topilmadi'))kicked(r.error)}catch(e){}}
+  try{const r=await api({action:'sync',sid:session.sid,token:session.token,state:collectState()});if(!r.ok&&(r.error==='token'||r.error==='topilmadi'))kicked(r.error);else if(r.ok)serverProfile(r)}catch(e){}}
+/* Ustoz o‘quvchini boshqa guruhga o‘tkazgan bo‘lsa, profil shu yerda yangilanadi. */
+function serverProfile(r){if(r.groups)setGroups(r.groups);
+  if(prof&&r.group&&r.group!==prof.gr){prof=Object.assign({},prof,{gr:r.group});store.set('profile',prof);showWho()}}
 function setAuth(m){authMode=m;
   $('#tabReg').setAttribute('aria-selected',m==='reg');$('#tabLogin').setAttribute('aria-selected',m==='login');
   $('#regFields').hidden=m!=='reg';$('#loginFields').hidden=m!=='login';
@@ -863,6 +890,7 @@ $('#roleStudent').addEventListener('click',showRegForm);
 $('#regBack').addEventListener('click',()=>{if(editMode||session||(prof&&!ENDPOINT)){$('#reg').hidden=true;return}$('#regForm').hidden=true;$('#regChoice').hidden=false});
 function openReg(edit){
   editMode=!!edit;
+  grDraw();loadGroups();
   $('#regChoice').hidden=true;$('#regForm').hidden=false;
   $('#authTabs').hidden=editMode||!ENDPOINT;
   $$('#regFields [data-acc]').forEach(el=>el.hidden=editMode||!ENDPOINT);
@@ -871,9 +899,9 @@ function openReg(edit){
   $('#regBack').textContent='Yopish';$('#regBack').hidden=!editMode;
   if(editMode){$('#regFields').hidden=false;$('#loginFields').hidden=true;$('#regT').textContent='Profil';
     $('#regLead').textContent=session?'Hisob: '+session.login:'Ism, familiya va guruhni o‘zgartirishingiz mumkin.';$('#regBtn').textContent='Saqlash';errBox('');
-    if(prof){$('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr}}
+    if(prof){$('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;grSet(prof.gr)}}
   else if(prof&&ENDPOINT&&!session){$('#regChoice').hidden=true;$('#regForm').hidden=false;setAuth('reg');
-    $('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr;
+    $('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;grSet(prof.gr);
     $('#regLead').textContent='Natijalaringiz yo‘qolmasligi uchun Gmail yoki nik va parol qo‘yib, hisobingizni saqlang.'}
   if(!editMode&&!(prof&&ENDPOINT&&!session)){setAuth(authMode);if(!gCred)gInit()}
   $('#reg').hidden=false;
@@ -888,8 +916,8 @@ function applyLogin(r){
 $('#regForm').addEventListener('submit',async e=>{e.preventDefault();
   const btn=$('#regBtn');
   if(editMode){
-    const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=$('#rGr').value.trim();
-    if(ism.length<2||fam.length<2||gr.length<2){errBox('Iltimos, ism, familiya va guruhni to‘liq yozing.');return}
+    const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=grGet();
+    if(ism.length<2||fam.length<2||gr.length<2){errBox(grMissing());return}
     prof=Object.assign({},prof,{ism,fam,gr});store.set('profile',prof);$('#reg').hidden=true;showWho();
     if(session&&ENDPOINT)api({action:'sync',sid:session.sid,token:session.token,state:collectState(),name:ism+' '+fam,group:gr}).catch(()=>{});
     sendEvent({type:'profil'});return}
@@ -905,12 +933,13 @@ $('#regForm').addEventListener('submit',async e=>{e.preventDefault();
     }catch(x){errBox('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
     finally{btn.disabled=false}
     return}
-  const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=$('#rGr').value.trim();
-  if(ism.length<2||fam.length<2||gr.length<2){errBox('Iltimos, ism, familiya va guruhni to‘liq yozing.');return}
+  const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=grGet();
+  if(ism.length<2||fam.length<2||gr.length<2){errBox(grMissing());return}
   if(gCred&&authMode==='reg'&&$('#rLogin').closest('.field').hidden&&ENDPOINT){
     btn.disabled=true;errBox('');
     try{const r=await api({action:'google',credential:gCred,name:ism+' '+fam,group:gr,sid:prof?.id||'',state:collectState(),snap:snapshot()});
       if(r.ok){finishLogin(r);return}
+      if(r.error==='guruh'){setGroups(r.groups||[]);errBox('Guruhingizni ro‘yxatdan tanlang.');return}
       errBox(r.error==='token'?'Google seansi eskirdi. «Google bilan kirish» tugmasini qayta bosing.':'Hisob ochib bo‘lmadi. Qayta urinib ko‘ring.');gCred=null;openReg(false);showRegForm();
     }catch(x){errBox('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
     finally{btn.disabled=false}
@@ -925,6 +954,7 @@ $('#regForm').addEventListener('submit',async e=>{e.preventDefault();
   if(p1!==p2){errBox('Parollar bir xil emas.');return}
   btn.disabled=true;errBox('');
   try{const r=await api({action:'register',login,password:p1,name:ism+' '+fam,group:gr,sid:prof?.id||'',state:collectState(),snap:snapshot()});
+    if(!r.ok&&r.error==='guruh'){setGroups(r.groups||[]);errBox('Guruhingizni ro‘yxatdan tanlang.');return}
     if(!r.ok){errBox(r.error==='band'?'Bu Gmail yoki nik band. Boshqasini yozing yoki «Kirish» bo‘limidan kiring.':r.error==='login'?'Gmail yoki nik noto‘g‘ri yozilgan.':r.error==='parol'?'Parol kamida 6 belgidan iborat bo‘lsin.':'Ma’lumotlarni tekshirib, qayta urinib ko‘ring.');return}
     applyLogin(r);$('#reg').hidden=true;showWho();
   }catch(x){errBox('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
@@ -1490,6 +1520,5 @@ $('#footQ').textContent=QUOTES[new Date().getDate()%QUOTES.length];
 renderQuiz();renderProbs();renderMatch();calc();updateProg();route();initIdentity();
 })();
 </script>
-
 </body>
 </html>

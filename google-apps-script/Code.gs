@@ -71,6 +71,7 @@ function doPost(e) {
   let d;
   try { d = JSON.parse(e.postData.contents); } catch (err) { return json_({ ok: false, error: 'bad_request' }); }
   if (d.action === 'report') return hisobot_(d);
+  if (d.action === 'guruhlar') return json_({ ok: true, groups: guruhlar_() });
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
@@ -84,6 +85,8 @@ function doPost(e) {
     if (d.action === 'ustoz_parol') return ustozParol_(d);
     if (d.action === 'ustoz_royxat') return ustozRoyxat_(d);
     if (d.action === 'ochirish') return ochirish_(d);
+    if (d.action === 'guruh_royxat') return guruhRoyxat_(d);
+    if (d.action === 'guruh_ozgartir') return guruhOzgartir_(d);
     if (!d.sid) return json_({ ok: false });
     yozish_(d);
     return json_({ ok: true });
@@ -98,6 +101,8 @@ const son_ = v => Math.max(0, Math.min(10000, Number(v) || 0));
 /** Faollik jurnaliga yozish va o‘quvchi qatorini yangilash. */
 function yozish_(d) {
   if ((prop_('OCHIRILGANLAR', []) || []).indexOf(String(d.sid)) >= 0) return;
+  const hh = hisobId_(d.sid);
+  if (hh.qator) d.group = String(hh.sh.getRange(hh.qator, 6).getValue() || '') || d.group;
   const vaqt = new Date();
   const natija = d.ok === true ? 'to‘g‘ri' : d.ok === false ? 'xato' : '';
   varaq_(FAOLLIK, []).appendRow([vaqt, toza_(d.sid), toza_(d.name), toza_(d.group), toza_(d.type),
@@ -156,6 +161,7 @@ function royxat_(d) {
   if (!/^[a-z0-9._@+-]{3,80}$/.test(login)) return json_({ ok: false, error: 'login' });
   if (parol.length < 6 || parol.length > 100) return json_({ ok: false, error: 'parol' });
   if (ism.length < 3 || guruh.length < 2) return json_({ ok: false, error: 'ism' });
+  if (!guruhBormi_(guruh)) return json_({ ok: false, error: 'guruh', groups: guruhlar_() });
   const h = hisobTop_(login);
   if (h.qator) return json_({ ok: false, error: 'band' });
   const sid = String(d.sid || '').match(/^s[a-z0-9]{6,30}$/) && !hisobId_(d.sid).qator ? String(d.sid) :
@@ -190,8 +196,9 @@ function sinx_(d) {
   if (!d.token || String(d.token) !== String(r[7])) return json_({ ok: false, error: 'token' });
   const qiymat = [[JSON.stringify(d.state || {}).slice(0, 45000), new Date()]];
   h.sh.getRange(h.qator, 9, 1, 2).setValues(qiymat);
-  if (d.name || d.group) h.sh.getRange(h.qator, 5, 1, 2).setValues([[toza_(d.name) || r[4], toza_(d.group) || r[5]]]);
-  return json_({ ok: true });
+  const yangiG = d.group && guruhBormi_(toza_(d.group)) ? toza_(d.group) : '';
+  if (d.name || yangiG) h.sh.getRange(h.qator, 5, 1, 2).setValues([[toza_(d.name) || r[4], yangiG || r[5]]]);
+  return json_({ ok: true, name: toza_(d.name) || r[4], group: yangiG || r[5], groups: guruhlar_() });
 }
 
 /** Google bilan kirish: ID tokenni Google’da tekshiradi. */
@@ -217,7 +224,8 @@ function google_(d) {
   }
   const ism = toza_(d.name) || toza_([info.given_name, info.family_name].filter(Boolean).join(' ')) || toza_(info.name);
   const guruh = toza_(d.group);
-  if (!guruh) return json_({ ok: false, error: 'yangi', email: login, name: ism });
+  if (!guruh) return json_({ ok: false, error: 'yangi', email: login, name: ism, groups: guruhlar_() });
+  if (!guruhBormi_(guruh)) return json_({ ok: false, error: 'guruh', groups: guruhlar_() });
   const sid = String(d.sid || '').match(/^s[a-z0-9]{6,30}$/) && !hisobId_(d.sid).qator ? String(d.sid) :
     's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const token = yangiToken_(), vaqt = new Date();
@@ -326,6 +334,39 @@ function ochirish_(d) {
   return json_({ ok: true, deleted: n });
 }
 
+/* ---------- Guruhlar: ustoz qo‘shadi, o‘quvchi ro‘yxatdan tanlaydi ---------- */
+function guruhlar_() { return (prop_('GURUHLAR', []) || []).filter(Boolean); }
+/** Ustoz hali guruh qo‘shmagan bo‘lsa, istalgan nom qabul qilinadi. */
+function guruhBormi_(g) { const l = guruhlar_(); return !l.length || l.indexOf(g) >= 0; }
+function guruhRoyxat_(d) {
+  if (!ustozOk_(d)) return json_({ ok: false, error: 'kalit' });
+  const nom = String(d.name || '').replace(/\s+/g, ' ').trim().slice(0, 60);
+  let list = guruhlar_();
+  if (d.op === 'add') {
+    if (nom.length < 2) return json_({ ok: false, error: 'nom' });
+    if (list.indexOf(nom) < 0) list.push(nom);
+  } else if (d.op === 'remove') {
+    list = list.filter(x => x !== nom);
+  }
+  propSet_('GURUHLAR', list.slice(0, 100));
+  return json_({ ok: true, groups: guruhlar_() });
+}
+/** Ustoz o‘quvchini boshqa guruhga o‘tkazadi. */
+function guruhOzgartir_(d) {
+  if (!ustozOk_(d)) return json_({ ok: false, error: 'kalit' });
+  const sid = String(d.sid || ''), g = toza_(d.group).trim();
+  if (!sid || g.length < 2) return json_({ ok: false, error: 'nom' });
+  const h = hisobId_(sid);
+  if (h.qator) h.sh.getRange(h.qator, 6).setValue(g);
+  const sh = varaq_(OQUVCHILAR, USTUNLAR);
+  if (sh.getLastRow() > 1) {
+    const ids = sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues().map(r => String(r[0]));
+    const i = ids.indexOf(sid);
+    if (i >= 0) sh.getRange(i + 2, 3).setValue(g);
+  }
+  return json_({ ok: true, group: g });
+}
+
 /** Ustoz o‘quvchi parolini tiklaydi: vaqtinchalik 6 xonali parol qaytaradi. */
 function tiklash_(d) {
   if (!ustozOk_(d)) return json_({ ok: false, error: 'kalit' });
@@ -368,7 +409,7 @@ function hisobot_(d) {
   const events = ev.slice(-400).reverse().map(r => ({
     ts: new Date(r[0]).toISOString(), id: r[1], name: r[2], group: r[3], type: r[4], task: r[5], title: r[6], result: r[7]
   }));
-  return json_({ ok: true, generated: new Date().toISOString(), students: students, events: events });
+  return json_({ ok: true, generated: new Date().toISOString(), students: students, events: events, groups: guruhlar_() });
 }
 
 function doGet() {
