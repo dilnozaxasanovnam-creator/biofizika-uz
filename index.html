@@ -378,6 +378,13 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 .reg-card h2{font-size:1.6rem}
 .reg-card .lead{font-size:.95rem}
 .reg-note{font-size:.82rem;color:var(--muted)}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.role-grid{grid-template-columns:1fr}}
+.role{display:grid;gap:6px;justify-items:start;text-align:left;padding:18px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-decoration:none;transition:border-color .15s,transform .15s,background-color .15s}
+.role:hover{border-color:var(--teal);transform:translateY(-2px);background:var(--teal-soft)}
+.role svg{color:var(--teal)}
+.role b{font:700 1.15rem var(--f-display)}
+.role span{font-size:.85rem;color:var(--muted);line-height:1.4}
 .teacher{display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;background:var(--bright);color:var(--deep);font:600 .85rem var(--f-body);flex:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
@@ -703,7 +710,20 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 </main>
 
 <div class="reg" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regT">
-  <form class="reg-card" id="regForm" novalidate>
+  <div class="reg-card" id="regChoice">
+    <span class="eyebrow" style="color:var(--teal)">Biofizika.uz</span>
+    <h2>Xush kelibsiz!</h2>
+    <p class="lead">Saytga kim sifatida kirasiz?</p>
+    <div class="role-grid">
+      <button type="button" class="role" id="roleStudent">
+        <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5L2 9Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <b>O‘quvchi</b><span>Ro‘yxatdan o‘tib, o‘rganish va mashq qilish</span></button>
+      <a class="role" id="roleTeacher" href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/ustoz.html">
+        <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 20h8M12 16v4M7 12l3-3 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <b>Ustoz</b><span>O‘quvchilar natijasi va reytingi (kalit bilan)</span></a>
+    </div>
+  </div>
+  <form class="reg-card" id="regForm" novalidate hidden>
     <span class="eyebrow" style="color:var(--teal)">Biofizika.uz</span>
     <h2 id="regT">Ro‘yxatdan o‘tish</h2>
     <p class="lead" id="regLead">Boshlashdan oldin ism-familiyangiz va guruhingizni yozing. Topshiriqlar natijasi o‘qituvchingizga shu ism bilan yuboriladi.</p>
@@ -713,7 +733,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
       <div class="field full"><label for="rGr">Guruh yoki sinf</label><input id="rGr" placeholder="Masalan: Biologiya, 2-kurs, 201-guruh"></div>
     </div>
     <p class="formmsg no" id="regErr" hidden></p>
-    <button class="btn btn-primary" type="submit" id="regBtn" style="justify-self:start">Boshlash</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-primary" type="submit" id="regBtn">Boshlash</button><button class="btn btn-ghost" type="button" id="regBack">Orqaga</button></div>
     <p class="reg-note">Ism, guruh va topshiriqlar natijasi faqat o‘qituvchingizga ko‘rinadi. Boshqa o‘quvchilar ularni ko‘rmaydi.</p>
   </form>
 </div>
@@ -763,11 +783,16 @@ function showWho(){
   if(!prof){$('#who').hidden=true;return}
   $('#who').hidden=false;$('#whoI').textContent=(prof.ism[0]||'')+(prof.fam[0]||'');$('#whoN').textContent=prof.ism+' '+prof.fam;
 }
+function showRegForm(){$('#regChoice').hidden=true;$('#regForm').hidden=false;setTimeout(()=>$('#rIsm').focus(),30)}
+$('#roleStudent').addEventListener('click',showRegForm);
+$('#regBack').addEventListener('click',()=>{if(prof){$('#reg').hidden=true;return}$('#regForm').hidden=true;$('#regChoice').hidden=false});
 function openReg(edit){
+  $('#regChoice').hidden=!!edit;$('#regForm').hidden=!edit;
+  $('#regBack').textContent=edit?'Bekor qilish':'Orqaga';
   $('#regT').textContent=edit?'Profilni o‘zgartirish':'Ro‘yxatdan o‘tish';
   $('#regBtn').textContent=edit?'Saqlash':'Boshlash';
   if(edit&&prof){$('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr}
-  $('#reg').hidden=false;setTimeout(()=>$('#rIsm').focus(),30);
+  $('#reg').hidden=false;if(edit)setTimeout(()=>$('#rIsm').focus(),30);
 }
 $('#regForm').addEventListener('submit',e=>{e.preventDefault();
   const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=$('#rGr').value.trim(),err=$('#regErr');

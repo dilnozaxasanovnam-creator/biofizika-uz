@@ -90,6 +90,12 @@ tbody tr:hover{background:var(--surface-2)}
 .who b{font-weight:600}
 .who small{color:var(--muted);font-size:.78rem}
 .score{font:700 1rem var(--f-display);color:var(--teal)}
+.pctc{display:inline-flex;align-items:center;gap:8px;font:700 .95rem var(--f-display);font-variant-numeric:tabular-nums}
+.pctc i{display:block;width:64px;height:8px;border-radius:9px;background:var(--surface-2);overflow:hidden}
+.pctc i b{display:block;height:100%;border-radius:9px}
+.pctc.hi{color:var(--good)}.pctc.hi i b{background:var(--good)}
+.pctc.mid{color:var(--warn)}.pctc.mid i b{background:var(--warn)}
+.pctc.lo{color:var(--bad)}.pctc.lo i b{background:var(--bad)}
 .mini{display:inline-flex;align-items:center;gap:6px}
 .mini i{display:block;width:44px;height:6px;border-radius:9px;background:var(--surface-2);overflow:hidden}
 .mini i b{display:block;height:100%;background:var(--teal);border-radius:9px}
@@ -154,7 +160,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
       <div class="tile"><strong id="tStudents">0</strong><span>Ro‘yxatdagi o‘quvchilar</span><em id="tGroups"></em></div>
       <div class="tile"><strong id="tActive">0</strong><span>Bugun faol bo‘lganlar</span><em id="tActivePct"></em></div>
       <div class="tile"><strong id="tTasks">0</strong><span>Bugun tasdiqlangan topshiriqlar</span><em id="tErr"></em></div>
-      <div class="tile"><strong id="tAvg">0</strong><span>O‘rtacha ball</span><em id="tTop"></em></div>
+      <div class="tile"><strong id="tAvg">0%</strong><span>O‘rtacha o‘zlashtirish</span><em id="tTop"></em></div>
     </div>
     <div class="layout">
       <section class="card" aria-labelledby="rt">
@@ -169,14 +175,14 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
         <div class="tablewrap">
           <table>
             <thead><tr>
-              <th data-k="rank" class="num">O‘rin</th><th data-k="name">O‘quvchi</th><th data-k="ball" class="num" aria-sort="descending">Ball</th>
+              <th data-k="rank" class="num">O‘rin</th><th data-k="name">O‘quvchi</th><th data-k="pct" class="num">O‘zlashtirish</th><th data-k="ball" class="num" aria-sort="descending">Ball</th>
               <th data-k="topshiriq" class="num">Topshiriqlar</th><th data-k="test" class="num">Testlar</th><th data-k="masala" class="num">Masalalar</th>
               <th data-k="xato" class="num">Xato</th><th data-k="last">Oxirgi faollik</th>
             </tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
-        <p class="note">Ball: tasdiqlangan topshiriq – 10, masala – 5, to‘g‘ri test – 2, o‘yin juftligi – 1. Xato urinishlar ballni kamaytirmaydi, lekin alohida ko‘rsatiladi.</p>
+        <p class="note">O‘zlashtirish: to‘g‘ri yechilgan testlar, masalalar va o‘yin juftliklari ulushining o‘rtachasi (80% dan yuqori – yashil, 50–79% – sariq, 50% dan past – qizil). Ball: tasdiqlangan topshiriq – 10, masala – 5, to‘g‘ri test – 2, o‘yin juftligi – 1. Xato urinishlar ballni kamaytirmaydi, lekin alohida ko‘rsatiladi.</p>
       </section>
       <aside class="card" aria-labelledby="ft">
         <div class="card-head"><h2 id="ft">Bugungi faollik</h2><span class="pill" id="feedCount"></span></div>
@@ -208,7 +214,8 @@ function ago(iso){if(!iso)return '—';const m=Math.round((Date.now()-new Date(i
   if(m<1)return 'hozir';if(m<60)return m+' daqiqa oldin';const h=Math.round(m/60);if(h<24)return h+' soat oldin';const d=Math.round(h/24);return d+' kun oldin'}
 const typeName={topshiriq:'Topshiriq',test:'Test',masala:'Masala',oyin:'O‘yin',royxat:'Ro‘yxatdan o‘tdi',profil:'Profilni o‘zgartirdi'};
 
-function ranked(){return data.students.slice().sort((a,b)=>b.ball-a.ball||b.topshiriq-a.topshiriq).map((s,i)=>Object.assign({rank:i+1},s))}
+const pctOf=s=>{const parts=[[s.test,s.testN],[s.masala,s.masalaN],[s.oyin,s.oyinN]].filter(x=>x[1]>0);return parts.length?Math.round(parts.reduce((a,x)=>a+Math.min(1,x[0]/x[1]),0)/parts.length*100):0};
+function ranked(){return data.students.map(s=>Object.assign({pct:pctOf(s)},s)).slice().sort((a,b)=>b.ball-a.ball||b.topshiriq-a.topshiriq).map((s,i)=>Object.assign({rank:i+1},s))}
 function render(){
   const all=ranked(), q=$('#q').value.trim().toLowerCase(), g=$('#grp').value, p=$('#period').value;
   const groups=[...new Set(all.map(s=>s.group).filter(Boolean))].sort();
@@ -221,20 +228,21 @@ function render(){
   $('#tActivePct').textContent=scope.length?Math.round(act.length/scope.length*100)+'%':'';
   const tt=scope.reduce((a,s)=>a+(s.today?.topshiriq||0),0), te=scope.reduce((a,s)=>a+(s.today?.xato||0),0);
   $('#tTasks').textContent=tt;$('#tErr').textContent=te?te+' ta xato urinish':'';
-  $('#tAvg').textContent=scope.length?Math.round(scope.reduce((a,s)=>a+s.ball,0)/scope.length):0;
-  $('#tTop').textContent=scope[0]?'1-o‘rin: '+scope[0].name:'';
+  $('#tAvg').textContent=(scope.length?Math.round(scope.reduce((a,s)=>a+s.pct,0)/scope.length):0)+'%';
+  $('#tTop').textContent=scope.length?scope.filter(s=>s.pct>=80).length+' nafari 80% dan yuqori':'';
   let list=scope.filter(s=>(!q||String(s.name).toLowerCase().includes(q))&&(p!=='today'||isToday(s.last))&&(p!=='idle'||!s.last||Date.now()-new Date(s.last)>3*864e5));
   list.sort((a,b)=>{const x=a[sortK],y=b[sortK];if(sortK==='name'||sortK==='last')return String(x||'').localeCompare(String(y||''))*sortDir*(sortK==='last'?1:-1);return ((x||0)-(y||0))*sortDir});
   const bar=(v,n)=>`<span class="mini">${v}/${n||'?'}<i><b style="width:${n?Math.min(100,v/n*100):0}%"></b></i></span>`;
   $('#rows').innerHTML=list.length?list.map(s=>`<tr data-id="${esc(s.id)}" tabindex="0">
     <td class="num"><span class="rank ${s.rank<=3?'r'+s.rank:''}">${s.rank}</span></td>
     <td><span class="who"><b>${esc(s.name)}</b><small>${esc(s.group)}</small></span></td>
+    <td class="num"><span class="pctc ${s.pct>=80?'hi':s.pct>=50?'mid':'lo'}">${s.pct}%<i><b style="width:${s.pct}%"></b></i></span></td>
     <td class="num"><span class="score">${s.ball}</span></td>
     <td class="num">${s.topshiriq}${s.today?.topshiriq?` <span class="pill on">+${s.today.topshiriq} bugun</span>`:''}</td>
     <td class="num">${bar(s.test,s.testN)}</td><td class="num">${bar(s.masala,s.masalaN)}</td>
     <td class="num">${s.xato?`<span class="pill bad">${s.xato}</span>`:'0'}</td>
     <td>${isToday(s.last)?'<span class="pill on">bugun</span> ':''}${ago(s.last)}</td></tr>`).join(''):
-    `<tr><td colspan="8" class="empty">${data.students.length?'Filtrga mos o‘quvchi yo‘q.':'Hali hech kim ro‘yxatdan o‘tmagan. O‘quvchilarga sayt havolasini yuboring – ular ro‘yxatdan o‘tishi bilan shu yerda paydo bo‘ladi.'}</td></tr>`;
+    `<tr><td colspan="9" class="empty">${data.students.length?'Filtrga mos o‘quvchi yo‘q.':'Hali hech kim ro‘yxatdan o‘tmagan. O‘quvchilarga sayt havolasini yuboring – ular ro‘yxatdan o‘tishi bilan shu yerda paydo bo‘ladi.'}</td></tr>`;
   document.querySelectorAll('th[data-k]').forEach(th=>{th.removeAttribute('aria-sort');if(th.dataset.k===sortK)th.setAttribute('aria-sort',sortDir<0?'descending':'ascending')});
   const ev=data.events.filter(e=>isToday(e.ts)&&(!g||e.group===g));
   $('#feedCount').textContent=ev.length+' ta';
@@ -247,7 +255,7 @@ function detail(id){
   const s=ranked().find(x=>String(x.id)===id);if(!s)return;
   const ev=data.events.filter(e=>String(e.id)===id).slice(0,30);
   $('#dlgBody').innerHTML=`<div class="dlg-head"><div><h2 style="font-size:1.35rem">${esc(s.name)}</h2><p class="note">${esc(s.group)} · ${s.rank}-o‘rin · ro‘yxatdan o‘tgan: ${s.joined?new Date(s.joined).toLocaleDateString('uz-UZ'):'—'}</p></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
-    <div class="stats"><div><b>${s.ball}</b><span>Ball</span></div><div><b>${s.topshiriq}</b><span>Topshiriqlar</span></div><div><b>${s.xato}</b><span>Xato urinishlar</span></div>
+    <div class="stats"><div><b>${s.pct}%</b><span>O‘zlashtirish</span></div><div><b>${s.ball}</b><span>Ball</span></div><div><b>${s.topshiriq}</b><span>Topshiriqlar</span></div><div><b>${s.xato}</b><span>Xato urinishlar</span></div>
     <div><b>${s.test}/${s.testN}</b><span>Testlar</span></div><div><b>${s.masala}/${s.masalaN}</b><span>Masalalar</span></div><div><b>${s.oyin}/${s.oyinN}</b><span>O‘yin</span></div></div>
     <h3 style="font-size:1rem">So‘nggi harakatlar</h3>
     <ul class="feed" style="max-height:300px">${ev.length?ev.map(e=>`<li><span class="dot ${e.result==='to‘g‘ri'?'ok':e.result==='xato'?'no':'new'}"></span><span>${typeName[e.type]||esc(e.type)}${e.result?' – '+esc(e.result):''}${e.title?`<small>${esc(e.title)}</small>`:''}<small>${new Date(e.ts).toLocaleString('uz-UZ')}</small></span></li>`).join(''):'<li style="display:block;color:var(--muted)">Yozuvlar yo‘q.</li>'}</ul>`;
@@ -278,8 +286,8 @@ $('#refresh').onclick=refresh;
 document.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=(k==='name'||k==='rank')?1:-1}render()}));
 $('#rows').addEventListener('click',e=>{const tr=e.target.closest('tr[data-id]');if(tr)detail(tr.dataset.id)});
 $('#rows').addEventListener('keydown',e=>{if(e.key==='Enter'){const tr=e.target.closest('tr[data-id]');if(tr)detail(tr.dataset.id)}});
-$('#csv').onclick=()=>{if(!data)return;const head=['O‘rin','Ism familiya','Guruh','Ball','Topshiriqlar','Testlar','Masalalar','O‘yin','Xato urinishlar','Oxirgi faollik'];
-  const rows=ranked().map(s=>[s.rank,s.name,s.group,s.ball,s.topshiriq,s.test+'/'+s.testN,s.masala+'/'+s.masalaN,s.oyin+'/'+s.oyinN,s.xato,s.last?new Date(s.last).toLocaleString('uz-UZ'):'']);
+$('#csv').onclick=()=>{if(!data)return;const head=['O‘rin','Ism familiya','Guruh','O‘zlashtirish %','Ball','Topshiriqlar','Testlar','Masalalar','O‘yin','Xato urinishlar','Oxirgi faollik'];
+  const rows=ranked().map(s=>[s.rank,s.name,s.group,s.pct,s.ball,s.topshiriq,s.test+'/'+s.testN,s.masala+'/'+s.masalaN,s.oyin+'/'+s.oyinN,s.xato,s.last?new Date(s.last).toLocaleString('uz-UZ'):'']);
   const csv='﻿'+[head,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='biofizika-reyting-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
 if(store.get('ustozKey',null)) showPanel(); else logout();
