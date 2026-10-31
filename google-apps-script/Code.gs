@@ -386,6 +386,7 @@ const BARCHA_TURLAR = OCHIQ_TURLAR.concat(['mavzu', 'sorov']);
 function egami_(d) { const e = ustozKim_(d); return !!e && e === egasi_(); }
 function sanaStr_(v) {
   if (v instanceof Date) return Utilities.formatDate(v, TZ, 'yyyy-MM-dd');
+  if (typeof v === 'number' || /^\d{5}$/.test(String(v))) return Utilities.formatDate(new Date(Math.round((Number(v) - 25569) * 864e5)), 'UTC', 'yyyy-MM-dd');
   return String(v || '').slice(0, 10);
 }
 function kontentQatorlar_() {
