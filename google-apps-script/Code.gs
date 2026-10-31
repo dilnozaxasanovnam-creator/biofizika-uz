@@ -79,6 +79,10 @@ function doPost(e) {
     if (d.action === 'sync') return sinx_(d);
     if (d.action === 'reset') return tiklash_(d);
     if (d.action === 'google') return google_(d);
+    if (d.action === 'ustoz_google') return ustozGoogle_(d);
+    if (d.action === 'ustoz_login') return ustozLogin_(d);
+    if (d.action === 'ustoz_parol') return ustozParol_(d);
+    if (d.action === 'ustoz_royxat') return ustozRoyxat_(d);
     if (!d.sid) return json_({ ok: false });
     yozish_(d);
     return json_({ ok: true });
@@ -220,10 +224,88 @@ function google_(d) {
   return json_({ ok: true, sid: sid, token: token, login: login, name: ism, group: guruh, state: d.state || {} });
 }
 
+/* ---------- Ustoz hisoblari: faqat ruxsat berilgan Gmail manzillari ---------- */
+function egasi_() { return String(Session.getEffectiveUser().getEmail() || '').toLowerCase(); }
+function prop_(k, d) { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty(k) || '') ; } catch (e) { return d; } }
+function propSet_(k, v) { PropertiesService.getScriptProperties().setProperty(k, JSON.stringify(v)); }
+function ustozlar_() {
+  const list = prop_('USTOZLAR', []) || [];
+  const e = egasi_();
+  return [e].concat(list.filter(x => x && x !== e));
+}
+function ustozTokenBer_(email) {
+  const t = yangiToken_(), now = Date.now();
+  const list = (prop_('USTOZ_TOKENLAR', []) || []).filter(x => x.exp > now).slice(-29);
+  list.push({ t: t, e: email, exp: now + 30 * 864e5 });
+  propSet_('USTOZ_TOKENLAR', list);
+  return t;
+}
+function ustozKim_(d) {
+  const kalit = PropertiesService.getScriptProperties().getProperty('USTOZ_KALITI');
+  if (kalit && d.key && String(d.key) === kalit) return egasi_();
+  if (!d.token) return '';
+  const now = Date.now(), x = (prop_('USTOZ_TOKENLAR', []) || []).find(y => y.t === String(d.token) && y.exp > now);
+  return x && ustozlar_().indexOf(x.e) >= 0 ? x.e : '';
+}
+function ustozOk_(d) { return !!ustozKim_(d); }
+function ustozJavob_(email) {
+  const parollar = prop_('USTOZ_PAROLLAR', {}) || {};
+  const owner = email === egasi_();
+  return { ok: true, token: ustozTokenBer_(email), email: email, hasPassword: !!parollar[email], owner: owner, teachers: owner ? ustozlar_() : undefined };
+}
+function ustozGoogle_(d) {
+  if (!GOOGLE_CLIENT_ID) return json_({ ok: false, error: 'sozlanmagan' });
+  let info;
+  try {
+    const res = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(String(d.credential || '')), { muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) return json_({ ok: false, error: 'token' });
+    info = JSON.parse(res.getContentText());
+  } catch (err) { return json_({ ok: false, error: 'token' }); }
+  if (info.aud !== GOOGLE_CLIENT_ID || String(info.email_verified) !== 'true') return json_({ ok: false, error: 'token' });
+  const email = String(info.email || '').toLowerCase();
+  if (ustozlar_().indexOf(email) < 0) return json_({ ok: false, error: 'ustoz_emas', email: email });
+  return json_(ustozJavob_(email));
+}
+function ustozLogin_(d) {
+  const login = loginToza_(d.login), parol = String(d.password || '');
+  if (urinish_('ustoz:' + login, false) >= 6) return json_({ ok: false, error: 'kop' });
+  const parollar = prop_('USTOZ_PAROLLAR', {}) || {};
+  if (ustozlar_().indexOf(login) < 0 || !parollar[login]) { urinish_('ustoz:' + login, true); return json_({ ok: false, error: 'xato' }); }
+  const sp = String(parollar[login]).split('|');
+  if (xesh_(sp[0], parol) !== sp[1]) { urinish_('ustoz:' + login, true); return json_({ ok: false, error: 'xato' }); }
+  return json_(ustozJavob_(login));
+}
+function ustozParol_(d) {
+  const email = ustozKim_(d);
+  if (!email) return json_({ ok: false, error: 'kalit' });
+  const parol = String(d.password || '');
+  if (parol.length < 8 || parol.length > 100) return json_({ ok: false, error: 'parol' });
+  const parollar = prop_('USTOZ_PAROLLAR', {}) || {};
+  const salt = Utilities.getUuid();
+  parollar[email] = salt + '|' + xesh_(salt, parol);
+  propSet_('USTOZ_PAROLLAR', parollar);
+  return json_({ ok: true, email: email });
+}
+/** Faqat sayt egasi: ustoz qo‘shish yoki olib tashlash. */
+function ustozRoyxat_(d) {
+  if (ustozKim_(d) !== egasi_()) return json_({ ok: false, error: 'egasi_emas' });
+  const email = loginToza_(d.email);
+  let list = (prop_('USTOZLAR', []) || []).filter(x => x !== egasi_());
+  if (d.op === 'add') {
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/.test(email)) return json_({ ok: false, error: 'email' });
+    if (list.indexOf(email) < 0) list.push(email);
+  } else if (d.op === 'remove') {
+    list = list.filter(x => x !== email);
+    const parollar = prop_('USTOZ_PAROLLAR', {}) || {}; delete parollar[email]; propSet_('USTOZ_PAROLLAR', parollar);
+    propSet_('USTOZ_TOKENLAR', (prop_('USTOZ_TOKENLAR', []) || []).filter(x => x.e !== email));
+  }
+  propSet_('USTOZLAR', list.slice(0, 50));
+  return json_({ ok: true, teachers: ustozlar_() });
+}
+
 /** Ustoz o‘quvchi parolini tiklaydi: vaqtinchalik 6 xonali parol qaytaradi. */
 function tiklash_(d) {
-  const kalit = PropertiesService.getScriptProperties().getProperty('USTOZ_KALITI');
-  if (!kalit || String(d.key || '') !== kalit) return json_({ ok: false, error: 'kalit' });
+  if (!ustozOk_(d)) return json_({ ok: false, error: 'kalit' });
   const h = hisobId_(d.sid);
   if (!h.qator) return json_({ ok: false, error: 'topilmadi' });
   const yangi = String(Math.floor(100000 + Math.random() * 900000));
@@ -235,8 +317,7 @@ function tiklash_(d) {
 
 /** Ustoz sahifasi uchun: o‘quvchilar, reyting va so‘nggi faollik. */
 function hisobot_(d) {
-  const kalit = PropertiesService.getScriptProperties().getProperty('USTOZ_KALITI');
-  if (!kalit || String(d.key || '') !== kalit) return json_({ ok: false, error: 'kalit' });
+  if (!ustozOk_(d)) return json_({ ok: false, error: 'kalit' });
   const oquv = varaq_(OQUVCHILAR, USTUNLAR);
   const log = varaq_(FAOLLIK, []);
   const rows = oquv.getLastRow() > 1 ? oquv.getRange(2, 1, oquv.getLastRow() - 1, USTUNLAR.length).getValues() : [];

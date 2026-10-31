@@ -725,9 +725,6 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
       <button type="button" class="role" id="roleStudent">
         <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5L2 9Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
         <b>O‘quvchi</b><span>Ro‘yxatdan o‘tib, o‘rganish va mashq qilish</span></button>
-      <a class="role" id="roleTeacher" href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/ustoz.html">
-        <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 20h8M12 16v4M7 12l3-3 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <b>Ustoz</b><span>O‘quvchilar natijasi va reytingi (kalit bilan)</span></a>
     </div>
   </div>
   <form class="reg-card" id="regForm" novalidate hidden>
@@ -760,7 +757,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 <footer>
   <div class="wrap">
     <q id="footQ">Har bir katta kashfiyot kichik savoldan boshlanadi.</q>
-    <span>© 2026 Biofizika.uz · Ta’limiy va bepul sayt · <a href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/ustoz.html" style="color:var(--on-deep-muted)">Ustoz sahifasi</a> · <a href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/maxfiylik.html" style="color:var(--on-deep-muted)">Maxfiylik siyosati</a></span>
+    <span>© 2026 Biofizika.uz · Ta’limiy va bepul sayt · <a href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/maxfiylik.html" style="color:var(--on-deep-muted)">Maxfiylik siyosati</a></span>
   </div>
 </footer>
 
@@ -860,18 +857,19 @@ $('#roleStudent').addEventListener('click',showRegForm);
 $('#regBack').addEventListener('click',()=>{if(editMode||session||(prof&&!ENDPOINT)){$('#reg').hidden=true;return}$('#regForm').hidden=true;$('#regChoice').hidden=false});
 function openReg(edit){
   editMode=!!edit;
-  $('#regChoice').hidden=editMode;$('#regForm').hidden=!editMode;
+  $('#regChoice').hidden=true;$('#regForm').hidden=false;
   $('#authTabs').hidden=editMode||!ENDPOINT;
   $$('#regFields [data-acc]').forEach(el=>el.hidden=editMode||!ENDPOINT);
   $('#logoutBtn').hidden=!editMode;
   if(editMode)$('#gWrap').hidden=true;
-  $('#regBack').textContent=editMode?'Yopish':'Orqaga';
+  $('#regBack').textContent='Yopish';$('#regBack').hidden=!editMode;
   if(editMode){$('#regFields').hidden=false;$('#loginFields').hidden=true;$('#regT').textContent='Profil';
     $('#regLead').textContent=session?'Hisob: '+session.login:'Ism, familiya va guruhni o‘zgartirishingiz mumkin.';$('#regBtn').textContent='Saqlash';errBox('');
     if(prof){$('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr}}
   else if(prof&&ENDPOINT&&!session){$('#regChoice').hidden=true;$('#regForm').hidden=false;setAuth('reg');
     $('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr;
     $('#regLead').textContent='Natijalaringiz yo‘qolmasligi uchun Gmail yoki nik va parol qo‘yib, hisobingizni saqlang.'}
+  if(!editMode&&!(prof&&ENDPOINT&&!session)){setAuth(authMode);if(!gCred)gInit()}
   $('#reg').hidden=false;
 }
 function splitName(full){const p=String(full||'').trim().split(/\s+/);return {ism:p[0]||'',fam:p.slice(1).join(' ')}}

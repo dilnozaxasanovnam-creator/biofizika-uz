@@ -116,6 +116,8 @@ tbody tr:hover{background:var(--surface-2)}
 .msg{font-size:.88rem;padding:10px 12px;border-radius:10px}
 .msg.no{background:var(--bad-soft);color:var(--bad)}
 .note{font-size:.82rem;color:var(--muted)}
+.orline{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.82rem}
+.orline::before,.orline::after{content:"";flex:1;height:1px;background:var(--line)}
 
 dialog{border:0;border-radius:18px;padding:0;width:min(560px,calc(100vw - 32px));background:var(--surface);color:var(--ink);box-shadow:0 30px 80px -20px rgba(0,0,0,.5)}
 dialog::backdrop{background:rgba(4,12,8,.6)}
@@ -138,6 +140,8 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
       <span class="updated" id="updated"></span>
       <button class="btn btn-ghost" id="refresh" type="button">Yangilash</button>
       <button class="btn btn-ghost" id="csv" type="button">CSV yuklab olish</button>
+      <button class="btn btn-ghost" id="teachersBtn" type="button" hidden>Ustozlar</button>
+      <button class="btn btn-ghost" id="pwBtn" type="button">Parol</button>
       <button class="btn btn-ghost" id="logout" type="button">Chiqish</button>
     </div>
   </div>
@@ -145,13 +149,20 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 
 <div class="wrap">
   <form class="login" id="login" hidden>
-    <h1 style="font-size:1.6rem">Ustoz sahifasi</h1>
-    <p class="note" style="font-size:.92rem">O‘quvchilar natijalari va reytingini ko‘rish uchun ustoz kalitini kiriting. Kalit Google jadvalni sozlaganingizda pochtangizga yuborilgan.</p>
-    <label for="key" style="font-size:.85rem;color:var(--muted)">Ustoz kaliti</label>
-    <input id="key" autocomplete="off" spellcheck="false" placeholder="Masalan: a1b2c3d4e5f6">
+    <h1 style="font-size:1.6rem">Ustozlar uchun kirish</h1>
+    <p class="note" style="font-size:.92rem">Bu sahifa faqat ustozlar uchun. Bu yerga faqat ruxsat berilgan ustozlarning Gmail hisoblari bilan kirish mumkin, o‘quvchilar kira olmaydi.</p>
+    <div id="gBtnU" style="min-height:44px;display:flex;justify-content:center"></div>
+    <div class="orline"><span>yoki</span></div>
+    <label for="uLogin" style="font-size:.85rem;color:var(--muted)">Gmail</label>
+    <input id="uLogin" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="ism@gmail.com">
+    <label for="uPass" style="font-size:.85rem;color:var(--muted)">Parol</label>
+    <input id="uPass" type="password" autocomplete="current-password">
     <p class="msg no" id="loginErr" hidden></p>
     <button class="btn btn-primary" type="submit" style="justify-self:start" id="loginBtn">Kirish</button>
-    <p class="note">Bu sahifa Google qidiruvida ko‘rinmaydi. Kalitni o‘quvchilarga bermang.</p>
+    <details class="note"><summary style="cursor:pointer">Kalit bilan kirish</summary>
+      <div style="display:grid;gap:8px;margin-top:10px"><input id="key" autocomplete="off" spellcheck="false" placeholder="Pochtangizga kelgan ustoz kaliti"><button class="btn btn-ghost" type="button" id="keyBtn" style="justify-self:start">Kalit bilan kirish</button></div>
+    </details>
+    <p class="note">Parol hali yo‘q bo‘lsa, birinchi marta «Google orqali kirish» bilan kiring va yuqoridagi «Parol» tugmasi orqali parol qo‘ying. Bu sahifa Google qidiruvida ko‘rinmaydi.</p>
   </form>
 
   <main id="panel" hidden>
@@ -197,6 +208,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 <script>
 (function(){
 /* Google Apps Script veb-ilovasi manzili (…/exec). Asosiy saytdagi ENDPOINT bilan bir xil. */
+const GOOGLE_CLIENT_ID='668867285337-i7v5dlhn9tnpjmvi4bchjhgl6e3q1930.apps.googleusercontent.com';
 const ENDPOINT='https://script.google.com/macros/s/AKfycbwKlFZm3JZeQG1hn9SDpoSkqYeoSVv4g0rugdfKsuwe24BdWMnPrPgDSAng92o5wDUS/exec';
 const $=s=>document.querySelector(s);
 const store={get(k,d){try{const v=localStorage.getItem('bf_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('bf_'+k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem('bf_'+k)}catch(e){}}};
@@ -204,10 +216,12 @@ const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 let data=null, sortK='ball', sortDir=-1, timer=null;
 
 function emptyData(){return {ok:true,generated:new Date().toISOString(),students:[],events:[]}}
-async function load(key){
+const api=b=>fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)}).then(r=>r.json());
+let auth=store.get('ustozAuth',null)||(store.get('ustozKey',null)?{key:store.get('ustozKey','')}:null);
+const cred=()=>auth?(auth.token?{token:auth.token}:{key:auth.key}):{};
+async function load(){
   if(!ENDPOINT) return emptyData();
-  const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'report',key})});
-  return await r.json();
+  return await api(Object.assign({action:'report'},cred()));
 }
 const isToday=iso=>iso&&new Date(iso).toDateString()===new Date().toDateString();
 function ago(iso){if(!iso)return '—';const m=Math.round((Date.now()-new Date(iso))/60000);
@@ -261,30 +275,69 @@ function detail(id){
     <ul class="feed" style="max-height:300px">${ev.length?ev.map(e=>`<li><span class="dot ${e.result==='to‘g‘ri'?'ok':e.result==='xato'?'no':'new'}"></span><span>${typeName[e.type]||esc(e.type)}${e.result?' – '+esc(e.result):''}${e.title?`<small>${esc(e.title)}</small>`:''}<small>${new Date(e.ts).toLocaleString('uz-UZ')}</small></span></li>`).join(''):'<li style="display:block;color:var(--muted)">Yozuvlar yo‘q.</li>'}</ul>`;
   if(ENDPOINT&&s.login){$('#dlgBody').insertAdjacentHTML('beforeend',`<div style="display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost" type="button" id="resetPw">Parolni tiklash</button><span class="note">O‘quvchi parolini unutgan bo‘lsa, yangi vaqtinchalik parol beriladi.</span></div><p class="msg" id="resetOut" hidden></p></div>`);
     $('#resetPw').onclick=async()=>{const b=$('#resetPw'),o=$('#resetOut');if(!b.dataset.sure){b.dataset.sure='1';b.textContent='Tasdiqlash – eski parol ishlamay qoladi';return}
-      b.disabled=true;try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'reset',key:store.get('ustozKey',''),sid:s.id})}).then(x=>x.json());
+      b.disabled=true;try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:'reset',sid:s.id},cred()))}).then(x=>x.json());
         o.hidden=false;if(r.ok){o.className='msg';o.style.background='var(--good-soft)';o.style.color='var(--good)';o.innerHTML='Yangi parol: <b style="font-size:1.2rem;letter-spacing:.08em">'+esc(r.password)+'</b> · hisob: <b>'+esc(r.login)+'</b>. Buni o‘quvchiga ayting – u shu parol bilan kiradi.'}else{o.className='msg no';o.textContent='Parolni tiklab bo‘lmadi. Qaytadan urinib ko‘ring.'}}
       catch(e){o.hidden=false;o.className='msg no';o.textContent='Ulanib bo‘lmadi.'}finally{b.disabled=false}}}
   const d=$('#dlg');d.showModal();$('#dlgX').onclick=()=>d.close();
 }
 async function refresh(){
-  const key=store.get('ustozKey','');$('#refresh').disabled=true;
-  try{const r=await load(key);
-    if(!r.ok){if(r.error==='kalit'){logout('Kalit noto‘g‘ri yoki eskirgan. Qaytadan kiriting.');return}throw new Error(r.error||'xato')}
+  $('#refresh').disabled=true;
+  try{const r=await load();
+    if(!r.ok){if(r.error==='kalit'){logout('Kirish muddati tugadi yoki ruxsat olib tashlangan. Qaytadan kiring.');return}throw new Error(r.error||'xato')}
     data=r;render();
   }catch(e){$('#updated').textContent='Ulanib bo‘lmadi – internetni tekshirib, «Yangilash»ni bosing.'}
   finally{$('#refresh').disabled=false}
 }
-function showPanel(){$('#login').hidden=true;$('#panel').hidden=false;$('#hdActions').hidden=false;$('#demo').hidden=!!ENDPOINT;if(ENDPOINT)store.set('teacher',true);refresh();clearInterval(timer);timer=setInterval(refresh,60000)}
-function logout(msg){store.del('ustozKey');store.del('teacher');clearInterval(timer);$('#panel').hidden=true;$('#hdActions').hidden=true;$('#login').hidden=false;
-  const er=$('#loginErr');er.hidden=!msg;er.textContent=msg||'';}
-$('#login').addEventListener('submit',async e=>{e.preventDefault();const k=$('#key').value.trim(),er=$('#loginErr');
-  if(!ENDPOINT){store.set('ustozKey',k||'demo');showPanel();return}
-  if(k.length<6){er.hidden=false;er.textContent='Kalitni to‘liq kiriting.';return}
-  $('#loginBtn').disabled=true;
-  try{const r=await load(k);if(r.ok){store.set('ustozKey',k);data=r;showPanel()}else{er.hidden=false;er.textContent='Kalit noto‘g‘ri. Pochtangizdagi «ustoz sahifasi kaliti» xatini tekshiring.'}}
-  catch(err){er.hidden=false;er.textContent='Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.'}
+function showPanel(){$('#teachersBtn').hidden=!(auth&&(auth.owner||auth.key));$('#pwBtn').hidden=!(auth&&auth.token);$('#login').hidden=true;$('#panel').hidden=false;$('#hdActions').hidden=false;$('#demo').hidden=!!ENDPOINT;if(ENDPOINT)store.set('teacher',true);refresh();clearInterval(timer);timer=setInterval(refresh,60000)}
+function logout(msg){auth=null;store.del('ustozAuth');store.del('ustozKey');store.del('teacher');clearInterval(timer);$('#panel').hidden=true;$('#hdActions').hidden=true;$('#login').hidden=false;
+  const er=$('#loginErr');er.hidden=!msg;er.textContent=msg||'';gInitU()}
+const errL=m=>{const er=$('#loginErr');er.hidden=!m;er.textContent=m||''};
+function saveAuth(r){auth={token:r.token,email:r.email,owner:!!r.owner,hasPassword:!!r.hasPassword};store.set('ustozAuth',auth);store.del('ustozKey')}
+function gInitU(){
+  if(!GOOGLE_CLIENT_ID||!ENDPOINT)return;
+  const draw=()=>{try{google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:onGoogleU,ux_mode:'popup'});
+    google.accounts.id.renderButton($('#gBtnU'),{theme:'outline',size:'large',text:'signin_with',shape:'pill',locale:'uz',width:Math.min(340,$('#gBtnU').clientWidth||300)})}catch(e){}};
+  if(window.google&&google.accounts)return draw();
+  if(document.getElementById('gsiScript'))return;
+  const sc=document.createElement('script');sc.id='gsiScript';sc.src='https://accounts.google.com/gsi/client';sc.async=true;sc.onload=draw;document.head.appendChild(sc);
+}
+async function onGoogleU(resp){errL('');
+  try{const r=await api({action:'ustoz_google',credential:resp.credential});
+    if(r.ok){saveAuth(r);showPanel();if(!r.hasPassword)setTimeout(openPw,600);return}
+    errL(r.error==='ustoz_emas'?(r.email||'Bu hisob')+' ustozlar ro‘yxatida yo‘q. Bu sahifa faqat ustozlar uchun – o‘quvchilar asosiy saytdan foydalanadi.':'Google orqali kirib bo‘lmadi. Qayta urinib ko‘ring.');
+  }catch(e){errL('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}}
+$('#login').addEventListener('submit',async e=>{e.preventDefault();
+  const login=$('#uLogin').value.trim().toLowerCase(),pass=$('#uPass').value;
+  if(!login||!pass){errL('Gmail va parolni kiriting.');return}
+  $('#loginBtn').disabled=true;errL('');
+  try{const r=await api({action:'ustoz_login',login,password:pass});
+    if(r.ok){saveAuth(r);showPanel()}else errL(r.error==='kop'?'Juda ko‘p urinish. 10 daqiqadan keyin qayta urinib ko‘ring.':'Gmail yoki parol noto‘g‘ri. Parol qo‘ymagan bo‘lsangiz, «Google orqali kirish» tugmasidan foydalaning.')}
+  catch(err){errL('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
   finally{$('#loginBtn').disabled=false}
 });
+$('#keyBtn').addEventListener('click',async()=>{const k=$('#key').value.trim();if(k.length<6){errL('Kalitni to‘liq kiriting.');return}
+  try{const r=await api({action:'report',key:k});if(r.ok){auth={key:k};store.set('ustozKey',k);store.del('ustozAuth');data=r;showPanel()}else errL('Kalit noto‘g‘ri.')}catch(e){errL('Ulanib bo‘lmadi.')}});
+function dlgOpen(html){$('#dlgBody').innerHTML=html;const d=$('#dlg');d.showModal();const x=$('#dlgX');if(x)x.onclick=()=>d.close();return d}
+function openPw(){
+  const d=dlgOpen(`<div class="dlg-head"><div><h2 style="font-size:1.3rem">Parol qo‘yish</h2><p class="note">${esc(auth?.email||'')} uchun. Keyin Gmail va shu parol bilan ham kira olasiz.</p></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
+    <div class="login" style="margin:0;padding:0;border:0;max-width:none"><label for="np1" class="note">Yangi parol (kamida 8 belgi)</label><input id="np1" type="password" autocomplete="new-password"><label for="np2" class="note">Parolni takrorlang</label><input id="np2" type="password" autocomplete="new-password">
+    <p class="msg" id="pwOut" hidden></p><button class="btn btn-primary" type="button" id="pwSave" style="justify-self:start">Saqlash</button></div>`);
+  $('#pwSave').onclick=async()=>{const a=$('#np1').value,b=$('#np2').value,o=$('#pwOut');o.hidden=false;o.className='msg no';
+    if(a.length<8){o.textContent='Parol kamida 8 belgidan iborat bo‘lsin.';return}if(a!==b){o.textContent='Parollar bir xil emas.';return}
+    try{const r=await api(Object.assign({action:'ustoz_parol',password:a},cred()));if(r.ok){auth.hasPassword=true;store.set('ustozAuth',auth);o.className='msg';o.style.background='var(--good-soft)';o.style.color='var(--good)';o.textContent='Parol saqlandi.';setTimeout(()=>d.close(),1200)}else o.textContent='Saqlab bo‘lmadi. Qaytadan kiring.'}catch(e){o.textContent='Ulanib bo‘lmadi.'}}}
+function renderTeachers(list){return list.map((e,i)=>`<li style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)"><span>${esc(e)}${i===0?' <span class="pill on">siz – sayt egasi</span>':''}</span>${i===0?'':`<button class="btn btn-ghost" type="button" data-rm="${esc(e)}" style="padding:.4em .8em">Olib tashlash</button>`}</li>`).join('')}
+async function openTeachers(){
+  const d=dlgOpen(`<div class="dlg-head"><div><h2 style="font-size:1.3rem">Ustozlar</h2><p class="note">Faqat shu ro‘yxatdagi Gmail hisoblar ustoz sahifasiga kira oladi.</p></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
+    <ul id="tList" style="list-style:none;margin:0;padding:0"><li class="note">Yuklanmoqda…</li></ul>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="tNew" type="email" placeholder="ustoz@gmail.com" style="flex:1 1 200px;font:400 .95rem var(--f-body);padding:.6em .75em;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)"><button class="btn btn-primary" type="button" id="tAdd">Qo‘shish</button></div>
+    <p class="msg no" id="tOut" hidden></p>`);
+  const call=async(op,email)=>{const o=$('#tOut');o.hidden=true;try{const r=await api(Object.assign({action:'ustoz_royxat',op,email},cred()));if(r.ok)$('#tList').innerHTML=renderTeachers(r.teachers);else{o.hidden=false;o.textContent=r.error==='email'?'Gmail manzilini to‘g‘ri yozing.':'Bu amalni faqat sayt egasi bajara oladi.'}}catch(e){o.hidden=false;o.textContent='Ulanib bo‘lmadi.'}};
+  await call('list','');
+  $('#tAdd').onclick=()=>{const v=$('#tNew').value.trim();if(v){call('add',v);$('#tNew').value=''}};
+  $('#tList').onclick=e=>{const b=e.target.closest('[data-rm]');if(b)call('remove',b.dataset.rm)};
+}
+$('#pwBtn').onclick=openPw;
+$('#teachersBtn').onclick=openTeachers;
 $('#logout').onclick=()=>logout();
 $('#refresh').onclick=refresh;
 ['#q','#grp','#period'].forEach(s=>$(s).addEventListener('input',()=>data&&render()));
@@ -295,7 +348,7 @@ $('#csv').onclick=()=>{if(!data)return;const head=['O‘rin','Ism familiya','Gur
   const rows=ranked().map(s=>[s.rank,s.name,s.group,s.pct,s.ball,s.topshiriq,s.test+'/'+s.testN,s.masala+'/'+s.masalaN,s.oyin+'/'+s.oyinN,s.xato,s.last?new Date(s.last).toLocaleString('uz-UZ'):'']);
   const csv='﻿'+[head,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='biofizika-reyting-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
-if(store.get('ustozKey',null)) showPanel(); else logout();
+if(auth) showPanel(); else logout();
 })();
 </script>
 </body>
