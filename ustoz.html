@@ -197,7 +197,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 <script>
 (function(){
 /* Google Apps Script veb-ilovasi manzili (…/exec). Asosiy saytdagi ENDPOINT bilan bir xil. */
-const ENDPOINT='';
+const ENDPOINT='https://script.google.com/macros/s/AKfycbwKlFZm3JZeQG1hn9SDpoSkqYeoSVv4g0rugdfKsuwe24BdWMnPrPgDSAng92o5wDUS/exec';
 const $=s=>document.querySelector(s);
 const store={get(k,d){try{const v=localStorage.getItem('bf_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('bf_'+k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem('bf_'+k)}catch(e){}}};
 const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
