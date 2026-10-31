@@ -149,7 +149,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
   </form>
 
   <main id="panel" hidden>
-    <p class="demo" id="demo" hidden>Bu namuna ma’lumot. Google jadval ulanmaguncha sahifa qanday ko‘rinishini ko‘rsatadi. Haqiqiy o‘quvchilar natijasi ulangandan keyin shu yerda chiqadi.</p>
+    <p class="demo" id="demo" hidden>Google jadval hali ulanmagan. Ulangandan keyin bu yerda faqat saytda ro‘yxatdan o‘tgan o‘quvchilarning ismlari va natijalari chiqadi.</p>
     <div class="tiles">
       <div class="tile"><strong id="tStudents">0</strong><span>Ro‘yxatdagi o‘quvchilar</span><em id="tGroups"></em></div>
       <div class="tile"><strong id="tActive">0</strong><span>Bugun faol bo‘lganlar</span><em id="tActivePct"></em></div>
@@ -197,16 +197,9 @@ const store={get(k,d){try{const v=localStorage.getItem('bf_'+k);return v?JSON.pa
 const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let data=null, sortK='ball', sortDir=-1, timer=null;
 
-function demoData(){
-  const now=Date.now(), h=3600e3, names=[['Aziza Karimova','201-guruh'],['Jasur Toshmatov','201-guruh'],['Malika Rahimova','202-guruh'],['Bekzod Aliyev','202-guruh'],['Nilufar Ismoilova','201-guruh'],['Sardor Qodirov','202-guruh']];
-  const st=names.map((n,i)=>{const t=[22,18,15,12,9,4][i],m=[6,5,4,3,2,1][i],o=[8,8,6,8,4,2][i],top=[9,7,6,4,3,1][i];
-    return {id:'demo'+i,name:n[0],group:n[1],joined:new Date(now-9*24*h).toISOString(),last:new Date(now-[1,2,5,20,50,100][i]*h).toISOString(),
-      test:t,testN:24,masala:m,masalaN:7,oyin:o,oyinN:8,topshiriq:top,xato:[3,6,4,9,5,2][i],ball:top*10+m*5+t*2+o,today:{ok:[5,4,2,0,0,0][i],xato:[1,2,1,0,0,0][i],topshiriq:[2,1,1,0,0,0][i]}}});
-  const ev=[[0.3,0,'topshiriq','Cl⁻ uchun muvozanat potensialini hisoblang','to‘g‘ri'],[0.6,1,'test','Na⁺/K⁺-nasos bitta ATP hisobiga nima qiladi?','xato'],[0.9,0,'masala','Natriy uchun muvozanat potensiali','to‘g‘ri'],[1.4,2,'topshiriq','«Bioelektrik hodisalar» mavzusini o‘qing','to‘g‘ri'],[2.1,1,'topshiriq','«Bioelektrik hodisalar» mavzusini o‘qing','to‘g‘ri'],[3,5,'royxat','','']];
-  return {ok:true,generated:new Date().toISOString(),students:st,events:ev.map(e=>({ts:new Date(now-e[0]*h).toISOString(),id:'demo'+e[1],name:names[e[1]][0],group:names[e[1]][1],type:e[2],title:e[3],result:e[4]}))};
-}
+function emptyData(){return {ok:true,generated:new Date().toISOString(),students:[],events:[]}}
 async function load(key){
-  if(!ENDPOINT) return demoData();
+  if(!ENDPOINT) return emptyData();
   const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'report',key})});
   return await r.json();
 }
