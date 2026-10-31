@@ -3,14 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Biofizika.uz – biofizikani o‘zbek tilida o‘rganish uchun bepul sayt: nazariya, formulalar, testlar, masalalar, simulyatsiya va kundalik topshiriqlar.">
-<meta name="keywords" content="biofizika, biofizika o‘zbek tilida, membrana potensiali, Nernst tenglamasi, bioenergetika, testlar, o‘quv sayti">
+<title>Biofizika.uz – biofizika o‘zbek tilida: nazariya, testlar, masalalar</title>
+<meta name="description" content="Biofizika.uz – biofizikani o‘zbek tilida o‘rganish uchun bepul sayt: membrana potensiali, Nernst tenglamasi, bioenergetika, mitoxondriya, tibbiy va optik biofizika. Testlar, formula masalalari, simulyatsiya va kundalik topshiriqlar.">
+<meta name="keywords" content="biofizika, biofizika o‘zbek tilida, biofizika testlar, membrana potensiali, ta’sir potensiali, Nernst tenglamasi, bioenergetika, mitoxondriya, tibbiy biofizika, optik biofizika, biofizika masalalar">
+<link rel="canonical" href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/">
 <meta property="og:title" content="Biofizika.uz – Hayot va Fizika birlashuvi">
 <meta property="og:description" content="Biofizikani o‘zbek tilida o‘rganing: nazariya, testlar, masalalar va kundalik topshiriqlar.">
 <meta property="og:type" content="website">
-<link rel="canonical" href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/">
-<!-- Google Search Console tasdiqlash kodini shu qatordan keyin qo‘ying: <meta name="google-site-verification" content="..."> -->
+<meta property="og:url" content="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/">
+<meta property="og:locale" content="uz_UZ">
+<meta name="theme-color" content="#0B1D15">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Biofizika.uz", "alternateName": "Biofizika o‘zbek tilida", "url": "https://dilnozaxasanovnam-creator.github.io/biofizika-uz/", "inLanguage": "uz", "description": "Biofizikani o‘zbek tilida o‘rganish uchun bepul o‘quv sayti: nazariya, formulalar, testlar, masalalar, simulyatsiya va kundalik topshiriqlar."}, {"@type": "Course", "name": "Biofizika asoslari (o‘zbek tilida)", "description": "Molekulyar biofizika, hujayra biofizikasi, bioenergetika, bioelektrik hodisalar, tibbiy va optik biofizika bo‘yicha bepul onlayn kurs.", "inLanguage": "uz", "isAccessibleForFree": true, "provider": {"@type": "Organization", "name": "Biofizika.uz", "url": "https://dilnozaxasanovnam-creator.github.io/biofizika-uz/"}, "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT15M"}}]}</script>
 <style>:root{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<noscript><h1>Biofizika.uz – biofizika o‘zbek tilida</h1><p>Biofizikani o‘zbek tilida o‘rganish uchun bepul o‘quv sayti. Mavzular: biofizikaning asoslari, molekulyar biofizika, hujayra biofizikasi (membrana, diffuziya, ion nasoslari), bioenergetika (ATP, mitoxondriya), bioelektrik hodisalar (tinchlik va ta’sir potensiali, Nernst tenglamasi), tibbiy biofizika (EKG, UTT, rentgen, MRT) va optik biofizika. Saytda testlar, formula masalalari, Nernst kalkulyatori, simulyatsiya va kundalik topshiriqlar bor. Saytdan foydalanish uchun brauzerda JavaScript’ni yoqing.</p></noscript>
 <title>Biofizika.uz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -374,8 +381,6 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 .teacher{display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;background:var(--bright);color:var(--deep);font:600 .85rem var(--f-body);flex:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
-</head>
-<body>
 
 <header class="top">
   <div class="wrap">
@@ -534,12 +539,12 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
     </div>
 
     <div class="block" id="blkQuiz">
-      <div class="block-head"><div><h2>Testlar</h2><p>Javobni tanlang – to‘g‘ri yoki noto‘g‘riligi darhol ko‘rinadi.</p></div><button class="btn btn-ghost btn-sm" id="quizReset" type="button">Testlarni qaytadan boshlash</button></div>
+      <div class="block-head"><div><h2>Testlar</h2><p>Javobni tanlang. Xato bo‘lsa, savol 10 daqiqaga yopiladi: shu vaqtda mavzuni qayta o‘qing, keyin yana urinib ko‘ring.</p></div><span class="tag w" title="Xato javobdan keyin savol 10 daqiqaga yopiladi">Xato bo‘lsa – 10 daqiqa blok</span></div>
       <div class="qgrid" id="quiz"></div>
     </div>
 
     <div class="block" id="blkProb">
-      <div class="block-head"><div><h2>Formula masalalari</h2><p>Hisoblang, javobni kiriting va tekshiring. Kasr sonni vergul yoki nuqta bilan yozish mumkin.</p></div></div>
+      <div class="block-head"><div><h2>Formula masalalari</h2><p>Hisoblang, javobni kiriting va tekshiring. Xato javobdan keyin masala 10 daqiqaga yopiladi. Kasr sonni vergul yoki nuqta bilan yozish mumkin.</p></div></div>
       <div class="probs" id="probs"></div>
     </div>
 
@@ -605,7 +610,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
     <div class="page-head">
       <span class="eyebrow">Har kuni yangi</span>
       <h1>Yangiliklar va topshiriqlar</h1>
-      <p class="lead">Har bir topshiriq faqat tekshiruv savollariga to‘g‘ri javob berilgandan keyin bajarilgan hisoblanadi. Xato bo‘lsa – materialni qayta o‘qing va 45 soniyadan keyin yana urinib ko‘ring.</p>
+      <p class="lead">Har bir topshiriq faqat tekshiruv savollariga to‘g‘ri javob berilgandan keyin bajarilgan hisoblanadi. Xato bo‘lsa – topshiriq 10 daqiqaga yopiladi: materialni qayta o‘qing va keyin yana urinib ko‘ring.</p>
     </div>
     <div class="two">
       <div class="today hl" id="pageToday"></div>
@@ -716,7 +721,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 <footer>
   <div class="wrap">
     <q id="footQ">Har bir katta kashfiyot kichik savoldan boshlanadi.</q>
-    <span>© 2026 Biofizika.uz · Ta’limiy va bepul sayt</span>
+    <span>© 2026 Biofizika.uz · Ta’limiy va bepul sayt · <a href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/ustoz.html" style="color:var(--on-deep-muted)">Ustoz sahifasi</a></span>
   </div>
 </footer>
 
@@ -774,6 +779,7 @@ $('#regForm').addEventListener('submit',e=>{e.preventDefault();
 });
 $('#who').addEventListener('click',()=>openReg(true));
 async function initIdentity(){
+  if(store.get('teacher',false)){isTeacher=true;$('#reg').hidden=true;showWho();return}
   if(window.claude&&window.claude.use){
     try{const u=await Promise.race([window.claude.use('user'),new Promise(r=>setTimeout(()=>r(null),4000))]);
       if(u&&u.isOwner&&u.isOwner()){isTeacher=true;$('#reg').hidden=true;showWho();return}}catch(e){}
@@ -917,7 +923,18 @@ const QUIZ=[
 ];
 QUIZ.sort((a,b)=>'boy'.indexOf(a.l)-'boy'.indexOf(b.l));
 let level='all';
-let quizSt=store.get('quiz',{});
+let quizSt=store.get('quiz',{}), qlock=store.get('qlock',{}), plock=store.get('plock',{});
+const BLOCK=10*60*1000;
+const fmtLeft=ms=>{const t=Math.max(0,Math.ceil(ms/1000));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};
+const QTOPIC={q1:'t5',q2:'t4',q3:'t3',q4:'t6',q5:'t3',q6:'t5',q7:'t7',q8:'t3',q9:'t6',q10:'t5',q11:'t4',q12:'t7',q13:'t3',q14:'t3',q15:'t6',q16:'t7',q17:'t3',q18:'t5',q19:'t5',q20:'t6',q21:'t6',q22:'t1',q23:'t7',q24:'t4'};
+const PTOPIC={p1:'t7',p2:'t5',p3:'t7',p4:'t6',p5:'t6',p6:'t4',p7:'t5'};
+const topicBtn=t=>t?`<button type="button" class="linkbtn" data-topic="${t}">«${TOPICS.find(x=>x.id===t).t}» mavzusini o‘qish →</button>`:'';
+/* eski xato javoblar: blok muddati tugaganlarini qayta ochish */
+function expireLocks(){let ch=false;const n=Date.now();
+  for(const id in quizSt){const q=QUIZ.find(x=>x.id===id);if(q&&quizSt[id]!==q.a&&!((qlock[id]||0)>n)){delete quizSt[id];delete qlock[id];ch=true}}
+  for(const id in plock){if(plock[id]<=n){delete plock[id];ch=true}}
+  if(ch){store.set('quiz',quizSt);store.set('qlock',qlock);store.set('plock',plock)}return ch}
+expireLocks();
 function renderQuiz(){
   const list=QUIZ.filter(q=>level==='all'||q.l===level);
   $('#quiz').innerHTML=list.map(q=>{
@@ -925,13 +942,14 @@ function renderQuiz(){
     return `<div class="q" data-id="${q.id}">
       <div class="q-top"><span class="tag ${LVL[q.l][1]}">${LVL[q.l][0]}</span><small>${n}-savol</small></div>
       <p class="qt">${q.q}</p>
-      <div class="opts">${q.o.map((o,i)=>{let c='';if(st!==undefined){if(i===q.a)c='ok';else if(i===st)c='no'}
+      <div class="opts">${q.o.map((o,i)=>{let c='';if(st!==undefined){if(st===q.a&&i===q.a)c='ok';else if(i===st&&st!==q.a)c='no'}
         return `<button type="button" class="opt ${c}" data-i="${i}" ${st!==undefined?'disabled':''}><span class="k">${'ABCD'[i]}</span><span>${o}</span></button>`}).join('')}</div>
-      ${st!==undefined?`<div class="expl ${st===q.a?'ok':'no'}"><b>${st===q.a?'To‘g‘ri! Barakalla.':'Afsuski, noto‘g‘ri. To‘g‘ri javob: '+'ABCD'[q.a]+'.'}</b>${q.x}</div>`:''}
+      ${st===q.a?`<div class="expl ok"><b>To‘g‘ri! Barakalla.</b>${q.x}</div>`:''}
+      ${st!==undefined&&st!==q.a?`<div class="lock" style="display:grid;gap:6px"><span><b>Noto‘g‘ri.</b> Savol <b data-until="${qlock[q.id]||0}">${fmtLeft((qlock[q.id]||0)-Date.now())}</b> dan keyin qayta ochiladi. Shu vaqtda mavzuni qayta o‘qing.</span>${topicBtn(QTOPIC[q.id])}</div>`:''}
     </div>`}).join('');
 }
-$('#quiz').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||b.disabled)return;const id=b.closest('.q').dataset.id;quizSt[id]=+b.dataset.i;store.set('quiz',quizSt);renderQuiz();updateProg();const qq=QUIZ.find(x=>x.id===id);sendEvent({type:'test',task:id,title:qq.q,ok:quizSt[id]===qq.a})});
-$('#quizReset').addEventListener('click',()=>{quizSt={};store.set('quiz',quizSt);renderQuiz();updateProg()});
+$('#quiz').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||b.disabled)return;const id=b.closest('.q').dataset.id;quizSt[id]=+b.dataset.i;store.set('quiz',quizSt);{const qq0=QUIZ.find(x=>x.id===id);if(quizSt[id]!==qq0.a){qlock[id]=Date.now()+BLOCK;store.set('qlock',qlock)}}renderQuiz();updateProg();const qq=QUIZ.find(x=>x.id===id);sendEvent({type:'test',task:id,title:qq.q,ok:quizSt[id]===qq.a})});
+$('#quiz').addEventListener('click',e=>{const t=e.target.closest('[data-topic]');if(t)openTopic(t.dataset.topic)});
 
 /* ---------- formula masalalari ---------- */
 const PROBS=[
@@ -957,23 +975,22 @@ function renderProbs(){
   $('#probs').innerHTML=list.length?list.map(p=>`<div class="prob" data-id="${p.id}">
     <div class="q-top"><span class="tag ${LVL[p.l][1]}">${LVL[p.l][0]}</span>${probSt[p.id]?'<span class="tag g">Yechildi</span>':''}</div>
     <h3>${p.t}</h3><p>${p.q}</p>
-    <div class="ansrow"><input id="in_${p.id}" inputmode="decimal" aria-label="Javob: ${p.t}" placeholder="Javob"><span class="unit">${p.u}</span>
+    ${probSt[p.id]?`<div class="sol"><b>Yechim</b><span class="m">${p.s}</span></div>`:(plock[p.id]||0)>Date.now()?
+    `<div class="lock" style="display:grid;gap:6px"><span><b>Javob noto‘g‘ri edi.</b> Masala <b data-until="${plock[p.id]}">${fmtLeft(plock[p.id]-Date.now())}</b> dan keyin qayta ochiladi. Formulani va birliklarni qayta o‘rganing.</span>${topicBtn(PTOPIC[p.id])}</div>
+    <div class="sol"><b>Maslahat</b><span>${p.h}</span></div>`:
+    `<div class="ansrow"><input id="in_${p.id}" inputmode="decimal" aria-label="Javob: ${p.t}" placeholder="Javob"><span class="unit">${p.u}</span>
       <button class="btn btn-primary btn-sm" type="button" data-act="check">Tekshirish</button>
-      <button class="btn btn-ghost btn-sm" type="button" data-act="hint">Maslahat</button>
-      <button class="btn btn-ghost btn-sm" type="button" data-act="sol">Yechimni ko‘rish</button></div>
+      <button class="btn btn-ghost btn-sm" type="button" data-act="hint">Maslahat</button></div>
     <p class="fb" aria-live="polite"></p>
-    <div class="sol" data-hint hidden><b>Maslahat</b><span>${p.h}</span></div>
-    <div class="sol" data-sol hidden><b>Yechim</b><span class="m">${p.s}</span></div>
+    <div class="sol" data-hint hidden><b>Maslahat</b><span>${p.h}</span></div>`}
   </div>`).join(''):'<p style="color:var(--muted)">Bu darajada masala yo‘q.</p>';
 }
-$('#probs').addEventListener('click',e=>{const b=e.target.closest('button[data-act]');if(!b)return;const box=b.closest('.prob'),p=PROBS.find(x=>x.id===box.dataset.id);
+$('#probs').addEventListener('click',e=>{const tp=e.target.closest('[data-topic]');if(tp){openTopic(tp.dataset.topic);return}const b=e.target.closest('button[data-act]');if(!b)return;const box=b.closest('.prob'),p=PROBS.find(x=>x.id===box.dataset.id);
   if(b.dataset.act==='hint'){box.querySelector('[data-hint]').hidden=false;return}
-  if(b.dataset.act==='sol'){box.querySelector('[data-sol]').hidden=false;return}
   const raw=box.querySelector('input').value.trim().replace(',','.').replace('−','-'),v=parseFloat(raw),fb=box.querySelector('.fb');
   if(isNaN(v)){fb.className='fb no';fb.textContent='Iltimos, son kiriting.';return}
-  if(Math.abs(v-p.a)<=Math.abs(p.a)*p.tol){fb.className='fb ok';fb.textContent='To‘g‘ri! Ajoyib hisob-kitob.';probSt[p.id]=true;store.set('prob',probSt);updateProg();sendEvent({type:'masala',task:p.id,title:p.t,ok:true});
-    if(!box.querySelector('.tag.g'))box.querySelector('.q-top').insertAdjacentHTML('beforeend','<span class="tag g">Yechildi</span>')}
-  else{fb.className='fb no';fb.textContent='Hali emas. Birliklarni tekshiring yoki «Maslahat»ni bosing.';sendEvent({type:'masala',task:p.id,title:p.t,ok:false})}
+  if(Math.abs(v-p.a)<=Math.abs(p.a)*p.tol){fb.className='fb ok';fb.textContent='To‘g‘ri! Ajoyib hisob-kitob.';probSt[p.id]=true;store.set('prob',probSt);updateProg();sendEvent({type:'masala',task:p.id,title:p.t,ok:true});setTimeout(renderProbs,900)}
+  else{plock[p.id]=Date.now()+BLOCK;store.set('plock',plock);sendEvent({type:'masala',task:p.id,title:p.t,ok:false});renderProbs()}
 });
 $('#probs').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input'))e.target.closest('.prob').querySelector('[data-act=check]').click()});
 
@@ -1125,7 +1142,7 @@ const BANK=[
  ['k8','EKG va ta’sir potensiali','Yurak muskuli ta’sir potensiali fazalarini EKG tishchalari (P, QRS, T) bilan solishtirib jadval tuzing','t5','y']
 ];
 let taskSt=store.get('tasks',{}), cool=store.get('cool',{});
-const COOL=45000;
+const COOL=10*60*1000;
 /* Tekshiruv: q – savollar [savol, variantlar, to‘g‘ri indeks]; n – sonli javob; auto – sayt holatidan */
 const VER={
  d1:{type:'q',go:'t5',qs:[
@@ -1186,11 +1203,11 @@ function goLink(go){
 }
 function panel(id,k){
   const v=VER[id], left=(cool[id]||0)-now();
-  if(left>0) return `<div class="vpanel"><p class="lock">Javobda xato bor edi. Materialni qayta o‘qing va <b data-cd="${id}">${Math.ceil(left/1000)}</b> soniyadan keyin yana urinib ko‘ring. Savollar va variantlar tartibi har safar o‘zgaradi.</p>${goLink(v.go)}</div>`;
+  if(left>0) return `<div class="vpanel"><p class="lock">Javobda xato bor edi. Materialni qayta o‘qing va <b data-cd="${id}">${fmtLeft(left)}</b> dan keyin yana urinib ko‘ring. Savollar va variantlar tartibi har safar o‘zgaradi.</p>${goLink(v.go)}</div>`;
   if(v.type==='n') return `<div class="vpanel"><p class="vqt">${v.q}</p><div class="ansrow"><input id="vn_${k}" inputmode="decimal" placeholder="Javob" aria-label="Javob"><span class="unit">${v.unit}</span><button class="btn btn-primary btn-sm" type="button" data-checkn="${k}">Javobni tekshirish</button></div><p class="fb" id="vf_${k}" aria-live="polite"></p></div>`;
   if(!order[k]) order[k]=shuffle(v.qs.map((_,i)=>i)).map(qi=>[qi,shuffle(v.qs[qi][1].map((_,j)=>j))]);
   const sel=pick[k]||{};
-  return `<div class="vpanel"><p class="vnote">Topshiriq bajarilgan deb hisoblanishi uchun barcha ${v.qs.length} ta savolga to‘g‘ri javob bering. Bitta xato bo‘lsa ham, 45 soniya kutasiz.</p>
+  return `<div class="vpanel"><p class="vnote">Topshiriq bajarilgan deb hisoblanishi uchun barcha ${v.qs.length} ta savolga to‘g‘ri javob bering. Bitta xato bo‘lsa ham, topshiriq 10 daqiqaga yopiladi.</p>
    ${order[k].map(([qi,os],n)=>`<div class="vq"><p>${n+1}. ${v.qs[qi][0]}</p><div class="opts">${os.map((oi,m)=>`<button type="button" class="opt ${sel[qi]===oi?'sel':''}" data-pick="${k}|${qi}|${oi}"><span class="k">${'ABCD'[m]}</span><span>${v.qs[qi][1][oi]}</span></button>`).join('')}</div></div>`).join('')}
    <div class="ansrow"><button class="btn btn-primary btn-sm" type="button" data-checkq="${k}">Javoblarni tekshirish</button></div><p class="fb" id="vf_${k}" aria-live="polite"></p></div>`;
 }
@@ -1245,7 +1262,9 @@ document.addEventListener('click',e=>{
     Math.abs(x-v.a)<=v.tol?pass(id,k):fail(id,k)}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input[id^="vn_"]'))document.querySelector(`[data-checkn="${e.target.id.slice(3)}"]`).click()});
-setInterval(()=>{let re=false;$$('[data-cd]').forEach(el=>{const l=(cool[el.dataset.cd]||0)-now();if(l<=0)re=true;else el.textContent=Math.ceil(l/1000)});if(re)renderAllTasks()},1000);
+setInterval(()=>{let re=false;$$('[data-cd]').forEach(el=>{const l=(cool[el.dataset.cd]||0)-now();if(l<=0)re=true;else el.textContent=fmtLeft(l)});if(re)renderAllTasks();
+  let rq=false;$$('[data-until]').forEach(el=>{const l=+el.dataset.until-now();if(l<=0)rq=true;else el.textContent=fmtLeft(l)});
+  if(rq&&expireLocks()){renderQuiz();renderProbs();updateProg()}},1000);
 
 /* ---------- yangiliklar ---------- */
 const NEWS=[

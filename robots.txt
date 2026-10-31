@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /ustoz.html
 
 Sitemap: https://dilnozaxasanovnam-creator.github.io/biofizika-uz/sitemap.xml
