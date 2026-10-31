@@ -399,7 +399,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
       <a href="#haqida">Haqida</a>
       <a href="#aloqa">Aloqa</a>
     </nav>
-    <span class="teacher" id="teacherBadge" hidden>O‘qituvchi</span>
+    <button class="teacher" id="teacherBadge" type="button" hidden title="O‘quvchi sifatida ko‘rish uchun bosing" style="border:0;cursor:pointer">O‘qituvchi · chiqish</button>
     <button id="who" class="who" type="button" hidden aria-label="Profil"><i id="whoI"></i><span id="whoN"></span></button>
     <button id="themeBtn" class="icon-btn" aria-label="Tungi rejimni yoqish" title="Kunduzgi / tungi rejim">
       <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 12.6A7 7 0 0 1 7.4 3.5a7 7 0 1 0 9.1 9.1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
@@ -778,6 +778,7 @@ $('#regForm').addEventListener('submit',e=>{e.preventDefault();
   sendEvent({type:isNew?'royxat':'profil'});
 });
 $('#who').addEventListener('click',()=>openReg(true));
+$('#teacherBadge').addEventListener('click',()=>{try{localStorage.removeItem('bf_teacher')}catch(e){}isTeacher=false;$('#teacherBadge').hidden=true;if(!prof)openReg(false);else showWho()});
 async function initIdentity(){
   if(store.get('teacher',false)){isTeacher=true;$('#reg').hidden=true;showWho();return}
   if(window.claude&&window.claude.use){

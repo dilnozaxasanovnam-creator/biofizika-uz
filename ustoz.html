@@ -261,7 +261,7 @@ async function refresh(){
   }catch(e){$('#updated').textContent='Ulanib bo‘lmadi – internetni tekshirib, «Yangilash»ni bosing.'}
   finally{$('#refresh').disabled=false}
 }
-function showPanel(){$('#login').hidden=true;$('#panel').hidden=false;$('#hdActions').hidden=false;$('#demo').hidden=!!ENDPOINT;store.set('teacher',true);refresh();clearInterval(timer);timer=setInterval(refresh,60000)}
+function showPanel(){$('#login').hidden=true;$('#panel').hidden=false;$('#hdActions').hidden=false;$('#demo').hidden=!!ENDPOINT;if(ENDPOINT)store.set('teacher',true);refresh();clearInterval(timer);timer=setInterval(refresh,60000)}
 function logout(msg){store.del('ustozKey');store.del('teacher');clearInterval(timer);$('#panel').hidden=true;$('#hdActions').hidden=true;$('#login').hidden=false;
   const er=$('#loginErr');er.hidden=!msg;er.textContent=msg||'';}
 $('#login').addEventListener('submit',async e=>{e.preventDefault();const k=$('#key').value.trim(),er=$('#loginErr');
