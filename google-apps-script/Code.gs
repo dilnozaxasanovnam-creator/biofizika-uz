@@ -1,6 +1,6 @@
 /**
  * Biofizika.uz — o‘quvchilar ro‘yxati, reyting va kunlik hisobot.
- * Google Sheets → Kengaytmalar → Apps Script ga shu kodni to‘liq joylang.
+ * Mustaqil Apps Script loyihasi; jadvalga JADVAL_ID orqali ulanadi.
  * Ma’lumotlar faqat sizning Google jadvalingizda saqlanadi.
  */
 
@@ -8,6 +8,8 @@ const OQUVCHILAR = 'O‘quvchilar';
 const FAOLLIK = 'Faollik';
 const HISOBOT_SOATI = 20; // har kuni soat 20:00 da hisobot
 const TZ = 'Asia/Tashkent';
+const JADVAL_ID = '1ErxHBYG6P8TVESLtYuTyzsklvWvCZ5KSmQ_q4Uc9hjo'; // «Biofizika.uz o‘quvchilar» jadvali
+function jadval_() { return SpreadsheetApp.openById(JADVAL_ID); }
 const USTUNLAR = ['ID', 'Ism familiya', 'Guruh', 'Ro‘yxatdan o‘tgan', 'Oxirgi faollik',
   'Testlar', 'Testlar jami', 'Masalalar', 'Masalalar jami', 'O‘yin', 'O‘yin jami',
   'Tasdiqlangan topshiriqlar', 'Xato urinishlar', 'Ball'];
@@ -17,7 +19,7 @@ function ball_(t, m, o, top) { return top * 10 + m * 5 + t * 2 + o; }
 
 /** 1-marta shu funksiyani ishga tushiring: varaqlar, ustoz kaliti va kunlik hisobotni sozlaydi. */
 function sozlash() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = jadval_();
   ss.setSpreadsheetTimeZone(TZ);
   varaq_(OQUVCHILAR, USTUNLAR);
   varaq_(FAOLLIK, ['Vaqt', 'ID', 'Ism familiya', 'Guruh', 'Turi', 'Topshiriq ID', 'Nomi', 'Natija']);
@@ -47,7 +49,7 @@ function kalitniYangilash() {
 }
 
 function varaq_(nom, sarlavhalar) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = jadval_();
   let sh = ss.getSheetByName(nom);
   if (!sh) sh = ss.insertSheet(nom);
   if (sh.getLastRow() === 0 && sarlavhalar.length) {
@@ -138,7 +140,7 @@ function esc_(v) {
 
 /** Oxirgi 24 soatdagi faollik bo‘yicha sizga elektron xat yuboradi. */
 function kunlikHisobot() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = jadval_();
   const log = varaq_(FAOLLIK, []);
   const oquv = varaq_(OQUVCHILAR, USTUNLAR);
   const chegara = new Date(Date.now() - 24 * 3600 * 1000);
