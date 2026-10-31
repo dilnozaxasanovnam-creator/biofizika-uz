@@ -386,6 +386,10 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 .role b{font:700 1.15rem var(--f-display)}
 .authtabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface-2);padding:4px;border-radius:12px}
 .authtabs button{border:0;background:transparent;color:var(--muted);font:500 .92rem var(--f-body);padding:.6em;border-radius:9px;cursor:pointer}
+.gwrap{display:grid;gap:12px;justify-items:center}
+#gBtn{min-height:44px;display:flex;justify-content:center;width:100%}
+.orline{display:flex;align-items:center;gap:10px;width:100%;color:var(--muted);font-size:.82rem}
+.orline::before,.orline::after{content:"";flex:1;height:1px;background:var(--line)}
 .authtabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .role span{font-size:.85rem;color:var(--muted);line-height:1.4}
 .teacher{display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;background:var(--bright);color:var(--deep);font:600 .85rem var(--f-body);flex:none}
@@ -734,6 +738,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
     </div>
     <h2 id="regT">Ro‘yxatdan o‘tish</h2>
     <p class="lead" id="regLead">Hisob oching: natijalaringiz saqlanadi va istalgan telefon yoki kompyuterdan qayta kira olasiz.</p>
+    <div class="gwrap" id="gWrap" hidden><div id="gBtn"></div><div class="orline"><span>yoki</span></div></div>
     <div class="fields" id="regFields">
       <div class="field"><label for="rIsm">Ism</label><input id="rIsm" autocomplete="given-name" placeholder="Aziza"></div>
       <div class="field"><label for="rFam">Familiya</label><input id="rFam" autocomplete="family-name" placeholder="Karimova"></div>
@@ -755,7 +760,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 <footer>
   <div class="wrap">
     <q id="footQ">Har bir katta kashfiyot kichik savoldan boshlanadi.</q>
-    <span>© 2026 Biofizika.uz · Ta’limiy va bepul sayt · <a href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/ustoz.html" style="color:var(--on-deep-muted)">Ustoz sahifasi</a></span>
+    <span>© 2026 Biofizika.uz · Ta’limiy va bepul sayt · <a href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/ustoz.html" style="color:var(--on-deep-muted)">Ustoz sahifasi</a> · <a href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/maxfiylik.html" style="color:var(--on-deep-muted)">Maxfiylik siyosati</a></span>
   </div>
 </footer>
 
@@ -773,6 +778,8 @@ const LVL={b:['Boshlang‘ich','g'],o:['O‘rta','b'],y:['Yuqori','w']};
    ENDPOINT – o‘qituvchining Google Apps Script veb-ilovasi manzili (…/exec).
    claude.ai ichida tashqi manzilga yuborish bloklanadi; yuborish saytning internetdagi nusxasida ishlaydi. */
 const ENDPOINT='';
+/* Google Cloud → OAuth Client ID (Web). Bo‘sh bo‘lsa «Google bilan kirish» tugmasi chiqmaydi. */
+const GOOGLE_CLIENT_ID='668867285337-i7v5dlhn9tnpjmvi4bchjhgl6e3q1930.apps.googleusercontent.com';
 let prof=store.get('profile',null), isTeacher=false, flushing=false;
 function snapshot(){
   try{return {test:QUIZ.filter(x=>quizSt[x.id]===x.a).length,testN:QUIZ.length,masala:PROBS.filter(x=>probSt[x.id]).length,masalaN:PROBS.length,oyin:matched.size,oyinN:PAIRS.length,
@@ -798,7 +805,37 @@ function showWho(){
   if(!prof){$('#who').hidden=true;return}
   $('#who').hidden=false;$('#whoI').textContent=(prof.ism[0]||'')+(prof.fam[0]||'');$('#whoN').textContent=prof.ism+' '+prof.fam;
 }
-let session=store.get('session',null), authMode='reg', editMode=false;
+let session=store.get('session',null), authMode='reg', editMode=false, gCred=null, gReady=false;
+function gInit(){
+  if(!GOOGLE_CLIENT_ID||!ENDPOINT)return;
+  $('#gWrap').hidden=false;
+  const draw=()=>{try{google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:onGoogle,ux_mode:'popup',auto_select:false});
+    google.accounts.id.renderButton($('#gBtn'),{theme:'outline',size:'large',text:'continue_with',shape:'pill',locale:'uz',width:Math.min(320,$('#gBtn').clientWidth||300)});gReady=true}catch(e){$('#gWrap').hidden=true}};
+  if(window.google&&google.accounts)return draw();
+  if(document.getElementById('gsiScript'))return;
+  const sc=document.createElement('script');sc.id='gsiScript';sc.src='https://accounts.google.com/gsi/client';sc.async=true;sc.onload=draw;sc.onerror=()=>{$('#gWrap').hidden=true};document.head.appendChild(sc);
+}
+async function onGoogle(resp){
+  errBox('');gCred=resp.credential;
+  try{const r=await api({action:'google',credential:gCred,sid:prof?.id||'',state:collectState(),snap:snapshot()});
+    if(r.ok){finishLogin(r);return}
+    if(r.error==='yangi'){
+      setAuth('reg');$('#gWrap').hidden=true;$('#authTabs').hidden=true;
+      const n=splitName(r.name);if(!$('#rIsm').value)$('#rIsm').value=n.ism;if(!$('#rFam').value)$('#rFam').value=n.fam;
+      $$('#regFields [data-acc]').forEach(el=>el.hidden=true);
+      $('#regT').textContent='Deyarli tayyor';$('#regLead').textContent='Google hisobingiz: '+r.email+'. Ism-familiyangizni tekshiring va guruhingizni yozing.';
+      $('#regBtn').textContent='Davom etish';setTimeout(()=>$('#rGr').focus(),30);return}
+    errBox('Google orqali kirib bo‘lmadi. Qayta urinib ko‘ring yoki Gmail va parol bilan ro‘yxatdan o‘ting.');
+  }catch(x){errBox('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
+}
+function finishLogin(r){
+  const cur=collectState(), st=r.state||{};
+  const hasServer=Object.keys(st).length>0;
+  if(hasServer){SYNC_KEYS.forEach(k=>store.del(k));Object.keys(st).forEach(k=>{if(SYNC_KEYS.includes(k))try{localStorage.setItem('bf_'+k,JSON.stringify(st[k]))}catch(x){}})}
+  applyLogin(r);
+  if(!hasServer&&Object.keys(cur).length)window.__bfSync&&window.__bfSync();
+  location.reload();
+}
 const errBox=m=>{const e=$('#regErr');e.hidden=!m;e.textContent=m||''};
 async function api(body){
   const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
@@ -818,7 +855,7 @@ function setAuth(m){authMode=m;
   errBox('');setTimeout(()=>(m==='reg'?$('#rIsm'):$('#lLogin')).focus(),30)}
 $('#tabReg').addEventListener('click',()=>setAuth('reg'));
 $('#tabLogin').addEventListener('click',()=>setAuth('login'));
-function showRegForm(){$('#regChoice').hidden=true;$('#regForm').hidden=false;setAuth(authMode)}
+function showRegForm(){$('#regChoice').hidden=true;$('#regForm').hidden=false;setAuth(authMode);if(!gCred)gInit()}
 $('#roleStudent').addEventListener('click',showRegForm);
 $('#regBack').addEventListener('click',()=>{if(editMode||session||(prof&&!ENDPOINT)){$('#reg').hidden=true;return}$('#regForm').hidden=true;$('#regChoice').hidden=false});
 function openReg(edit){
@@ -827,6 +864,7 @@ function openReg(edit){
   $('#authTabs').hidden=editMode||!ENDPOINT;
   $$('#regFields [data-acc]').forEach(el=>el.hidden=editMode||!ENDPOINT);
   $('#logoutBtn').hidden=!editMode;
+  if(editMode)$('#gWrap').hidden=true;
   $('#regBack').textContent=editMode?'Yopish':'Orqaga';
   if(editMode){$('#regFields').hidden=false;$('#loginFields').hidden=true;$('#regT').textContent='Profil';
     $('#regLead').textContent=session?'Hisob: '+session.login:'Ism, familiya va guruhni o‘zgartirishingiz mumkin.';$('#regBtn').textContent='Saqlash';errBox('');
@@ -856,7 +894,7 @@ $('#regForm').addEventListener('submit',async e=>{e.preventDefault();
     if(!login||!pass){errBox('Gmail yoki nik va parolni kiriting.');return}
     btn.disabled=true;errBox('');
     try{const r=await api({action:'login',login,password:pass,snap:snapshot()});
-      if(!r.ok){errBox(r.error==='kop'?'Juda ko‘p urinish bo‘ldi. 10 daqiqadan keyin qayta urinib ko‘ring.':r.error==='topilmadi'?'Bunday Gmail yoki nik topilmadi. «Ro‘yxatdan o‘tish» bo‘limidan hisob oching.':'Parol noto‘g‘ri. Unutgan bo‘lsangiz, ustozingizga murojaat qiling.');return}
+      if(!r.ok){errBox(r.error==='google'?'Bu hisob Google orqali ochilgan. Yuqoridagi «Google bilan kirish» tugmasini bosing.':r.error==='kop'?'Juda ko‘p urinish bo‘ldi. 10 daqiqadan keyin qayta urinib ko‘ring.':r.error==='topilmadi'?'Bunday Gmail yoki nik topilmadi. «Ro‘yxatdan o‘tish» bo‘limidan hisob oching.':'Parol noto‘g‘ri. Unutgan bo‘lsangiz, ustozingizga murojaat qiling.');return}
       SYNC_KEYS.forEach(k=>store.del(k));
       const st=r.state||{};Object.keys(st).forEach(k=>{if(SYNC_KEYS.includes(k))try{localStorage.setItem('bf_'+k,JSON.stringify(st[k]))}catch(x){}});
       applyLogin(r);location.reload();
@@ -865,6 +903,14 @@ $('#regForm').addEventListener('submit',async e=>{e.preventDefault();
     return}
   const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=$('#rGr').value.trim();
   if(ism.length<2||fam.length<2||gr.length<2){errBox('Iltimos, ism, familiya va guruhni to‘liq yozing.');return}
+  if(gCred&&authMode==='reg'&&$('#rLogin').closest('.field').hidden&&ENDPOINT){
+    btn.disabled=true;errBox('');
+    try{const r=await api({action:'google',credential:gCred,name:ism+' '+fam,group:gr,sid:prof?.id||'',state:collectState(),snap:snapshot()});
+      if(r.ok){finishLogin(r);return}
+      errBox(r.error==='token'?'Google seansi eskirdi. «Google bilan kirish» tugmasini qayta bosing.':'Hisob ochib bo‘lmadi. Qayta urinib ko‘ring.');gCred=null;openReg(false);showRegForm();
+    }catch(x){errBox('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}
+    finally{btn.disabled=false}
+    return}
   if(!ENDPOINT){
     const isNew=!prof;
     prof={id:prof?.id||('s'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)),ism,fam,gr,at:prof?.at||new Date().toISOString()};
@@ -882,6 +928,7 @@ $('#regForm').addEventListener('submit',async e=>{e.preventDefault();
 });
 $('#logoutBtn').addEventListener('click',()=>{
   if(!session&&!confirmLogout())return;
+  try{window.google&&google.accounts&&google.accounts.id.disableAutoSelect()}catch(e){}
   ['session','profile','outbox',...SYNC_KEYS].forEach(k=>store.del(k));location.reload()});
 function confirmLogout(){const b=$('#logoutBtn');if(b.dataset.sure)return true;b.dataset.sure='1';b.textContent='Natijalar o‘chadi – yana bosing';errBox('Hisobingiz yo‘q: chiqsangiz, shu qurilmadagi natijalaringiz o‘chib ketadi.');return false}
 $('#who').addEventListener('click',()=>openReg(true));

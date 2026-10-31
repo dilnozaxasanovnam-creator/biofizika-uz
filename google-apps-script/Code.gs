@@ -8,6 +8,7 @@ const OQUVCHILAR = 'O‘quvchilar';
 const FAOLLIK = 'Faollik';
 const HISOBOT_SOATI = 20; // har kuni soat 20:00 da hisobot
 const TZ = 'Asia/Tashkent';
+const GOOGLE_CLIENT_ID = '668867285337-i7v5dlhn9tnpjmvi4bchjhgl6e3q1930.apps.googleusercontent.com'; // Google Cloud → OAuth Client ID (Web)
 const JADVAL_ID = '1ErxHBYG6P8TVESLtYuTyzsklvWvCZ5KSmQ_q4Uc9hjo'; // «Biofizika.uz o‘quvchilar» jadvali
 function jadval_() { return SpreadsheetApp.openById(JADVAL_ID); }
 const USTUNLAR = ['ID', 'Ism familiya', 'Guruh', 'Ro‘yxatdan o‘tgan', 'Oxirgi faollik',
@@ -77,6 +78,7 @@ function doPost(e) {
     if (d.action === 'login') return kirish_(d);
     if (d.action === 'sync') return sinx_(d);
     if (d.action === 'reset') return tiklash_(d);
+    if (d.action === 'google') return google_(d);
     if (!d.sid) return json_({ ok: false });
     yozish_(d);
     return json_({ ok: true });
@@ -165,6 +167,7 @@ function kirish_(d) {
   const h = hisobTop_(login);
   if (!h.qator) { urinish_(login, true); return json_({ ok: false, error: 'topilmadi' }); }
   const r = h.sh.getRange(h.qator, 1, 1, H_USTUN.length).getValues()[0];
+  if (r[1] === 'google' && !r[2]) return json_({ ok: false, error: 'google' });
   if (xesh_(r[1], parol) !== r[2]) { urinish_(login, true); return json_({ ok: false, error: 'parol' }); }
   const token = yangiToken_();
   h.sh.getRange(h.qator, 8).setValue(token);
@@ -183,6 +186,38 @@ function sinx_(d) {
   h.sh.getRange(h.qator, 9, 1, 2).setValues(qiymat);
   if (d.name || d.group) h.sh.getRange(h.qator, 5, 1, 2).setValues([[toza_(d.name) || r[4], toza_(d.group) || r[5]]]);
   return json_({ ok: true });
+}
+
+/** Google bilan kirish: ID tokenni Google’da tekshiradi. */
+function google_(d) {
+  if (!GOOGLE_CLIENT_ID) return json_({ ok: false, error: 'sozlanmagan' });
+  let info;
+  try {
+    const res = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(String(d.credential || '')), { muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) return json_({ ok: false, error: 'token' });
+    info = JSON.parse(res.getContentText());
+  } catch (err) { return json_({ ok: false, error: 'token' }); }
+  if (info.aud !== GOOGLE_CLIENT_ID || String(info.email_verified) !== 'true' || !info.email) return json_({ ok: false, error: 'token' });
+  const login = loginToza_(info.email);
+  const h = hisobTop_(login);
+  if (h.qator) {
+    const r = h.sh.getRange(h.qator, 1, 1, H_USTUN.length).getValues()[0];
+    const token = yangiToken_();
+    h.sh.getRange(h.qator, 8).setValue(token);
+    let holat = {};
+    try { holat = JSON.parse(r[8] || '{}'); } catch (err) { holat = {}; }
+    yozish_({ sid: r[3], name: r[4], group: r[5], type: 'kirish', snap: d.snap || {} });
+    return json_({ ok: true, sid: r[3], token: token, login: r[0], name: r[4], group: r[5], state: holat });
+  }
+  const ism = toza_(d.name) || toza_([info.given_name, info.family_name].filter(Boolean).join(' ')) || toza_(info.name);
+  const guruh = toza_(d.group);
+  if (!guruh) return json_({ ok: false, error: 'yangi', email: login, name: ism });
+  const sid = String(d.sid || '').match(/^s[a-z0-9]{6,30}$/) && !hisobId_(d.sid).qator ? String(d.sid) :
+    's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const token = yangiToken_(), vaqt = new Date();
+  h.sh.appendRow([login, 'google', '', sid, ism, guruh, vaqt, token, JSON.stringify(d.state || {}).slice(0, 45000), vaqt]);
+  yozish_({ sid: sid, name: ism, group: guruh, type: 'royxat', snap: d.snap || {} });
+  return json_({ ok: true, sid: sid, token: token, login: login, name: ism, group: guruh, state: d.state || {} });
 }
 
 /** Ustoz o‘quvchi parolini tiklaydi: vaqtinchalik 6 xonali parol qaytaradi. */
