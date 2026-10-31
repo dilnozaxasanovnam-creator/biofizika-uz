@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dilnozaxasanovnam-creator.github.io/biofizika-uz/sitemap.xml

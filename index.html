@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Biofizika.uz – biofizikani o‘zbek tilida o‘rganish uchun bepul sayt: nazariya, formulalar, testlar, masalalar, simulyatsiya va kundalik topshiriqlar.">
+<meta name="keywords" content="biofizika, biofizika o‘zbek tilida, membrana potensiali, Nernst tenglamasi, bioenergetika, testlar, o‘quv sayti">
+<meta property="og:title" content="Biofizika.uz – Hayot va Fizika birlashuvi">
+<meta property="og:description" content="Biofizikani o‘zbek tilida o‘rganing: nazariya, testlar, masalalar va kundalik topshiriqlar.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://dilnozaxasanovnam-creator.github.io/biofizika-uz/">
+<!-- Google Search Console tasdiqlash kodini shu qatordan keyin qo‘ying: <meta name="google-site-verification" content="..."> -->
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Biofizika.uz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Lexend:wght@300;400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: sticky header → hash-routed pages; hero pairs plain text with a live "oscilloscope" trace of an action potential, the one bold element. */
+:root{
+  --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#EEF6F1; --ink:#0C1F17; --muted:#4F6559; --line:#DCE8E1;
+  --teal:#12804A; --teal-soft:#E0F3E8; --blue:#2763C4; --blue-soft:#E3ECFA; --on-accent:#FFFFFF;
+  --warn:#9A6514; --warn-soft:#FBF0DC; --good:#17795A; --good-soft:#DDF2E9; --bad:#B93A33; --bad-soft:#FBE5E3;
+  --deep:#0B1D15; --deep-2:#14321F; --on-deep:#FFFFFF; --on-deep-muted:#B4CCBE; --bright:#4ADE80;
+  --scope:#06140E; --scope-grid:#173A28; --scope-ink:#5EF08F; --scope-label:#9CC9AE; --scope-warn:#F2C46B;
+  --shadow:0 1px 2px rgba(12,31,23,.06),0 8px 24px -12px rgba(12,31,23,.2);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Lexend","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-math:"STIX Two Text","Cambria Math","Times New Roman",serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#07110C; --surface:#0E1E16; --surface-2:#13291E; --ink:#E4F1E9; --muted:#94AE9F; --line:#20392B;
+  --teal:#4ADE80; --teal-soft:#123222; --blue:#7FA7F1; --blue-soft:#172B48; --on-accent:#04180C;
+  --deep:#030A06; --deep-2:#0D2116; --on-deep-muted:#A3BDAE;
+  --warn:#E6B465; --warn-soft:#382B15; --good:#55CC9B; --good-soft:#113427; --bad:#F28C82; --bad-soft:#3B1C1A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#07110C; --surface:#0E1E16; --surface-2:#13291E; --ink:#E4F1E9; --muted:#94AE9F; --line:#20392B;
+  --teal:#4ADE80; --teal-soft:#123222; --blue:#7FA7F1; --blue-soft:#172B48; --on-accent:#04180C;
+  --deep:#030A06; --deep-2:#0D2116; --on-deep-muted:#A3BDAE;
+  --warn:#E6B465; --warn-soft:#382B15; --good:#55CC9B; --good-soft:#113427; --bad:#F28C82; --bad-soft:#3B1C1A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6); color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+q{quotes:"«" "»"}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;font-weight:350}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--deep)}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0;font-weight:700;letter-spacing:-.01em}
+p{margin:0}
+a{color:var(--teal)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--teal);font-weight:500}
+.lead{color:var(--muted);font-size:1.06rem;max-width:62ch}
+.btn{display:inline-flex;align-items:center;gap:.5em;font:500 .95rem/1 var(--f-body);padding:.85em 1.25em;border-radius:999px;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:transform .18s ease,background-color .18s ease,box-shadow .18s ease}
+.btn-primary{background:var(--teal);color:var(--on-accent)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-sm{padding:.6em 1em;font-size:.88rem}
+
+/* Header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--deep);border-bottom:1px solid var(--deep-2)}
+.top .wrap{display:flex;align-items:center;gap:16px;min-height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--on-deep);font:800 1.2rem var(--f-display);letter-spacing:-.02em;white-space:nowrap}
+.brand b{color:var(--bright);font-weight:800}
+.brand svg{flex:none}
+nav.menu{display:flex;gap:2px;margin-left:auto;flex-wrap:wrap}
+nav.menu a{padding:.5em .8em;border-radius:10px;text-decoration:none;color:var(--on-deep-muted);font-size:.93rem;font-weight:450;transition:background-color .15s,color .15s}
+nav.menu a:hover{background:var(--deep-2);color:var(--on-deep)}
+nav.menu a[aria-current="page"]{color:var(--bright);background:var(--deep-2);font-weight:500}
+.icon-btn{width:40px;height:40px;border-radius:10px;border:1px solid var(--deep-2);background:transparent;color:var(--on-deep);display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn:hover{background:var(--deep-2)}
+#menuBtn{display:none}
+@media (max-width:900px){
+  #menuBtn{display:grid;margin-left:auto}
+  nav.menu{position:absolute;left:0;right:0;top:100%;flex-direction:column;background:var(--deep);border-bottom:1px solid var(--deep-2);padding:8px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px));gap:2px}
+  nav.menu:not(.open){display:none}
+  nav.menu a{padding:.8em 1em}
+}
+
+main{padding-block:0 64px}
+section.page{padding-top:8px}
+.page-head{padding-block:40px 24px;display:grid;gap:10px}
+.page-head h1{font-size:clamp(2rem,4.5vw,2.9rem);font-weight:800}
+
+/* Hero */
+.hero{background:radial-gradient(900px 420px at 88% 0%,rgba(74,222,128,.20),transparent 62%),linear-gradient(160deg,var(--deep) 30%,var(--deep-2));color:var(--on-deep)}
+.hero .eyebrow{color:var(--bright)}
+.hero .lead{color:var(--on-deep-muted)}
+.hero .btn-primary{background:var(--bright);color:var(--deep)}
+.hero .btn-ghost{color:var(--on-deep);border-color:rgba(255,255,255,.3)}
+.hero .btn-ghost:hover{background:var(--deep-2)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center;padding-block:56px 56px}
+.hero h1{font-size:clamp(2.2rem,5.2vw,3.7rem);font-weight:800;letter-spacing:-.025em}
+.hero h1 span{color:var(--bright)}
+.hero .txt{display:grid;gap:18px;min-width:0}
+.hero .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.scope{background:var(--scope);border:1px solid var(--scope-grid);border-radius:18px;padding:14px;box-shadow:var(--shadow);color:var(--scope-label);min-width:0}
+.scope-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:2px 4px 10px}
+.scope-top output{font:600 1.5rem var(--f-display);color:var(--scope-ink);letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
+.scope canvas{display:block;width:100%;height:240px;border-radius:10px}
+.scope-foot{display:flex;gap:14px;flex-wrap:wrap;font-size:.75rem;padding:10px 4px 2px}
+.scope-foot i{display:inline-block;width:14px;height:2px;vertical-align:middle;margin-right:6px;background:var(--scope-ink)}
+.scope-foot i.th{background:none;border-top:2px dashed var(--scope-warn)}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr;padding-block:36px}}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:40px}
+.stat{padding:18px 20px;display:grid;gap:4px;border-left:1px solid var(--line);min-width:0}
+.stat:first-child{border-left:0}
+.stat strong{font:700 1.45rem var(--f-display);color:var(--teal);font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat span{font-size:.86rem;color:var(--muted);line-height:1.45}
+@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}.stat:nth-child(3){border-left:0}.stat:nth-child(n+3){border-top:1px solid var(--line)}}
+
+.section{padding-top:48px;display:grid;gap:20px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.section-head h2{font-size:clamp(1.45rem,3vw,1.9rem)}
+
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:980px){.cards{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;grid-template-rows:auto auto 1fr auto;gap:10px;text-decoration:none;color:var(--ink);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--teal) 45%,var(--line))}
+.card .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--teal-soft);color:var(--teal)}
+.card.blue .ic{background:var(--blue-soft);color:var(--blue)}
+.card.warm .ic{background:var(--warn-soft);color:var(--warn)}
+.card h3{font-size:1.2rem}
+.card p{color:var(--muted);font-size:.93rem}
+.card .go{font-size:.9rem;font-weight:500;color:var(--teal)}
+.card:hover .go{text-decoration:underline}
+
+.motiv{background:radial-gradient(500px 200px at 100% 0%,rgba(74,222,128,.22),transparent 70%),var(--deep);color:var(--on-deep);border-radius:var(--r);padding:22px 26px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.motiv p{font:600 clamp(1.05rem,2.3vw,1.3rem)/1.4 var(--f-display);max-width:46ch}
+.motiv .btn{background:var(--bright);color:var(--deep)}
+
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+
+/* Today task */
+.today{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;display:grid;gap:14px;align-content:start;position:relative;overflow:hidden}
+.today.hl{border:2px solid var(--teal);background:linear-gradient(180deg,var(--teal-soft),var(--surface) 140px)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:500;letter-spacing:.04em;padding:.3em .7em;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.tag.t{background:var(--teal-soft);color:var(--teal)}
+.tag.b{background:var(--blue-soft);color:var(--blue)}
+.tag.w{background:var(--warn-soft);color:var(--warn)}
+.tag.g{background:var(--good-soft);color:var(--good)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.today h3{font-size:1.35rem}
+.checklist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.checklist li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);transition:background-color .2s,border-color .2s}
+.checklist input{appearance:none;width:22px;height:22px;border:2px solid var(--line);border-radius:7px;flex:none;margin-top:2px;cursor:pointer;display:grid;place-items:center;background:var(--surface);transition:background-color .15s,border-color .15s}
+.checklist input:checked{background:var(--good);border-color:var(--good)}
+.checklist input:checked::after{content:"";width:6px;height:11px;border:solid var(--on-accent);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.checklist li.done{background:var(--good-soft);border-color:transparent}
+.checklist li.done label>span:first-child{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--ink) 40%,transparent)}
+.checklist label{cursor:pointer;display:grid;gap:2px;min-width:0}
+.tlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tlist.bank{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+@media (max-width:760px){.tlist.bank{grid-template-columns:1fr}}
+.ti{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px 14px;display:grid;gap:12px;min-width:0}
+.ti.done{background:var(--good-soft);border-color:transparent}
+.ti-row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.ti-txt{display:grid;gap:2px;flex:1 1 180px;min-width:0}
+.ti-txt small{color:var(--muted);font-size:.82rem}
+.st{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;margin-top:2px;color:var(--on-accent)}
+.ti.done .st{background:var(--good);border-color:var(--good)}
+.vpanel{border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:14px}
+.vnote{font-size:.85rem;color:var(--muted)}
+.vq{display:grid;gap:8px}.vq>p,.vqt{font-weight:500;font-size:.93rem}
+.opt.sel{border-color:var(--teal);background:var(--teal-soft);box-shadow:0 0 0 1px var(--teal) inset}
+.opt.sel .k{background:var(--teal);color:var(--on-accent)}
+.lock{font-size:.9rem;color:var(--warn);background:var(--warn-soft);padding:10px 12px;border-radius:10px}
+.lock b{font-variant-numeric:tabular-nums}
+.vpanel .linkbtn{justify-self:start;text-align:left;white-space:normal}
+.checklist small{color:var(--muted);font-size:.82rem}
+.bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--teal);border-radius:99px;transition:width .4s ease}
+.bar.g>i{background:var(--good)}
+.bar.b>i{background:var(--blue)}
+.bar.w>i{background:var(--warn)}
+.done-msg{font-weight:500;color:var(--good)}
+
+/* News */
+.news{display:grid;gap:14px}
+.news article{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:grid;gap:8px}
+.news time{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.news h3{font-size:1.15rem}
+.news p{color:var(--ink);font-size:.95rem}
+.news .why{font-size:.9rem;color:var(--muted);border-left:3px solid var(--teal);padding-left:12px}
+.news .src{font-size:.84rem}
+
+/* Learn */
+.topics{display:grid;gap:12px}
+details.topic{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:border-color .2s,box-shadow .2s}
+details.topic[open]{border-color:color-mix(in srgb,var(--teal) 40%,var(--line));box-shadow:var(--shadow)}
+details.topic summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:18px 22px}
+details.topic summary::-webkit-details-marker{display:none}
+details.topic summary:hover{background:var(--surface-2)}
+.tnum{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:700 1rem var(--f-display);background:var(--teal-soft);color:var(--teal);font-variant-numeric:tabular-nums}
+.ttl{display:grid;gap:2px;min-width:0}
+.ttl b{font:700 1.18rem var(--f-display)}
+.ttl small{color:var(--muted);font-size:.86rem}
+.chev{transition:transform .25s ease;color:var(--muted)}
+details[open] .chev{transform:rotate(180deg)}
+.tbody{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;padding:6px 22px 24px 78px}
+@media (max-width:860px){.tbody{grid-template-columns:1fr;padding:6px 18px 22px}}
+.tcol{display:grid;gap:14px;align-content:start;min-width:0}
+.tcol h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-family:var(--f-body);font-weight:500;margin-top:6px}
+.tcol>p{max-width:66ch}
+.formula{font-family:var(--f-math);font-size:1.32rem;padding:14px 18px;border-radius:12px;background:var(--surface-2);overflow-x:auto;white-space:nowrap;line-height:1.5}
+.formula i{font-style:italic}
+.formula sub,.formula sup{font-size:.62em}
+.fdesc{font-size:.88rem;color:var(--muted);margin-top:-6px}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .12em;line-height:1.15}
+.frac>span:first-child{border-bottom:1.2px solid currentColor;padding:0 .2em .08em}
+.frac>span:last-child{padding:.08em .2em 0}
+.m{font-family:var(--f-math);font-size:1.08em}
+aside.tside{display:grid;gap:12px;align-content:start;min-width:0}
+.muhim{background:var(--warn-soft);border-radius:12px;padding:16px 18px;display:grid;gap:6px;font-size:.93rem}
+.muhim b{font:700 .8rem var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--warn);display:flex;gap:8px;align-items:center}
+.imgidea{border:1.5px dashed var(--line);border-radius:12px;padding:16px 18px;font-size:.86rem;color:var(--muted);display:grid;gap:4px;background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--surface-2) 60%,transparent) 10px 20px)}
+.imgidea b{color:var(--ink);font-weight:500}
+.terms{display:flex;flex-wrap:wrap;gap:6px}
+
+/* Practice */
+.prog{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}
+@media (max-width:700px){.prog{grid-template-columns:1fr}}
+.ring{width:108px;height:108px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .tr{stroke:var(--surface-2)}
+.ring .fg{stroke:var(--teal);transition:stroke-dashoffset .5s ease}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:800 1.5rem var(--f-display);font-variant-numeric:tabular-nums}
+.prog-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px}
+@media (max-width:560px){.prog-rows{grid-template-columns:1fr}}
+.prow{display:grid;gap:6px}
+.prow div{display:flex;justify-content:space-between;font-size:.88rem;gap:8px}
+.prow span:last-child{font-variant-numeric:tabular-nums;color:var(--muted)}
+
+.levels{display:flex;gap:6px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);padding:5px;border-radius:999px;width:max-content;max-width:100%}
+.levels button{border:0;background:transparent;color:var(--muted);font:500 .9rem var(--f-body);padding:.55em 1.05em;border-radius:999px;cursor:pointer}
+.levels button[aria-pressed="true"]{background:var(--teal);color:var(--on-accent)}
+.levels button:hover:not([aria-pressed="true"]){background:var(--surface-2);color:var(--ink)}
+.practice-nav{display:flex;gap:8px;flex-wrap:wrap}
+.practice-nav a{font-size:.88rem;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--surface);padding:.45em .9em;border-radius:999px}
+.practice-nav a:hover{border-color:var(--teal);color:var(--teal)}
+
+.block{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;display:grid;gap:18px;scroll-margin-top:90px}
+.block-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.block-head h2{font-size:1.4rem}
+.block-head p{color:var(--muted);font-size:.92rem}
+.qgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:820px){.qgrid{grid-template-columns:1fr}}
+.q{border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
+.q-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.q-top small{color:var(--muted);font-variant-numeric:tabular-nums}
+.q p.qt{font-weight:500}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:400 .93rem/1.45 var(--f-body);padding:10px 12px;border-radius:10px;cursor:pointer;transition:border-color .15s,background-color .15s,transform .15s}
+.opt:hover:not(:disabled){border-color:var(--teal);transform:translateX(2px)}
+.opt .k{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;background:var(--surface-2);font-size:.8rem;font-weight:600}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--good);background:var(--good-soft)}
+.opt.ok .k{background:var(--good);color:var(--on-accent)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt.no .k{background:var(--bad);color:var(--on-accent)}
+.expl{font-size:.9rem;border-radius:10px;padding:12px 14px;background:var(--surface-2)}
+.expl b{display:block;margin-bottom:2px}
+.expl.ok b{color:var(--good)}
+.expl.no b{color:var(--bad)}
+
+.probs{display:grid;gap:14px}
+.prob{border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;min-width:0}
+.prob h3{font-size:1.08rem}
+.ansrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ansrow input{font:500 1rem var(--f-body);padding:.6em .8em;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:150px;font-variant-numeric:tabular-nums}
+.ansrow .unit{color:var(--muted);font-size:.92rem}
+.fb{font-size:.92rem;font-weight:500}
+.fb.ok{color:var(--good)} .fb.no{color:var(--bad)}
+.sol{font-size:.9rem;background:var(--surface-2);border-radius:10px;padding:12px 14px;display:grid;gap:6px}
+
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:760px){.calc{grid-template-columns:1fr}}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:grid;gap:4px;min-width:0}
+.field label{font-size:.82rem;color:var(--muted)}
+.field input,.field select,.field textarea{font:400 .98rem var(--f-body);padding:.6em .75em;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+.field textarea{min-height:130px;resize:vertical}
+.field.full{grid-column:1/-1}
+.result{background:var(--surface-2);border-radius:12px;padding:18px;display:grid;gap:12px;align-content:start}
+.result output{font:800 2.4rem var(--f-display);color:var(--teal);font-variant-numeric:tabular-nums}
+.scale{position:relative;height:46px;margin-top:6px}
+.scale .line{position:absolute;left:0;right:0;top:14px;height:6px;border-radius:99px;background:linear-gradient(90deg,var(--blue-soft),var(--surface),var(--teal-soft));border:1px solid var(--line)}
+.scale .mk{position:absolute;top:6px;width:2px;height:22px;background:var(--teal);transform:translateX(-1px);transition:left .3s ease}
+.scale .rest{position:absolute;top:10px;width:2px;height:14px;background:var(--muted);transform:translateX(-1px)}
+.scale .lbl{position:absolute;top:30px;font-size:.72rem;color:var(--muted);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.match{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:14px}
+@media (max-width:640px){.match{grid-template-columns:1fr}}
+.mcol{display:grid;gap:8px;align-content:start}
+.mcol h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-family:var(--f-body);font-weight:500}
+.mi{border:1px solid var(--line);background:var(--surface);color:var(--ink);text-align:left;font:400 .92rem/1.4 var(--f-body);padding:11px 13px;border-radius:10px;cursor:pointer;transition:border-color .15s,background-color .15s,transform .15s}
+.mi.term{font-weight:600;font-family:var(--f-display);font-size:1rem}
+.mi:hover:not(:disabled){border-color:var(--teal)}
+.mi.sel{border-color:var(--teal);background:var(--teal-soft);box-shadow:0 0 0 2px var(--teal) inset}
+.mi.matched{background:var(--good-soft);border-color:transparent;color:var(--good);cursor:default}
+.mi.wrong{animation:shake .35s ease;border-color:var(--bad)}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+.sim canvas{width:100%;height:230px;display:block;border-radius:12px;background:var(--scope)}
+.simctl{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.simctl input[type=range]{flex:1 1 200px;accent-color:var(--teal)}
+.simctl output{font:700 1.1rem var(--f-display);font-variant-numeric:tabular-nums;min-width:4.5em}
+.simmsg{font-size:.93rem;padding:12px 14px;border-radius:10px;background:var(--surface-2)}
+.ideas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.ideas{grid-template-columns:1fr}}
+.idea{border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:6px;align-content:start}
+.idea h3{font-size:1.04rem}
+.idea p{font-size:.9rem;color:var(--muted)}
+.idea .tags{margin-top:4px}
+
+/* Archive */
+.arch{width:100%;border-collapse:collapse;font-size:.93rem}
+.arch th{text-align:left;font-weight:500;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:10px 12px;border-bottom:1px solid var(--line)}
+.arch td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.arch td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted)}
+.arch tr:last-child td{border-bottom:0}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.linkbtn{background:none;border:0;color:var(--teal);font:500 .9rem var(--f-body);cursor:pointer;padding:0;white-space:nowrap}
+.linkbtn:hover{text-decoration:underline}
+
+/* About / contact */
+.aud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:820px){.aud{grid-template-columns:1fr}}
+.aud div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:8px;align-content:start}
+.aud h3{font-size:1.12rem}
+.aud p{font-size:.93rem;color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;counter-reset:s}
+@media (max-width:820px){.steps{grid-template-columns:1fr}}
+.steps div{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.steps div::before{counter-increment:s;content:counter(s);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--teal);color:var(--on-accent);font:700 .95rem var(--f-display)}
+.steps p{font-size:.93rem;color:var(--muted)}
+.steps b{display:block;color:var(--ink);font-weight:600}
+.note{border-radius:var(--r);padding:18px 20px;background:var(--blue-soft);display:grid;gap:6px;font-size:.95rem}
+.note b{color:var(--blue)}
+.contact{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+@media (max-width:820px){.contact{grid-template-columns:1fr}}
+.clist{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.clist li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;flex-wrap:wrap}
+.clist span{display:grid;min-width:0}
+.clist small{color:var(--muted);font-size:.78rem}
+.clist code{font:500 .95rem var(--f-body);user-select:all;word-break:break-all}
+.formmsg{font-size:.92rem;padding:12px 14px;border-radius:10px}
+.formmsg.ok{background:var(--good-soft);color:var(--good)}
+.formmsg.no{background:var(--bad-soft);color:var(--bad)}
+
+footer{background:var(--deep);padding-block:28px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;font-size:.88rem;color:var(--on-deep-muted)}
+footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-size:1rem}
+/* Ro‘yxatdan o‘tish */
+.who{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px 0 5px;border-radius:999px;border:1px solid var(--deep-2);background:transparent;color:var(--on-deep);font:500 .88rem var(--f-body);cursor:pointer;flex:none;max-width:220px}
+.who:hover{background:var(--deep-2)}
+.who i{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--bright);color:var(--deep);font:700 .8rem var(--f-display);font-style:normal;flex:none}
+.who span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:900px){.who span{display:none}.who{padding:0 5px}}
+.reg{position:fixed;inset:0;z-index:60;background:rgba(4,12,8,.78);display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
+.reg-card{background:var(--surface);color:var(--ink);border-radius:18px;padding:28px;width:100%;max-width:460px;display:grid;gap:16px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+.reg-card h2{font-size:1.6rem}
+.reg-card .lead{font-size:.95rem}
+.reg-note{font-size:.82rem;color:var(--muted)}
+.teacher{display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;background:var(--bright);color:var(--deep);font:600 .85rem var(--f-body);flex:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#bosh" aria-label="Biofizika.uz bosh sahifa">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="var(--bright)"/><path d="M4 18h6l2-4 2.5 9 3-17 2.5 12h6" fill="none" stroke="var(--deep)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Biofizika<b>.uz</b></span>
+    </a>
+    <button id="menuBtn" class="icon-btn" aria-label="Menyuni ochish" aria-expanded="false" aria-controls="nav">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="menu" id="nav" aria-label="Asosiy menyu">
+      <a href="#bosh">Bosh sahifa</a>
+      <a href="#organish">O‘rganish</a>
+      <a href="#amaliyot">Amaliyot</a>
+      <a href="#yangiliklar">Yangiliklar va topshiriqlar</a>
+      <a href="#haqida">Haqida</a>
+      <a href="#aloqa">Aloqa</a>
+    </nav>
+    <span class="teacher" id="teacherBadge" hidden>O‘qituvchi</span>
+    <button id="who" class="who" type="button" hidden aria-label="Profil"><i id="whoI"></i><span id="whoN"></span></button>
+    <button id="themeBtn" class="icon-btn" aria-label="Tungi rejimni yoqish" title="Kunduzgi / tungi rejim">
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 12.6A7 7 0 0 1 7.4 3.5a7 7 0 1 0 9.1 9.1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+<!-- ================= BOSH SAHIFA ================= -->
+<section class="page" data-page="bosh">
+  <div class="hero">
+    <div class="wrap">
+      <div class="txt">
+        <span class="eyebrow">Bepul o‘quv platformasi · o‘zbek tilida</span>
+        <h1>Biofizika – Hayot va <span>Fizika</span> birlashuvi</h1>
+        <p class="lead">Biofizika tirik organizmlarda kechadigan jarayonlarni fizika qonunlari va usullari yordamida o‘rganadigan fan. Nerv impulsi qanday tarqaladi? Hujayra energiyani qayerdan oladi? Ko‘z yorug‘likni qanday sezadi? Bu savollarga biofizika javob beradi.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#organish">O‘rganishni boshlash
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <a class="btn btn-ghost" href="#yangiliklar">Bugungi topshiriq</a>
+        </div>
+      </div>
+      <figure class="scope" aria-label="Nerv hujayrasidagi ta’sir potensialining jonli grafigi" style="margin:0">
+        <div class="scope-top"><span>Neyron · ta’sir potensiali</span><output id="scopeVal">−70 mV</output></div>
+        <canvas id="scopeCanvas" aria-hidden="true"></canvas>
+        <figcaption class="scope-foot"><span><i></i>membrana potensiali, mV</span><span><i class="th"></i>qo‘zg‘alish chegarasi −55 mV</span></figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="stats" aria-label="Biofizika raqamlarda">
+      <div class="stat"><strong>−70 mV</strong><span>nerv hujayrasining tinchlik potensiali</span></div>
+      <div class="stat"><strong>4–10 nm</strong><span>hujayra membranasining qalinligi</span></div>
+      <div class="stat"><strong>30,5 kJ/mol</strong><span>ATP gidrolizida ajraladigan energiya</span></div>
+      <div class="stat"><strong>380–760 nm</strong><span>ko‘zimiz ko‘radigan yorug‘lik diapazoni</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2>Qayerdan boshlaysiz?</h2></div>
+      <div class="cards">
+        <a class="card" href="#organish">
+          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15ZM4 20.5A2.5 2.5 0 0 0 6.5 23H20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+          <h3>O‘rganish</h3>
+          <p>7 ta asosiy mavzu: sodda tushuntirish, formulalar, hayotiy misollar va «Muhim» eslatmalar.</p>
+          <span class="go">Mavzularni ko‘rish →</span>
+        </a>
+        <a class="card blue" href="#amaliyot">
+          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v6L4 19a2 2 0 0 0 1.8 3h12.4A2 2 0 0 0 20 19l-5-10V3M8 3h8M7 15h10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h3>Amaliyot</h3>
+          <p>24 ta test, 7 ta formula masalasi, moslashtirish o‘yini va jonli simulyatsiya. Uch qiyinlik darajasi.</p>
+          <span class="go">Mashq qilish →</span>
+        </a>
+        <a class="card warm" href="#yangiliklar">
+          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 2.5v4M16 2.5v4M8 13l2.5 2.5L16 10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h3>Bugungi topshiriq</h3>
+          <p>Har kuni 3 ta vazifa va ularni tasdiqlovchi savollar. Bugun: Nernst tenglamasi.</p>
+          <span class="go">Topshiriqni ochish →</span>
+        </a>
+        <a class="card" href="#yangiliklar">
+          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.2" fill="currentColor"/><ellipse cx="12" cy="12" rx="9.5" ry="4" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="12" cy="12" rx="9.5" ry="4" transform="rotate(60 12 12)" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="12" cy="12" rx="9.5" ry="4" transform="rotate(120 12 12)" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
+          <h3>Yangiliklar</h3>
+          <p>Dunyo biofizikasidagi muhim voqealar o‘zbek tilida, qisqa va tushunarli.</p>
+          <span class="go">O‘qish →</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="motiv">
+        <p>Har kuni 15 daqiqa ajrating – bir yilda 90 soatdan ortiq biofizika o‘rganasiz.</p>
+        <a class="btn btn-sm" href="#amaliyot">Hozir boshlash</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2>So‘nggi yangiliklar va topshiriqlar</h2><a href="#yangiliklar" style="font-size:.92rem">Barchasini ko‘rish →</a></div>
+      <div class="two">
+        <div class="today hl" id="homeToday"></div>
+        <div class="news" id="homeNews"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= O‘RGANISH ================= -->
+<section class="page" data-page="organish" hidden>
+  <div class="wrap">
+    <div class="page-head">
+      <span class="eyebrow">Nazariya</span>
+      <h1>O‘rganish</h1>
+      <p class="lead">Mavzularni ketma-ket o‘qing yoki keraklisini tanlang. Har bir mavzuda qisqa nazariya, asosiy formulalar, hayotdan misol va «Muhim» eslatma bor.</p>
+    </div>
+    <div class="topics" id="topics"></div>
+  </div>
+</section>
+
+<!-- ================= AMALIYOT ================= -->
+<section class="page" data-page="amaliyot" hidden>
+  <div class="wrap" style="display:grid;gap:20px">
+    <div class="page-head" style="padding-bottom:4px">
+      <span class="eyebrow">Mashq qiling</span>
+      <h1>Amaliyot</h1>
+      <p class="lead">Bilimni mustahkamlashning eng yaxshi yo‘li – o‘zingiz yechib ko‘rish. Xato qilishdan qo‘rqmang: har bir javobdan keyin tushuntirish chiqadi.</p>
+    </div>
+
+    <div class="prog" aria-label="Sizning yutuqlaringiz">
+      <div class="ring">
+        <svg viewBox="0 0 108 108" aria-hidden="true"><circle class="tr" cx="54" cy="54" r="46" fill="none" stroke-width="10"/><circle class="fg" id="ringFg" cx="54" cy="54" r="46" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="289.03" stroke-dashoffset="289.03"/></svg>
+        <b id="ringVal">0%</b>
+      </div>
+      <div style="display:grid;gap:14px;min-width:0">
+        <div><h2 style="font-size:1.2rem">Sizning yutuqlaringiz</h2><p style="color:var(--muted);font-size:.9rem" id="progMsg">Birinchi testni yeching – yo‘l shu yerdan boshlanadi.</p></div>
+        <div class="prog-rows">
+          <div class="prow"><div><span>Testlar (to‘g‘ri javob)</span><span id="pQuiz">0 / 24</span></div><div class="bar"><i id="bQuiz"></i></div></div>
+          <div class="prow"><div><span>Formula masalalari</span><span id="pProb">0 / 7</span></div><div class="bar b"><i id="bProb"></i></div></div>
+          <div class="prow"><div><span>Moslashtirish o‘yini</span><span id="pMatch">0 / 8</span></div><div class="bar g"><i id="bMatch"></i></div></div>
+          <div class="prow"><div><span>Bugungi topshiriq</span><span id="pTask">0 / 3</span></div><div class="bar w"><i id="bTask"></i></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+      <div class="levels" role="group" aria-label="Qiyinlik darajasi">
+        <button type="button" data-lvl="all" aria-pressed="true">Hammasi</button>
+        <button type="button" data-lvl="b" aria-pressed="false">Boshlang‘ich</button>
+        <button type="button" data-lvl="o" aria-pressed="false">O‘rta</button>
+        <button type="button" data-lvl="y" aria-pressed="false">Yuqori</button>
+      </div>
+      <div class="practice-nav">
+        <a href="#amaliyot" data-scroll="blkQuiz">Testlar</a>
+        <a href="#amaliyot" data-scroll="blkProb">Masalalar</a>
+        <a href="#amaliyot" data-scroll="blkCalc">Kalkulyator</a>
+        <a href="#amaliyot" data-scroll="blkMatch">O‘yin</a>
+        <a href="#amaliyot" data-scroll="blkSim">Simulyatsiya</a>
+      </div>
+    </div>
+
+    <div class="block" id="blkQuiz">
+      <div class="block-head"><div><h2>Testlar</h2><p>Javobni tanlang – to‘g‘ri yoki noto‘g‘riligi darhol ko‘rinadi.</p></div><button class="btn btn-ghost btn-sm" id="quizReset" type="button">Testlarni qaytadan boshlash</button></div>
+      <div class="qgrid" id="quiz"></div>
+    </div>
+
+    <div class="block" id="blkProb">
+      <div class="block-head"><div><h2>Formula masalalari</h2><p>Hisoblang, javobni kiriting va tekshiring. Kasr sonni vergul yoki nuqta bilan yozish mumkin.</p></div></div>
+      <div class="probs" id="probs"></div>
+    </div>
+
+    <div class="block" id="blkCalc">
+      <div class="block-head"><div><h2>Nernst kalkulyatori</h2><p>Ionni tanlang, konsentratsiyalarni o‘zgartiring va muvozanat potensiali qanday o‘zgarishini kuzating.</p></div></div>
+      <div class="calc">
+        <div class="fields">
+          <div class="field full"><label for="nIon">Ion</label>
+            <select id="nIon"><option value="K">K⁺ (kaliy)</option><option value="Na">Na⁺ (natriy)</option><option value="Cl">Cl⁻ (xlor)</option><option value="Ca">Ca²⁺ (kalsiy)</option></select></div>
+          <div class="field"><label for="nZ">Ion zaryadi, z</label><input id="nZ" type="number" step="1" value="1"></div>
+          <div class="field"><label for="nT">Harorat, °C</label><input id="nT" type="number" step="0.5" value="37"></div>
+          <div class="field"><label for="nCo">Tashqi konsentratsiya, mM</label><input id="nCo" type="number" step="any" min="0" value="5"></div>
+          <div class="field"><label for="nCi">Ichki konsentratsiya, mM</label><input id="nCi" type="number" step="any" min="0" value="140"></div>
+          <div class="formula full" style="grid-column:1/-1;font-size:1.15rem"><i>E</i> = <span class="frac"><span><i>RT</i></span><span><i>zF</i></span></span> ln <span class="frac"><span>[C]<sub>tash</sub></span><span>[C]<sub>ich</sub></span></span></div>
+        </div>
+        <div class="result" aria-live="polite">
+          <span style="font-size:.85rem;color:var(--muted)">Muvozanat potensiali</span>
+          <output id="nOut">−89,0 mV</output>
+          <div class="scale" aria-hidden="true">
+            <div class="line"></div>
+            <div class="rest" id="nRest"></div>
+            <div class="mk" id="nMk"></div>
+            <span class="lbl" style="left:0;transform:none">−120</span>
+            <span class="lbl" id="nRestLbl">tinchlik −70</span>
+            <span class="lbl" style="left:auto;right:0;transform:none">+150 mV</span>
+          </div>
+          <p id="nNote" style="font-size:.9rem"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" id="blkMatch">
+      <div class="block-head"><div><h2>Moslashtirish o‘yini</h2><p>Avval atamani, keyin uning ta’rifini bosing. Barcha juftliklarni toping.</p></div>
+        <div style="display:flex;gap:10px;align-items:center"><span class="tag t" id="matchCount">0 / 8 juftlik</span><button class="btn btn-ghost btn-sm" id="matchReset" type="button">Qaytadan</button></div></div>
+      <div class="match">
+        <div class="mcol"><h4>Atamalar</h4><div class="mcol" id="mTerms"></div></div>
+        <div class="mcol"><h4>Ta’riflar</h4><div class="mcol" id="mDefs"></div></div>
+      </div>
+      <p class="fb" id="matchMsg" aria-live="polite"></p>
+    </div>
+
+    <div class="block sim" id="blkSim">
+      <div class="block-head"><div><h2>Simulyatsiya: chegarani toping</h2><p>Neyronga turli kuchdagi stimul bering. Qaysi kuchda ta’sir potensiali paydo bo‘ladi?</p></div><span class="tag b">Bioelektrik hodisalar</span></div>
+      <canvas id="simCanvas" aria-label="Stimuldan keyingi membrana potensiali grafigi"></canvas>
+      <div class="simctl">
+        <label for="simS" style="font-size:.9rem">Stimul kuchi</label>
+        <input id="simS" type="range" min="0" max="30" step="1" value="10">
+        <output id="simSv">+10 mV</output>
+        <button class="btn btn-primary btn-sm" id="simGo" type="button">Stimul berish</button>
+      </div>
+      <p class="simmsg" id="simMsg" aria-live="polite">Stimul kuchini tanlang va «Stimul berish» tugmasini bosing.</p>
+      <div>
+        <h3 style="font-size:1.1rem;margin-bottom:10px">Yana simulyatsiya g‘oyalari</h3>
+        <div class="ideas" id="ideas"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= YANGILIKLAR ================= -->
+<section class="page" data-page="yangiliklar" hidden>
+  <div class="wrap" style="display:grid;gap:8px">
+    <div class="page-head">
+      <span class="eyebrow">Har kuni yangi</span>
+      <h1>Yangiliklar va topshiriqlar</h1>
+      <p class="lead">Har bir topshiriq faqat tekshiruv savollariga to‘g‘ri javob berilgandan keyin bajarilgan hisoblanadi. Xato bo‘lsa – materialni qayta o‘qing va 45 soniyadan keyin yana urinib ko‘ring.</p>
+    </div>
+    <div class="two">
+      <div class="today hl" id="pageToday"></div>
+      <div class="today" id="weekly"></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><div style="display:grid;gap:4px"><h2>Mustaqil topshiriqlar to‘plami</h2><p style="color:var(--muted);font-size:.93rem">Uyda, darsda yoki laboratoriyada bajariladigan amaliy vazifalar. Har birini bajargach, tekshiruvdan o‘ting.</p></div>
+        <div style="display:grid;gap:6px;min-width:180px"><div style="display:flex;justify-content:space-between;font-size:.86rem"><span>Bajarildi</span><span id="bankCount">0 / 8</span></div><div class="bar g"><i id="bankBar"></i></div></div></div>
+      <ul class="tlist bank" id="bank"></ul>
+    </div>
+    <div class="section">
+      <div class="section-head"><h2>Biofizika olamidan</h2></div>
+      <div class="news" id="newsList"></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><h2>Oldingi topshiriqlar arxivi</h2></div>
+      <div class="tablewrap">
+        <table class="arch">
+          <thead><tr><th>Sana</th><th>Topshiriq</th><th>Daraja</th><th></th></tr></thead>
+          <tbody id="archive"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HAQIDA ================= -->
+<section class="page" data-page="haqida" hidden>
+  <div class="wrap" style="display:grid;gap:8px">
+    <div class="page-head">
+      <span class="eyebrow">Loyiha haqida</span>
+      <h1>Haqida</h1>
+      <p class="lead">Biofizika.uz – biofizikani o‘zbek tilida sodda, tushunarli va qiziqarli o‘rgatish uchun yaratilgan ta’limiy sayt. O‘zbek tilidagi biofizika materiallari hali kam. Shuning uchun biz nazariya, mashqlar va kundalik topshiriqlarni bir joyga jamladik – har bir o‘quvchi o‘z sur’atida o‘rgana olsin.</p>
+    </div>
+    <div class="section" style="padding-top:8px">
+      <h2 style="font-size:1.5rem">Sayt kimlar uchun?</h2>
+      <div class="aud">
+        <div><span class="tag t">Maktab</span><h3>Maktab o‘quvchilari</h3><p>Fizika va biologiyani bir-biriga bog‘lab tushunish, fan olimpiadalariga tayyorlanish uchun.</p></div>
+        <div><span class="tag b">Universitet</span><h3>Talabalar</h3><p>Biologiya, tibbiyot va biofizika yo‘nalishi talabalari uchun: seminar, nazorat ishi va imtihonga tayyorgarlik.</p></div>
+        <div><span class="tag w">Kasbiy</span><h3>O‘qituvchilar</h3><p>Darsda foydalanish uchun tayyor misollar, testlar va kundalik topshiriqlar.</p></div>
+      </div>
+    </div>
+    <div class="section">
+      <h2 style="font-size:1.5rem">Qanday foydalanish kerak?</h2>
+      <div class="steps">
+        <div><p><b>O‘rganing</b>«O‘rganish» bo‘limida mavzuni o‘qing, formulalarni daftaringizga yozing.</p></div>
+        <div><p><b>Mashq qiling</b>«Amaliyot» bo‘limida testlar va masalalar bilan bilimingizni mustahkamlang.</p></div>
+        <div><p><b>Har kuni ozgina</b>«Bugungi topshiriq»ni bajaring. Muntazamlik – muvaffaqiyat kaliti.</p></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="note"><b>Sayt mutlaqo bepul va faqat ta’limiy maqsadda.</b><p>Saytdagi materiallar tibbiy maslahat o‘rnini bosmaydi. Materiallardan dars va o‘quv maqsadida manbani ko‘rsatgan holda foydalanish mumkin.</p><p style="color:var(--muted);font-size:.9rem">Mualliflar: [ism-familiya, kafedra va tashkilot nomi]</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ALOQA ================= -->
+<section class="page" data-page="aloqa" hidden>
+  <div class="wrap" style="display:grid;gap:8px">
+    <div class="page-head">
+      <span class="eyebrow">Bog‘lanish</span>
+      <h1>Aloqa</h1>
+      <p class="lead">Savol, taklif bormi yoki saytda xato ko‘rdingizmi? Bizga yozing – har bir xabar saytni yaxshilashga yordam beradi.</p>
+    </div>
+    <div class="contact">
+      <form class="block" id="cForm" novalidate>
+        <div class="fields">
+          <div class="field"><label for="cName">Ismingiz</label><input id="cName" autocomplete="name" placeholder="Masalan: Aziza"></div>
+          <div class="field"><label for="cMail">Elektron pochta</label><input id="cMail" type="email" autocomplete="email" placeholder="ism@example.com"></div>
+          <div class="field full"><label for="cTopic">Mavzu</label>
+            <select id="cTopic"><option>Savol</option><option>Taklif</option><option>Xato haqida xabar</option><option>Hamkorlik</option></select></div>
+          <div class="field full"><label for="cMsg">Xabar</label><textarea id="cMsg" placeholder="Xabaringizni yozing…"></textarea></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button class="btn btn-primary" type="submit">Xabarni yuborish</button></div>
+        <p class="formmsg" id="cOut" hidden aria-live="polite"></p>
+      </form>
+      <div class="block" style="align-content:start">
+        <h2 style="font-size:1.2rem">Bizning manzillar</h2>
+        <ul class="clist">
+          <li><span><small>Elektron pochta</small><code>info@biofizika.uz</code></span><button class="linkbtn" type="button" data-copy="info@biofizika.uz">Nusxa olish</button></li>
+          <li><span><small>Telegram</small><code>@biofizika_uz</code></span><button class="linkbtn" type="button" data-copy="@biofizika_uz">Nusxa olish</button></li>
+          <li><span><small>Instagram</small><code>@biofizika.uz</code></span><button class="linkbtn" type="button" data-copy="@biofizika.uz">Nusxa olish</button></li>
+          <li><span><small>YouTube</small><code>Biofizika.uz</code></span><button class="linkbtn" type="button" data-copy="Biofizika.uz">Nusxa olish</button></li>
+        </ul>
+        <p style="font-size:.84rem;color:var(--muted)">Manzillar namuna sifatida berilgan – o‘zingizning haqiqiy manzillaringiz bilan almashtiring.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="reg" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regT">
+  <form class="reg-card" id="regForm" novalidate>
+    <span class="eyebrow" style="color:var(--teal)">Biofizika.uz</span>
+    <h2 id="regT">Ro‘yxatdan o‘tish</h2>
+    <p class="lead" id="regLead">Boshlashdan oldin ism-familiyangiz va guruhingizni yozing. Topshiriqlar natijasi o‘qituvchingizga shu ism bilan yuboriladi.</p>
+    <div class="fields">
+      <div class="field"><label for="rIsm">Ism</label><input id="rIsm" autocomplete="given-name" placeholder="Aziza"></div>
+      <div class="field"><label for="rFam">Familiya</label><input id="rFam" autocomplete="family-name" placeholder="Karimova"></div>
+      <div class="field full"><label for="rGr">Guruh yoki sinf</label><input id="rGr" placeholder="Masalan: Biologiya, 2-kurs, 201-guruh"></div>
+    </div>
+    <p class="formmsg no" id="regErr" hidden></p>
+    <button class="btn btn-primary" type="submit" id="regBtn" style="justify-self:start">Boshlash</button>
+    <p class="reg-note">Ism, guruh va topshiriqlar natijasi faqat o‘qituvchingizga ko‘rinadi. Boshqa o‘quvchilar ularni ko‘rmaydi.</p>
+  </form>
+</div>
+
+<footer>
+  <div class="wrap">
+    <q id="footQ">Har bir katta kashfiyot kichik savoldan boshlanadi.</q>
+    <span>© 2026 Biofizika.uz · Ta’limiy va bepul sayt</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem('bf_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('bf_'+k,JSON.stringify(v))}catch(e){}}};
+const num=(n,d=1)=>n.toFixed(d).replace('.',',').replace('-','−');
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const LVL={b:['Boshlang‘ich','g'],o:['O‘rta','b'],y:['Yuqori','w']};
+
+/* ---------- ro‘yxat va natijalarni o‘qituvchiga yuborish ----------
+   ENDPOINT – o‘qituvchining Google Apps Script veb-ilovasi manzili (…/exec).
+   claude.ai ichida tashqi manzilga yuborish bloklanadi; yuborish saytning internetdagi nusxasida ishlaydi. */
+const ENDPOINT='';
+let prof=store.get('profile',null), isTeacher=false, flushing=false;
+function snapshot(){
+  try{return {test:QUIZ.filter(x=>quizSt[x.id]===x.a).length,testN:QUIZ.length,masala:PROBS.filter(x=>probSt[x.id]).length,masalaN:PROBS.length,oyin:matched.size,oyinN:PAIRS.length,
+    topshiriq:Object.keys(taskSt).filter(k=>taskSt[k]).length}}catch(e){return {}}
+}
+function sendEvent(ev){
+  if(isTeacher||!prof) return;
+  const q=store.get('outbox',[]);
+  q.push(Object.assign({},ev,{sid:prof.id,name:prof.ism+' '+prof.fam,group:prof.gr,ts:new Date().toISOString(),snap:snapshot()}));
+  store.set('outbox',q.slice(-300));flush();
+}
+async function flush(){
+  if(!ENDPOINT||flushing) return; flushing=true;
+  let q=store.get('outbox',[]);
+  while(q.length){
+    try{await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(q[0])});q.shift();store.set('outbox',q)}
+    catch(e){break}
+  }
+  flushing=false;
+}
+function showWho(){
+  if(isTeacher){$('#teacherBadge').hidden=false;$('#who').hidden=true;return}
+  if(!prof){$('#who').hidden=true;return}
+  $('#who').hidden=false;$('#whoI').textContent=(prof.ism[0]||'')+(prof.fam[0]||'');$('#whoN').textContent=prof.ism+' '+prof.fam;
+}
+function openReg(edit){
+  $('#regT').textContent=edit?'Profilni o‘zgartirish':'Ro‘yxatdan o‘tish';
+  $('#regBtn').textContent=edit?'Saqlash':'Boshlash';
+  if(edit&&prof){$('#rIsm').value=prof.ism;$('#rFam').value=prof.fam;$('#rGr').value=prof.gr}
+  $('#reg').hidden=false;setTimeout(()=>$('#rIsm').focus(),30);
+}
+$('#regForm').addEventListener('submit',e=>{e.preventDefault();
+  const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=$('#rGr').value.trim(),err=$('#regErr');
+  if(ism.length<2||fam.length<2||gr.length<2){err.hidden=false;err.textContent='Iltimos, ism, familiya va guruhni to‘liq yozing.';return}
+  err.hidden=true;const isNew=!prof;
+  prof={id:prof?.id||('s'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)),ism,fam,gr,at:prof?.at||new Date().toISOString()};
+  store.set('profile',prof);$('#reg').hidden=true;showWho();
+  sendEvent({type:isNew?'royxat':'profil'});
+});
+$('#who').addEventListener('click',()=>openReg(true));
+async function initIdentity(){
+  if(window.claude&&window.claude.use){
+    try{const u=await Promise.race([window.claude.use('user'),new Promise(r=>setTimeout(()=>r(null),4000))]);
+      if(u&&u.isOwner&&u.isOwner()){isTeacher=true;$('#reg').hidden=true;showWho();return}}catch(e){}
+  }
+  if(!prof) openReg(false); else {showWho();flush()}
+}
+const titleOf=id=>{const all=[...TODAY.items,...WEEK.items,...BANK];const f=all.find(x=>x[0]===id);return f?f[1]:id};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- theme ---------- */
+const root=document.documentElement;
+const savedTheme=store.get('theme',null); if(savedTheme) root.setAttribute('data-theme',savedTheme);
+const isDark=()=>root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+function themeLabel(){$('#themeBtn').setAttribute('aria-label',isDark()?'Kunduzgi rejimni yoqish':'Tungi rejimni yoqish')}
+$('#themeBtn').addEventListener('click',()=>{const t=isDark()?'light':'dark';root.setAttribute('data-theme',t);store.set('theme',t);themeLabel();drawSim(simLast,1)});
+themeLabel();
+
+/* ---------- routing ---------- */
+const PAGES=['bosh','organish','amaliyot','yangiliklar','haqida','aloqa'];
+function route(){
+  const h=location.hash.slice(1); const p=PAGES.includes(h)?h:'bosh';
+  $$('.page').forEach(s=>s.hidden=s.dataset.page!==p);
+  $$('nav.menu a').forEach(a=>a.getAttribute('href')==='#'+p?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+  $('#nav').classList.remove('open');$('#menuBtn').setAttribute('aria-expanded','false');
+  window.scrollTo({top:0,behavior:'auto'});
+  if(p==='amaliyot') requestAnimationFrame(()=>drawSim(simLast,1));
+}
+addEventListener('hashchange',route);
+$('#menuBtn').addEventListener('click',()=>{const o=$('#nav').classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',o)});
+function openTopic(id){location.hash='organish';setTimeout(()=>{const d=document.getElementById(id);if(d){d.open=true;d.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}},60)}
+
+/* ---------- O‘RGANISH: mavzular ---------- */
+const F=(a,b)=>`<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const TOPICS=[
+{id:'t1',t:'Biofizikaning asoslari',s:'Termodinamika, ochiq tizimlar, statsionar holat',
+ p:'Biofizika biologiya, fizika, kimyo va matematika chorrahasida joylashgan fan. U tirik tizimlarni molekula darajasidan tortib hujayra, to‘qima va butun organizm darajasigacha o‘rganadi. Tirik organizm – ochiq tizim: u atrof-muhit bilan doimo modda va energiya almashadi. Shu sababli tirik tizim uzoq vaqt statsionar holatda turadi, ya’ni uning ko‘rsatkichlari o‘zgarmaydi, lekin u termodinamik muvozanatda emas.',
+ f:[['Δ<i>U</i> = <i>Q</i> − <i>A</i>','Termodinamikaning birinchi qonuni: ichki energiya o‘zgarishi olingan issiqlik va bajarilgan ish farqiga teng.'],
+    ['Δ<i>G</i> = Δ<i>H</i> − <i>T</i>Δ<i>S</i>','Gibbs erkin energiyasi: jarayon o‘z-o‘zidan borishi mumkinligini ko‘rsatadi.']],
+ e:'Odam har kuni ovqat bilan taxminan 8–10 MJ energiya oladi va uni issiqlik, mexanik ish hamda yangi moddalar sintezi uchun sarflaydi. Tana haroratining 36,6 °C atrofida saqlanishi – statsionar holatning yaqqol misoli.',
+ m:'Agar ΔG < 0 bo‘lsa, jarayon o‘z-o‘zidan boradi. Agar ΔG > 0 bo‘lsa, unga tashqaridan energiya (masalan, ATP) kerak bo‘ladi.',
+ k:['ochiq tizim','entropiya','statsionar holat'],
+ i:'Ochiq tizim sxemasi: organizmga kiruvchi (ovqat, kislorod) va chiquvchi (issiqlik, CO₂) oqimlar. Canva’da oddiy strelkalar bilan chizish mumkin.'},
+{id:'t2',t:'Molekulyar biofizika',s:'Oqsillar, DNK, molekulalararo ta’sirlar',
+ p:'Molekulyar biofizika oqsillar, nuklein kislotalar, lipidlar va suv kabi biomolekulalarning tuzilishi, harakati va o‘zaro ta’sirini o‘rganadi. Molekulalarni kovalent bog‘lar, vodorod bog‘lar, elektrostatik ta’sir, van-der-Vaals kuchlari va gidrofob ta’sir ushlab turadi. Oqsil faqat to‘g‘ri fazoviy shaklda – konformatsiyada – ishlaydi. Shakl buzilsa (denaturatsiya), funksiya ham yo‘qoladi.',
+ f:[['<i>F</i> = <i>k</i> '+F('<i>q</i><sub>1</sub><i>q</i><sub>2</sub>','<i>ε r</i><sup>2</sup>'),'Kulon qonuni: ε – muhitning dielektrik singdiruvchanligi, r – zaryadlar orasidagi masofa.'],
+    [F('<i>N</i><sub>2</sub>','<i>N</i><sub>1</sub>')+' = <i>e</i><sup>−Δ<i>E</i>/<i>kT</i></sup>','Boltsman taqsimoti: ikki energetik holatdagi molekulalar sonining nisbati; k = 1,38·10⁻²³ J/K.']],
+ e:'Suvning dielektrik singdiruvchanligi ε ≈ 80. Shuning uchun suvda Na⁺ va Cl⁻ ionlari orasidagi tortishish vakuumdagidan 80 marta kuchsiz bo‘ladi va osh tuzi suvda oson eriydi.',
+ m:'DNK qo‘sh spiralida A–T juftini 2 ta, G–C juftini esa 3 ta vodorod bog‘ ushlab turadi. Shuning uchun G–C juftlariga boy DNK yuqoriroq haroratda «eriydi».',
+ k:['konformatsiya','vodorod bog‘','denaturatsiya'],
+ i:'DNK qo‘sh spirali va oqsilning 3D modeli. Bepul tasvirlar: RCSB PDB (rcsb.org), manbani ko‘rsatib.'},
+{id:'t3',t:'Hujayra biofizikasi',s:'Membrana tuzilishi, diffuziya, ion nasoslari',
+ p:'Har bir hujayra membrana bilan o‘ralgan. Suyuq-mozaik modelga (Singer va Nikolson, 1972) ko‘ra, membrana lipid qo‘sh qavatdan iborat, oqsillar esa unda orolchalar kabi «suzib» yuradi. Membrana moddalarni tanlab o‘tkazadi: O₂ va CO₂ oson o‘tadi, ionlar esa faqat maxsus kanal va tashuvchi oqsillar orqali o‘tadi. Passiv transportda energiya sarflanmaydi (modda konsentratsiya gradienti bo‘yicha harakatlanadi), faol transportda esa ATP energiyasi hisobiga gradientga qarshi tashiladi.',
+ f:[['<i>J</i> = −<i>D</i> '+F('<i>dC</i>','<i>dx</i>'),'Fik qonuni: diffuziya oqimi konsentratsiya gradientiga proporsional; minus belgisi oqim kam konsentratsiya tomonga yo‘nalganini bildiradi.'],
+    ['<i>J</i> = <i>P</i> (<i>C</i><sub>1</sub> − <i>C</i><sub>2</sub>)','Membrana orqali diffuziya: P – membrananing o‘tkazuvchanlik koeffitsiyenti.']],
+ e:'Na⁺/K⁺-nasos har bir ATP molekulasi hisobiga 3 ta Na⁺ ionini hujayradan chiqaradi va 2 ta K⁺ ionini ichkariga kiritadi. Tinch holatda organizm sarflaydigan energiyaning salmoqli qismi aynan shu nasos ishiga ketadi.',
+ m:'Membrana qalinligi atigi 4–10 nm – sochdan taxminan 10 000 marta yupqa. Shunga qaramay, u hujayra ichki muhitini tashqi muhitdan ishonchli ajratib turadi.',
+ k:['lipid qo‘sh qavat','passiv transport','faol transport'],
+ i:'Lipid qo‘sh qavat va membrana oqsillari sxemasi. Wikimedia Commons: «Cell membrane detailed diagram» (bepul litsenziya).'},
+{id:'t4',t:'Bioenergetika',s:'ATP, mitoxondriya, xemiosmotik nazariya',
+ p:'Bioenergetika hujayrada energiya qanday olinishi, saqlanishi va sarflanishini o‘rganadi. Hujayraning universal «energiya valyutasi» – ATP. Hayvon hujayralarida ATP asosan mitoxondriyada hosil bo‘ladi. Ichki membranadagi elektron tashish zanjiri protonlarni (H⁺) membranalararo bo‘shliqqa haydaydi va proton gradienti hosil qiladi. Protonlar ATP-sintaza orqali qaytib kirganda ATP sintezlanadi. Bu Piter Mitchellning xemiosmotik nazariyasi (Nobel mukofoti, 1978).',
+ f:[['Δ<i>p</i> = Δ<i>ψ</i> − 59·ΔpH &nbsp;<span style="font-size:.7em;font-style:normal">(mV, 25 °C)</span>','Protonlarni harakatlantiruvchi kuch: elektr (Δψ) va kimyoviy (ΔpH) qismlardan iborat.'],
+    ['Δ<i>G</i> = −<i>nF</i>Δ<i>E</i>','Oksidlanish-qaytarilish reaksiyasining erkin energiyasi; F = 96 485 Kl/mol – Faradey doimiysi.']],
+ e:'Yurak muskuli hujayralarida mitoxondriyalar hujayra hajmining taxminan uchdan bir qismini egallaydi. Yurak bir lahza ham to‘xtamasdan ishlashi uchun juda ko‘p ATP kerak.',
+ m:'Mitoxondriya ichki membranasining potensiali Δψ ≈ 150–180 mV. Juda yupqa membrana uchun bu ulkan elektr maydon: taxminan 300 000 V/sm!',
+ k:['ATP-sintaza','proton gradienti','oksidlanishli fosforlanish'],
+ i:'Mitoxondriya tuzilishi va elektron tashish zanjiri. OpenStax Biology tasvirlari (CC BY litsenziya).'},
+{id:'t5',t:'Bioelektrik hodisalar',s:'Tinchlik va ta’sir potensiallari, Nernst tenglamasi',
+ p:'Hujayra membranasining ikki tomoni orasida elektr potensiallar farqi bor. Tinch holatda nerv hujayrasining ichi tashqarisiga nisbatan manfiy – taxminan −70 mV. Hujayra qo‘zg‘alganda ta’sir potensiali hosil bo‘ladi: avval Na⁺ kanallari ochilib, Na⁺ ichkariga kiradi (depolyarizatsiya, +30…+40 mV gacha), so‘ng K⁺ kanallari ochilib, K⁺ tashqariga chiqadi (repolyarizatsiya). Qisqa vaqt potensial tinchlik darajasidan ham pastga tushadi (giperpolyarizatsiya). Ta’sir potensiali «hammasi yoki hech narsa» qonuniga bo‘ysunadi: stimul chegaraga (≈ −55 mV) yetmasa, impuls umuman hosil bo‘lmaydi.',
+ f:[['<i>E</i> = '+F('<i>RT</i>','<i>zF</i>')+' ln '+F('[C]<sub>tash</sub>','[C]<sub>ich</sub>'),'Nernst tenglamasi: bitta ion uchun muvozanat potensiali.'],
+    ['<i>E</i> ≈ '+F('61,5','<i>z</i>')+' lg '+F('[C]<sub>tash</sub>','[C]<sub>ich</sub>')+' &nbsp;<span style="font-size:.7em;font-style:normal">(mV, 37 °C)</span>','Tana harorati uchun qulay ko‘rinish.']],
+ e:'Elektrokardiogramma (EKG) yurak muskuli hujayralaridagi millionlab ta’sir potensiallarining yig‘indisini tana yuzasidan yozib oladi. Shifokor EKG tishchalariga qarab yurak ritmini baholaydi.',
+ m:'K⁺ uchun muvozanat potensiali ≈ −89 mV, Na⁺ uchun ≈ +67 mV. Tinchlik potensiali (−70 mV) K⁺ potensialiga yaqin, chunki tinch holatda membrana K⁺ ionlarini ancha yaxshi o‘tkazadi.',
+ k:['depolyarizatsiya','repolyarizatsiya','qo‘zg‘alish chegarasi'],
+ i:'Ta’sir potensiali grafigi (fazalari belgilangan) va neyron sxemasi. Amaliyot bo‘limidagi simulyatsiyadan skrinshot olsangiz ham bo‘ladi.'},
+{id:'t6',t:'Tibbiy biofizika',s:'EKG, UTT, rentgen, MRT, qon oqimi',
+ p:'Tibbiy biofizika diagnostika va davolash usullarining fizik asoslarini o‘rganadi. EKG va EEG bioelektrik signallarni yozadi. Ultratovush tekshiruvi (UTT) to‘qimalardan qaytgan tovush to‘lqinlaridan tasvir quradi. Rentgen va kompyuter tomografiyasi (KT) nurlarning turli to‘qimalarda turlicha yutilishiga asoslanadi. Magnit-rezonans tomografiya (MRT) esa vodorod yadrolarining kuchli magnit maydondagi xatti-harakatidan foydalanadi.',
+ f:[['<i>λ</i> = '+F('<i>v</i>','<i>f</i>'),'Ultratovush to‘lqin uzunligi; yumshoq to‘qimada tovush tezligi v ≈ 1540 m/s.'],
+    ['<i>I</i> = <i>I</i><sub>0</sub> <i>e</i><sup>−<i>μx</i></sup>','Rentgen nurining x qalinlikdagi to‘qimadan o‘tgandan keyingi intensivligi; μ – yutilish koeffitsiyenti.'],
+    ['<i>Q</i> = '+F('<i>π r</i><sup>4</sup> Δ<i>P</i>','8 <i>η l</i>'),'Puazeyl qonuni: tomirdagi qon oqimi radiusning to‘rtinchi darajasiga bog‘liq.']],
+ e:'Tomir ichida pilakcha hosil bo‘lib, uning radiusi 2 marta kichraysa, Puazeyl qonuniga ko‘ra qon oqimi 2⁴ = 16 marta kamayadi. Aterosklerozning xavfli bo‘lishining fizik sababi shu.',
+ m:'MRT va UTT ionlovchi nurlanish ishlatmaydi, rentgen va KT esa ishlatadi. Shuning uchun homilador ayollarni tekshirishda ko‘pincha UTT tanlanadi.',
+ k:['ultratovush','ionlovchi nurlanish','gemodinamika'],
+ i:'UTT apparati, EKG lentasi, MRT tasviri. Bepul fotolar: Unsplash, Pexels yoki Wikimedia Commons.'},
+{id:'t7',t:'Optik biofizika',s:'Yorug‘lik yutilishi, fluoressensiya, ko‘rish',
+ p:'Optik biofizika yorug‘likning biologik ob’ektlar bilan o‘zaro ta’sirini o‘rganadi: yutilish, sochilish va fluoressensiya. Fotosintez, ko‘rish, quyosh nuri ta’sirida D vitamini hosil bo‘lishi – fotobiologik jarayonlardir. Laboratoriyalarda spektrofotometriya va fluoressent mikroskopiya eng ko‘p ishlatiladigan optik usullar hisoblanadi. Optogenetika esa yorug‘lik yordamida neyronlarni «yoqish» va «o‘chirish» imkonini beradi.',
+ f:[['<i>E</i> = <i>hν</i> = '+F('<i>hc</i>','<i>λ</i>'),'Foton energiyasi: h = 6,626·10⁻³⁴ J·s – Plank doimiysi, c = 3·10⁸ m/s.'],
+    ['<i>A</i> = lg '+F('<i>I</i><sub>0</sub>','<i>I</i>')+' = <i>ε c l</i>','Buger–Lambert–Ber qonuni: A – optik zichlik, ε – molyar yutilish koeffitsiyenti, l – kyuveta qalinligi.']],
+ e:'NADH molekulasi 340 nm to‘lqin uzunligidagi yorug‘likni yutadi, NAD⁺ esa yutmaydi. Shuning uchun spektrofotometrda 340 nm dagi optik zichlik o‘zgarishiga qarab ko‘plab fermentlarning faolligi o‘lchanadi.',
+ m:'Ko‘z to‘r pardasidagi tayoqcha hujayralar hatto bitta fotonni ham seza oladi. Bu tabiatdagi eng sezgir yorug‘lik detektorlaridan biri.',
+ k:['spektrofotometriya','fluoressensiya','fotoretseptor'],
+ i:'Yorug‘lik spektri, spektrofotometr, fluoressent mikroskopda bo‘yalgan hujayralar (Wikimedia Commons).'}
+];
+const chev='<svg class="chev" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+$('#topics').innerHTML=TOPICS.map((t,i)=>`
+<details class="topic" id="${t.id}" ${i===0?'open':''}>
+  <summary><span class="tnum">${i+1}</span><span class="ttl"><b>${t.t}</b><small>${t.s}</small></span>${chev}</summary>
+  <div class="tbody">
+    <div class="tcol">
+      <p>${t.p}</p>
+      <h4>Asosiy formulalar</h4>
+      ${t.f.map(f=>`<div class="formula">${f[0]}</div><p class="fdesc">${f[1]}</p>`).join('')}
+      <h4>Hayotdan misol</h4>
+      <p>${t.e}</p>
+      <h4>Kalit atamalar</h4>
+      <div class="terms">${t.k.map(k=>`<span class="tag t">${k}</span>`).join('')}</div>
+    </div>
+    <aside class="tside">
+      <div class="muhim"><b><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5v4.2M8 11.2v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Muhim</b><p>${t.m}</p></div>
+      <div class="imgidea"><b>Rasm g‘oyasi</b><span>${t.i}</span></div>
+      <a class="btn btn-ghost btn-sm" href="#amaliyot" style="justify-self:start">Bu mavzu bo‘yicha mashq →</a>
+    </aside>
+  </div>
+</details>`).join('');
+
+/* ---------- AMALIYOT: testlar ---------- */
+const QUIZ=[
+{id:'q1',l:'b',q:'Tinch holatdagi nerv hujayrasining membrana potensiali taxminan qancha?',o:['−70 mV','+40 mV','0 mV','−200 mV'],a:0,x:'Tinch holatda hujayra ichi tashqarisiga nisbatan manfiy, taxminan −70 mV. Asosiy sabab – membrananing K⁺ ionlariga yuqori o‘tkazuvchanligi.'},
+{id:'q2',l:'b',q:'Hujayraning «energetik stansiyasi» deb qaysi organoidga aytiladi?',o:['Ribosoma','Mitoxondriya','Lizosoma','Golji apparati'],a:1,x:'ATP asosan mitoxondriyada, oksidlanishli fosforlanish jarayonida hosil bo‘ladi.'},
+{id:'q3',l:'b',q:'Hujayra membranasining asosini nima tashkil etadi?',o:['Sellyuloza qavati','DNK zanjiri','Lipid qo‘sh qavat','Kraxmal donachalari'],a:2,x:'Suyuq-mozaik modelga ko‘ra membrana asosi – fosfolipidlardan iborat qo‘sh qavat, unga oqsillar joylashgan.'},
+{id:'q4',l:'b',q:'Qaysi tekshiruv usulida ionlovchi nurlanish ishlatilmaydi?',o:['Rentgenografiya','Kompyuter tomografiyasi','Flyuorografiya','MRT'],a:3,x:'MRT kuchli magnit maydon va radioto‘lqinlardan foydalanadi. Rentgen, KT va flyuorografiya rentgen nurlaridan foydalanadi.'},
+{id:'q5',l:'o',q:'Na⁺/K⁺-nasos bitta ATP hisobiga qanday ion almashinuvini bajaradi?',o:['3 Na⁺ ichkariga, 2 K⁺ tashqariga','3 Na⁺ tashqariga, 2 K⁺ ichkariga','1 Na⁺ tashqariga, 1 K⁺ ichkariga','2 Na⁺ tashqariga, 3 K⁺ ichkariga'],a:1,x:'Nasos 3 ta Na⁺ ni chiqaradi va 2 ta K⁺ ni kiritadi. Natijada hujayra ichida musbat zaryad kamayadi – nasos elektrogen.'},
+{id:'q6',l:'o',q:'Ta’sir potensialining depolyarizatsiya fazasi asosan nima bilan bog‘liq?',o:['K⁺ ning tashqariga chiqishi','Cl⁻ ning ichkariga kirishi','Na⁺ ning ichkariga kirishi','Ca²⁺ ning tashqariga chiqishi'],a:2,x:'Kuchlanishga bog‘liq Na⁺ kanallari ochiladi va Na⁺ ionlari hujayra ichiga kirib, potensialni musbat tomonga suradi.'},
+{id:'q7',l:'o',q:'Yorug‘likning to‘lqin uzunligi kamaysa, foton energiyasi qanday o‘zgaradi?',o:['Ortadi','Kamayadi','O‘zgarmaydi','Nolga teng bo‘ladi'],a:0,x:'E = hc/λ: to‘lqin uzunligi λ maxrajda, shuning uchun λ kamaysa, energiya ortadi. Shu sababli UB nurlar ko‘rinadigan nurdan xavfliroq.'},
+{id:'q8',l:'o',q:'Fik qonuniga ko‘ra diffuziya oqimi nimaga to‘g‘ri proporsional?',o:['Modda massasiga','Konsentratsiya gradientiga','Membrana qalinligiga','Kuzatish vaqtiga'],a:1,x:'J = −D·dC/dx. Gradient qancha katta bo‘lsa, oqim shuncha kuchli. Membrana qalinligi esa teskari ta’sir qiladi.'},
+{id:'q9',l:'y',q:'Tomir radiusi 2 marta kamaysa, Puazeyl qonuniga ko‘ra qon oqimi necha marta kamayadi?',o:['2 marta','4 marta','8 marta','16 marta'],a:3,x:'Q ~ r⁴, shuning uchun 2⁴ = 16. Radiusning kichik o‘zgarishi oqimga juda katta ta’sir qiladi.'},
+{id:'q10',l:'y',q:'37 °C da [K⁺]tash = 5 mM, [K⁺]ich = 140 mM. K⁺ uchun Nernst potensiali taxminan qancha?',o:['+89 mV','−89 mV','−61 mV','−30 mV'],a:1,x:'E = 61,5·lg(5/140) = 61,5·(−1,447) ≈ −89 mV. Ichkarida K⁺ ko‘p bo‘lgani uchun potensial manfiy.'},
+{id:'q11',l:'y',q:'Mitchell nazariyasiga ko‘ra ATP-sintazani nima harakatga keltiradi?',o:['Ichki membrana orqali protonlarning elektrokimyoviy gradienti','Na⁺ ionlari gradienti','ATP gidrolizi','Glyukozaning diffuziyasi'],a:0,x:'Elektron tashish zanjiri protonlarni tashqariga haydaydi. Protonlar ATP-sintaza orqali qaytganda ferment aylanadi va ATP hosil qiladi.'},
+{id:'q12',l:'y',q:'340 nm da NADH uchun ε = 6220 M⁻¹·sm⁻¹. Optik zichlik A = 0,6, kyuveta l = 1 sm. NADH konsentratsiyasi qancha?',o:['≈ 9,6 mM','≈ 96 µM','≈ 0,96 µM','≈ 3,7 mM'],a:1,x:'c = A/(ε·l) = 0,6/6220 ≈ 9,6·10⁻⁵ M = 96 µM.'},
+{id:'q13',l:'b',q:'Osmos deb nimaga aytiladi?',o:['Ionlarning ATP hisobiga tashilishi','Suvning yarim o‘tkazgich membrana orqali o‘tishi','Oqsil sintezi','Yorug‘likning yutilishi'],a:1,x:'Osmosda suv erigan modda kam bo‘lgan tomondan ko‘p bo‘lgan tomonga membrana orqali o‘tadi.'},
+{id:'q14',l:'b',q:'Eritrotsit gipotonik eritmaga (masalan, distillangan suvga) tushsa, nima bo‘ladi?',o:['Burishadi','O‘zgarmaydi','Shishadi va yorilishi mumkin (gemoliz)','Ikkiga bo‘linadi'],a:2,x:'Tashqarida tuz kam, shuning uchun suv hujayra ichiga kiradi. Eritrotsit shishadi va yorilib ketishi mumkin.'},
+{id:'q15',l:'b',q:'Ultratovush deb qanday chastotali tovushga aytiladi?',o:['20 Hz dan past','200 Hz atrofida','2 kHz atrofida','20 kHz dan yuqori'],a:3,x:'Inson qulog‘i taxminan 20 Hz – 20 kHz oralig‘ini eshitadi. Undan yuqorisi ultratovush. Tibbiy UTT odatda 2–15 MHz da ishlaydi.'},
+{id:'q16',l:'b',q:'Fluoressent mikroskopda bo‘yalgan hujayra qismlari nima uchun yorug‘lanadi?',o:['Bo‘yoq yutgan yorug‘likni uzunroq to‘lqinda qayta chiqaradi','Hujayra issiqlik chiqaradi','Mikroskop rentgen nuri ishlatadi','Hujayra o‘zi elektr toki hosil qiladi'],a:0,x:'Fluoressensiyada molekula bir to‘lqin uzunligidagi nurni yutib, uzunroq (kam energiyali) to‘lqinda nur chiqaradi.'},
+{id:'q17',l:'o',q:'Qaysi modda membranadan oddiy diffuziya bilan eng oson o‘tadi?',o:['Na⁺ ioni','Glyukoza','O₂ molekulasi','Oqsil'],a:2,x:'O₂ kichik va qutbsiz, lipid qavatda yaxshi eriydi. Ionlar va glyukoza uchun kanal yoki tashuvchi oqsil kerak.'},
+{id:'q18',l:'o',q:'Nernst tenglamasida z harfi nimani bildiradi?',o:['Ion zaryadi (valentligi)','Absolyut harorat','Faradey doimiysi','Ion konsentratsiyasi'],a:0,x:'z – ion zaryadi: K⁺ va Na⁺ uchun +1, Ca²⁺ uchun +2, Cl⁻ uchun −1.'},
+{id:'q19',l:'o',q:'Membrana potensiali −70 mV dan −80 mV gacha o‘zgardi. Bu qanday ataladi?',o:['Depolyarizatsiya','Giperpolyarizatsiya','Repolyarizatsiya','Ta’sir potensiali'],a:1,x:'Potensial tinchlik darajasidan ham manfiyroq bo‘lsa – giperpolyarizatsiya. Bunda hujayrani qo‘zg‘atish qiyinlashadi.'},
+{id:'q20',l:'o',q:'Rentgen nurining to‘qimada susayishi qaysi formula bilan ifodalanadi?',o:['J = −D·dC/dx','Q = πr⁴ΔP/(8ηl)','I = I₀·e^(−μx)','E = hc/λ'],a:2,x:'Rentgen nuri intensivligi to‘qima qalinligi oshgani sari eksponensial kamayadi. Suyakda μ katta, shuning uchun u tasvirda oq ko‘rinadi.'},
+{id:'q21',l:'y',q:'UTT chastotasi f = 5 MHz, to‘qimada v = 1540 m/s. To‘lqin uzunligi qancha?',o:['≈ 0,31 mm','≈ 3,1 mm','≈ 0,031 mm','≈ 7,7 mm'],a:0,x:'λ = v/f = 1540 / (5·10⁶) = 3,08·10⁻⁴ m ≈ 0,31 mm. Chastota qancha yuqori bo‘lsa, tasvir shuncha aniq.'},
+{id:'q22',l:'y',q:'Reaksiyada ΔH = −20 kJ/mol, TΔS = +10 kJ/mol. ΔG qancha va reaksiya o‘z-o‘zidan boradimi?',o:['−10 kJ/mol, boradi','−30 kJ/mol, boradi','+30 kJ/mol, bormaydi','−10 kJ/mol, bormaydi'],a:1,x:'ΔG = ΔH − TΔS = −20 − 10 = −30 kJ/mol. ΔG < 0, demak reaksiya o‘z-o‘zidan boradi.'},
+{id:'q23',l:'y',q:'Eritmaning optik zichligi A = 1. Tushgan yorug‘likning qancha qismi eritmadan o‘tadi?',o:['1%','50%','90%','10%'],a:3,x:'A = lg(I₀/I) = 1, demak I₀/I = 10 va I = 0,1·I₀, ya’ni 10%.'},
+{id:'q24',l:'y',q:'Mitoxondriyaga protonofor (masalan, 2,4-dinitrofenol) qo‘shilsa, nima sodir bo‘ladi?',o:['ATP sintezi ortadi','Proton gradienti yo‘qoladi, O₂ iste’moli ortadi, ATP sintezi kamayadi','Elektron tashish butunlay to‘xtaydi','Membrana potensiali ortadi'],a:1,x:'Protonofor protonlarni ATP-sintazani chetlab o‘tkazadi. Nafas va oksidlanishli fosforlanish ajraladi: energiya issiqlikka aylanadi.'}
+];
+QUIZ.sort((a,b)=>'boy'.indexOf(a.l)-'boy'.indexOf(b.l));
+let level='all';
+let quizSt=store.get('quiz',{});
+function renderQuiz(){
+  const list=QUIZ.filter(q=>level==='all'||q.l===level);
+  $('#quiz').innerHTML=list.map(q=>{
+    const n=QUIZ.indexOf(q)+1, st=quizSt[q.id];
+    return `<div class="q" data-id="${q.id}">
+      <div class="q-top"><span class="tag ${LVL[q.l][1]}">${LVL[q.l][0]}</span><small>${n}-savol</small></div>
+      <p class="qt">${q.q}</p>
+      <div class="opts">${q.o.map((o,i)=>{let c='';if(st!==undefined){if(i===q.a)c='ok';else if(i===st)c='no'}
+        return `<button type="button" class="opt ${c}" data-i="${i}" ${st!==undefined?'disabled':''}><span class="k">${'ABCD'[i]}</span><span>${o}</span></button>`}).join('')}</div>
+      ${st!==undefined?`<div class="expl ${st===q.a?'ok':'no'}"><b>${st===q.a?'To‘g‘ri! Barakalla.':'Afsuski, noto‘g‘ri. To‘g‘ri javob: '+'ABCD'[q.a]+'.'}</b>${q.x}</div>`:''}
+    </div>`}).join('');
+}
+$('#quiz').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||b.disabled)return;const id=b.closest('.q').dataset.id;quizSt[id]=+b.dataset.i;store.set('quiz',quizSt);renderQuiz();updateProg();const qq=QUIZ.find(x=>x.id===id);sendEvent({type:'test',task:id,title:qq.q,ok:quizSt[id]===qq.a})});
+$('#quizReset').addEventListener('click',()=>{quizSt={};store.set('quiz',quizSt);renderQuiz();updateProg()});
+
+/* ---------- formula masalalari ---------- */
+const PROBS=[
+{id:'p1',l:'b',t:'Yashil yorug‘lik fotoni',q:'To‘lqin uzunligi λ = 500 nm bo‘lgan foton energiyasini hisoblang. Javobni 10⁻¹⁹ J birligida yozing.',u:'× 10⁻¹⁹ J',a:3.976,tol:.02,
+ h:'E = hc/λ formulasidan foydalaning. 500 nm = 5·10⁻⁷ m ekanini unutmang.',s:'E = (6,626·10⁻³⁴ · 3·10⁸) / (5·10⁻⁷) = 3,98·10⁻¹⁹ J'},
+{id:'p2',l:'o',t:'Natriy uchun muvozanat potensiali',q:'37 °C da [Na⁺]tash = 145 mM, [Na⁺]ich = 12 mM. Na⁺ uchun Nernst potensialini mV da hisoblang.',u:'mV',a:66.6,tol:.025,
+ h:'Na⁺ uchun z = +1. E ≈ 61,5·lg([C]tash/[C]ich) formulasini qo‘llang.',s:'E = 61,5 · lg(145/12) = 61,5 · lg(12,08) = 61,5 · 1,082 ≈ +66,6 mV'},
+{id:'p3',l:'y',t:'Spektrofotometrda NADH',q:'340 nm da namunaning optik zichligi A = 0,45; NADH uchun ε = 6220 M⁻¹·sm⁻¹; kyuveta l = 1 sm. NADH konsentratsiyasini µM da toping.',u:'µM',a:72.35,tol:.02,
+ h:'Buger–Lambert–Ber qonunidan c = A/(ε·l). Molyarni µM ga o‘tkazish uchun 10⁶ ga ko‘paytiring.',s:'c = 0,45 / (6220 · 1) = 7,23·10⁻⁵ M ≈ 72,3 µM'},
+{id:'p4',l:'b',t:'Toraygan tomir',q:'Tomir radiusi 1,5 marta kichraydi, bosim o‘zgarmaydi. Puazeyl qonuniga ko‘ra qon oqimi necha marta kamayadi?',u:'marta',a:5.0625,tol:.02,
+ h:'Q ~ r⁴. Demak oqim 1,5⁴ marta kamayadi.',s:'1,5⁴ = 1,5 · 1,5 · 1,5 · 1,5 = 5,06 marta'},
+{id:'p5',l:'o',t:'UTT to‘lqin uzunligi',q:'Ultratovush datchigi f = 3,5 MHz chastotada ishlaydi. Yumshoq to‘qimada v = 1540 m/s. To‘lqin uzunligini mm da toping.',u:'mm',a:0.44,tol:.02,
+ h:'λ = v/f. 3,5 MHz = 3,5·10⁶ Hz. Natijani metrdan millimetrga o‘tkazing (×1000).',s:'λ = 1540 / (3,5·10⁶) = 4,4·10⁻⁴ m = 0,44 mm'},
+{id:'p6',l:'o',t:'Nafas zanjiri energiyasi',q:'NADH dan O₂ gacha elektron o‘tganda ΔE = 1,14 V, n = 2. ΔG ni kJ/mol da hisoblang (F = 96 485 Kl/mol).',u:'kJ/mol',a:-220,tol:.02,
+ h:'ΔG = −nFΔE. Javob manfiy bo‘ladi. J dan kJ ga o‘tkazish uchun 1000 ga bo‘ling.',s:'ΔG = −2 · 96 485 · 1,14 = −219 986 J/mol ≈ −220 kJ/mol'},
+{id:'p7',l:'y',t:'Kalsiy uchun muvozanat potensiali',q:'37 °C da [Ca²⁺]tash = 2 mM, [Ca²⁺]ich = 100 nM (0,0001 mM). Ca²⁺ uchun Nernst potensialini mV da toping.',u:'mV',a:132.3,tol:.02,
+ h:'Ca²⁺ uchun z = 2. E ≈ (61,5/2)·lg([C]tash/[C]ich).',s:'E = 30,75 · lg(20 000) = 30,75 · 4,301 ≈ +132 mV'}
+];
+PROBS.sort((a,b)=>'boy'.indexOf(a.l)-'boy'.indexOf(b.l));
+let probSt=store.get('prob',{});
+function renderProbs(){
+  const list=PROBS.filter(p=>level==='all'||p.l===level);
+  $('#probs').innerHTML=list.length?list.map(p=>`<div class="prob" data-id="${p.id}">
+    <div class="q-top"><span class="tag ${LVL[p.l][1]}">${LVL[p.l][0]}</span>${probSt[p.id]?'<span class="tag g">Yechildi</span>':''}</div>
+    <h3>${p.t}</h3><p>${p.q}</p>
+    <div class="ansrow"><input id="in_${p.id}" inputmode="decimal" aria-label="Javob: ${p.t}" placeholder="Javob"><span class="unit">${p.u}</span>
+      <button class="btn btn-primary btn-sm" type="button" data-act="check">Tekshirish</button>
+      <button class="btn btn-ghost btn-sm" type="button" data-act="hint">Maslahat</button>
+      <button class="btn btn-ghost btn-sm" type="button" data-act="sol">Yechimni ko‘rish</button></div>
+    <p class="fb" aria-live="polite"></p>
+    <div class="sol" data-hint hidden><b>Maslahat</b><span>${p.h}</span></div>
+    <div class="sol" data-sol hidden><b>Yechim</b><span class="m">${p.s}</span></div>
+  </div>`).join(''):'<p style="color:var(--muted)">Bu darajada masala yo‘q.</p>';
+}
+$('#probs').addEventListener('click',e=>{const b=e.target.closest('button[data-act]');if(!b)return;const box=b.closest('.prob'),p=PROBS.find(x=>x.id===box.dataset.id);
+  if(b.dataset.act==='hint'){box.querySelector('[data-hint]').hidden=false;return}
+  if(b.dataset.act==='sol'){box.querySelector('[data-sol]').hidden=false;return}
+  const raw=box.querySelector('input').value.trim().replace(',','.').replace('−','-'),v=parseFloat(raw),fb=box.querySelector('.fb');
+  if(isNaN(v)){fb.className='fb no';fb.textContent='Iltimos, son kiriting.';return}
+  if(Math.abs(v-p.a)<=Math.abs(p.a)*p.tol){fb.className='fb ok';fb.textContent='To‘g‘ri! Ajoyib hisob-kitob.';probSt[p.id]=true;store.set('prob',probSt);updateProg();sendEvent({type:'masala',task:p.id,title:p.t,ok:true});
+    if(!box.querySelector('.tag.g'))box.querySelector('.q-top').insertAdjacentHTML('beforeend','<span class="tag g">Yechildi</span>')}
+  else{fb.className='fb no';fb.textContent='Hali emas. Birliklarni tekshiring yoki «Maslahat»ni bosing.';sendEvent({type:'masala',task:p.id,title:p.t,ok:false})}
+});
+$('#probs').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input'))e.target.closest('.prob').querySelector('[data-act=check]').click()});
+
+/* ---------- daraja filtri ---------- */
+$$('.levels button').forEach(b=>b.addEventListener('click',()=>{level=b.dataset.lvl;$$('.levels button').forEach(x=>x.setAttribute('aria-pressed',x===b));renderQuiz();renderProbs()}));
+$$('[data-scroll]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.getElementById(a.dataset.scroll).scrollIntoView({behavior:reduce?'auto':'smooth'})}));
+
+/* ---------- Nernst kalkulyatori ---------- */
+const IONS={K:[1,5,140],Na:[1,145,12],Cl:[-1,110,10],Ca:[2,2,0.0001]};
+const NAMES={K:'K⁺',Na:'Na⁺',Cl:'Cl⁻',Ca:'Ca²⁺'};
+const pos=v=>Math.min(100,Math.max(0,(v+120)/270*100));
+function calc(){
+  const z=+$('#nZ').value, T=+$('#nT').value+273.15, co=+$('#nCo').value, ci=+$('#nCi').value;
+  if(!z||co<=0||ci<=0||T<=0){$('#nOut').textContent='—';$('#nNote').textContent='Zaryad noldan farqli, konsentratsiyalar esa musbat bo‘lishi kerak.';return}
+  const E=8.314*T/(z*96485)*Math.log(co/ci)*1000;
+  $('#nOut').textContent=(E>0?'+':'')+num(E)+' mV';
+  $('#nMk').style.left=pos(E)+'%';
+  const ion=NAMES[$('#nIon').value];
+  $('#nNote').textContent=Math.abs(E)<1?'Ichki va tashqi konsentratsiyalar teng – potensial nolga yaqin.':
+    `Agar membrana faqat ${ion} ni o‘tkazganda, tinch holatdagi potensial ${num(E)} mV bo‘lardi. Tinchlik potensiali (−70 mV) bilan solishtiring.`;
+}
+$('#nRest').style.left=pos(-70)+'%';$('#nRestLbl').style.left=pos(-70)+'%';
+$('#nIon').addEventListener('change',()=>{const v=IONS[$('#nIon').value];$('#nZ').value=v[0];$('#nCo').value=v[1];$('#nCi').value=v[2];calc()});
+['#nZ','#nT','#nCo','#nCi'].forEach(s=>$(s).addEventListener('input',calc));
+
+/* ---------- moslashtirish o‘yini ---------- */
+const PAIRS=[
+['Depolyarizatsiya','Membrana potensialining musbat tomonga siljishi'],
+['Osmos','Suvning yarim o‘tkazgich membrana orqali kam konsentratsiyali eritmadan ko‘p konsentratsiyali eritmaga o‘tishi'],
+['Diffuziya','Moddaning yuqori konsentratsiyadan past konsentratsiya tomonga o‘z-o‘zidan harakati'],
+['Fluoressensiya','Yutilgan yorug‘likdan uzunroq to‘lqin uzunlikdagi nurni qayta chiqarish'],
+['ATP-sintaza','Protonlar oqimi hisobiga ATP hosil qiluvchi ferment'],
+['Ion kanali','Ionlarni membrana orqali tanlab o‘tkazuvchi oqsil teshigi'],
+['Giperpolyarizatsiya','Membrana potensialining tinchlik darajasidan ham manfiyroq bo‘lishi'],
+['Gemoliz','Eritrotsitlarning yorilib, gemoglobinning eritmaga chiqishi']
+];
+let matched=new Set(store.get('match',[])), selTerm=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function renderMatch(){
+  $('#mTerms').innerHTML=PAIRS.map((p,i)=>`<button type="button" class="mi term ${matched.has(i)?'matched':''}" data-i="${i}" ${matched.has(i)?'disabled':''}>${p[0]}</button>`).join('');
+  $('#mDefs').innerHTML=shuffle(PAIRS.map((p,i)=>i)).map(i=>`<button type="button" class="mi def ${matched.has(i)?'matched':''}" data-i="${i}" ${matched.has(i)?'disabled':''}>${PAIRS[i][1]}</button>`).join('');
+  $('#matchCount').textContent=matched.size+' / '+PAIRS.length+' juftlik';
+  $('#matchMsg').className='fb ok';$('#matchMsg').textContent=matched.size===PAIRS.length?'Barakalla! Barcha juftliklar topildi.':'';
+}
+$('#mTerms').addEventListener('click',e=>{const b=e.target.closest('.mi');if(!b||b.disabled)return;$$('#mTerms .mi').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selTerm=+b.dataset.i;$('#matchMsg').textContent=''});
+$('#mDefs').addEventListener('click',e=>{const b=e.target.closest('.mi');if(!b||b.disabled)return;
+  if(selTerm===null){$('#matchMsg').className='fb no';$('#matchMsg').textContent='Avval chap ustundan atamani tanlang.';return}
+  if(+b.dataset.i===selTerm){matched.add(selTerm);store.set('match',[...matched]);selTerm=null;renderMatch();updateProg();if(matched.size===PAIRS.length)sendEvent({type:'oyin',task:'match',title:'Moslashtirish o‘yini',ok:true})}
+  else{b.classList.remove('wrong');void b.offsetWidth;b.classList.add('wrong');$('#matchMsg').className='fb no';$('#matchMsg').textContent='Bu juftlik emas. Yana urinib ko‘ring!'}
+});
+$('#matchReset').addEventListener('click',()=>{matched=new Set();store.set('match',[]);selTerm=null;renderMatch();updateProg()});
+
+/* ---------- ta’sir potensiali egri chizig‘i ---------- */
+function spike(t,v0=-55){ // t: ms after threshold crossing, returns mV
+  if(t<0) return v0;
+  if(t<0.5) return v0+(40-v0)*Math.sin(t/0.5*Math.PI/2);
+  if(t<2.2){const u=(t-0.5)/1.7;return 40-120*(0.5-0.5*Math.cos(u*Math.PI))}
+  return -70-10*Math.exp(-(t-2.2)/2.2);
+}
+function apScope(t){ // periodic 0..16 ms
+  t=t%16;
+  if(t<5) return -70+0.6*Math.sin(t*7);
+  if(t<6) return -70+15*((t-5));      // stimul → chegara
+  const s=spike(t-6); return s;
+}
+
+/* hero oscillograf */
+const sc=$('#scopeCanvas'), sctx=sc.getContext('2d');
+function fit(c){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);c.getContext('2d').setTransform(d,0,0,d,0,0);return r}
+let sr=fit(sc); new ResizeObserver(()=>{sr=fit(sc);if(reduce)drawScope(9)}).observe(sc);
+function grid(ctx,w,h,yv,cGrid,cLbl,cWarn,pad){
+  ctx.clearRect(0,0,w,h);
+  ctx.lineWidth=1;ctx.strokeStyle=cGrid;
+  for(let x=pad;x<=w;x+=(w-pad)/10){ctx.beginPath();ctx.moveTo(x,6);ctx.lineTo(x,h-6);ctx.stroke()}
+  ctx.font='11px Lexend, system-ui, sans-serif';ctx.fillStyle=cLbl;ctx.textBaseline='middle';
+  [40,0,-70].forEach(v=>{const y=yv(v);ctx.strokeStyle=cGrid;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(w,y);ctx.stroke();ctx.fillText((v>0?'+':v<0?'−':'')+Math.abs(v),4,y)});
+  const yt=yv(-55);ctx.setLineDash([5,5]);ctx.strokeStyle=cWarn;ctx.beginPath();ctx.moveTo(pad,yt);ctx.lineTo(w,yt);ctx.stroke();ctx.setLineDash([]);
+}
+function drawScope(now){
+  const w=sr.width,h=sr.height,pad=34,yv=v=>8+(50-v)/140*(h-16);
+  grid(sctx,w,h,yv,css('--scope-grid'),css('--scope-label'),css('--scope-warn'),pad);
+  const span=24, tEnd=now, ink=css('--scope-ink');
+  sctx.lineWidth=2.4;sctx.strokeStyle=ink;sctx.lineJoin='round';sctx.shadowColor=ink;sctx.shadowBlur=8;
+  sctx.beginPath();let last=-70;
+  for(let i=0;i<=w-pad;i+=1.5){const t=tEnd-span+span*i/(w-pad);last=apScope(Math.max(0,t));const y=yv(last);i?sctx.lineTo(pad+i,y):sctx.moveTo(pad+i,y)}
+  sctx.stroke();sctx.shadowBlur=0;
+  sctx.fillStyle=ink;sctx.beginPath();sctx.arc(w-1.5,yv(last),3.5,0,7);sctx.fill();
+  $('#scopeVal').textContent=(last>0.5?'+':'')+num(last,0)+' mV';
+}
+if(reduce){drawScope(9)}else{let t0=performance.now();(function loop(ts){drawScope(24+(ts-t0)/160);requestAnimationFrame(loop)})(t0)}
+
+/* simulyatsiya */
+const simC=$('#simCanvas'),simX=simC.getContext('2d');let simR=null,simLast=10,simAnim=0;
+function simV(t,s){ // 0..14 ms, stimul at 2 ms
+  if(t<2) return -70;
+  const peak=-70+s;
+  if(t<2.4) return -70+s*(t-2)/0.4;
+  if(peak>=-55) return spike(t-2.4,peak);
+  return -70+s*Math.exp(-(t-2.4)/1.6);
+}
+function drawSim(s,prog){
+  simR=fit(simC);const w=simR.width,h=simR.height;if(w<10)return;const pad=34,yv=v=>10+(50-v)/140*(h-20);
+  grid(simX,w,h,yv,css('--scope-grid'),css('--scope-label'),css('--scope-warn'),pad);
+  simX.fillStyle=css('--scope-label');simX.fillText('stimul',pad+(w-pad)*2/14-14,h-14);
+  const ink=css('--scope-ink');simX.strokeStyle=ink;simX.lineWidth=2.4;simX.shadowColor=ink;simX.shadowBlur=8;simX.beginPath();
+  const n=w-pad;for(let i=0;i<=n*prog;i+=1.5){const t=14*i/n,y=yv(simV(t,s));i?simX.lineTo(pad+i,y):simX.moveTo(pad+i,y)}
+  simX.stroke();simX.shadowBlur=0;
+}
+$('#simS').addEventListener('input',e=>{$('#simSv').textContent='+'+e.target.value+' mV'});
+$('#simGo').addEventListener('click',()=>{
+  const s=+$('#simS').value;simLast=s;cancelAnimationFrame(simAnim);
+  const peak=-70+s, fire=peak>=-55;
+  $('#simMsg').innerHTML=fire?`<b style="color:var(--good)">Ta’sir potensiali hosil bo‘ldi!</b> Stimul potensialni ${num(peak,0)} mV gacha ko‘tardi – bu chegaradan (−55 mV) yuqori. Stimulni yanada oshirib ko‘ring: cho‘qqi balandligi (+40 mV) o‘zgarmaydi. Bu «hammasi yoki hech narsa» qonuni.`
+    :`<b style="color:var(--warn)">Impuls hosil bo‘lmadi.</b> Stimul potensialni faqat ${num(peak,0)} mV gacha ko‘tardi va chegaraga (−55 mV) yetmadi, shuning uchun potensial tinchlik darajasiga qaytdi. Stimulni oshirib ko‘ring.`;
+  if(reduce){drawSim(s,1);return}
+  const t0=performance.now();(function a(ts){const p=Math.min(1,(ts-t0)/1100);drawSim(s,p);if(p<1)simAnim=requestAnimationFrame(a)})(t0);
+});
+new ResizeObserver(()=>drawSim(simLast,1)).observe(simC);
+
+const IDEAS=[
+['Diffuziya va membrana','Ekranda membrana bilan ajratilgan ikki bo‘lim va zarrachalar. O‘tkazuvchanlik slayderi bor. O‘quvchi P ortganda konsentratsiyalar tezroq tenglashishini kuzatadi.','o'],
+['Osmos va eritrotsit','Eritrotsitni gipotonik, izotonik yoki gipertonik eritmaga «soling». Hujayra shishadi, o‘zgarmaydi yoki burishadi. Gemoliz tushunchasini ko‘rsatish uchun qulay.','b'],
+['Virtual spektrofotometr','Konsentratsiyani o‘zgartiring va optik zichlik A to‘g‘ri chiziq bo‘ylab ortishini ko‘ring. Natijalardan kalibrlash grafigini chizish mumkin.','o'],
+['Mitoxondriya proton nasosi','Elektronlar zanjir bo‘ylab yuradi, protonlar tashqariga chiqadi, ATP-sintaza aylanadi. Ingibitor qo‘shilganda nima bo‘lishini kuzating.','y']
+];
+$('#ideas').innerHTML=IDEAS.map(i=>`<div class="idea"><h3>${i[0]}</h3><p>${i[1]}</p><div class="tags"><span class="tag ${LVL[i[2]][1]}">${LVL[i[2]][0]}</span><span class="tag">G‘oya</span></div></div>`).join('');
+
+/* ---------- topshiriqlar ---------- */
+const TODAY={date:'31-oktabr, 2026 · shanba',title:'Nernst tenglamasi: ionlar muvozanat potensiali',lvl:'o',time:'≈ 25 daqiqa',
+ items:[['d1','«Bioelektrik hodisalar» mavzusini o‘qing','O‘rganish → 5-mavzu, 10 daqiqa'],
+        ['d2','O‘rta darajadagi testlardan kamida 4 tasiga to‘g‘ri javob bering','Amaliyot → Testlar → O‘rta. Avtomatik tekshiriladi'],
+        ['d3','Cl⁻ uchun muvozanat potensialini hisoblang','37 °C, [Cl⁻]tash = 110 mM, [Cl⁻]ich = 10 mM. Qo‘lda hisoblang, kalkulyatordan faqat tekshirish uchun foydalaning']]};
+const WEEK={range:'26-oktabr – 1-noyabr',items:[
+ ['w1','Membrana tuzilishi sxemasini daftaringizga chizing','Kamida 5 ta qismini belgilang'],
+ ['w2','Boshlang‘ich darajadagi barcha testlarga to‘g‘ri javob bering','Amaliyot bo‘limi. Avtomatik tekshiriladi'],
+ ['w3','Moslashtirish o‘yinini yakunlang','8 ta juftlik. Avtomatik tekshiriladi'],
+ ['w4','«Optik biofizika»dan bitta hayotiy misol toping','Guruhingizga yoki sinfdoshingizga aytib bering'],
+ ['w5','Bu haftadagi yangiliklardan birini o‘qing','Mazmunini 3 jumlada yozing'],
+ ['w6','Yuqori darajadagi formula masalalaridan kamida ikkitasini yeching','Amaliyot → Masalalar → Yuqori. Avtomatik tekshiriladi'],
+ ['w7','Simulyatsiyada qo‘zg‘alish chegarasini 1 mV aniqlikda toping','Natijani va xulosangizni daftaringizga yozing']]};
+const BANK=[
+ ['k1','Kunlik ratsioningiz energiyasini hisoblang','Bir kunda yeyilgan taomlar kkal miqdorini qo‘shing va kJ ga o‘tkazing (1 kkal = 4,184 kJ)','t1','b'],
+ ['k2','Kartoshka bilan osmos tajribasi','Ikki bo‘lak kartoshkani toza va sho‘r suvga 30 daqiqaga soling. Oldin va keyin tortib, farqni osmos bilan izohlang','t3','b'],
+ ['k3','Uydagi tibbiy asboblar fizikasi','Termometr, tonometr va puls-oksimetr qaysi fizik hodisaga asoslanganini 1–2 jumladan yozing','t6','b'],
+ ['k4','Denaturatsiyani tushuntiring','Tuxum oqi qizdirilganda nima uchun oqarib qotadi? Vodorod bog‘lar misolida 4–5 jumla yozing','t2','o'],
+ ['k5','Giperkaliyemiya va yurak','Nernst kalkulyatorida [K⁺]tash ni 5 dan 10 mM ga oshiring. Potensial qanchaga o‘zgardi va bu yurak uchun nima uchun xavfli?','t5','o'],
+ ['k6','Uy sharoitida spektr','Quyosh nurini suvli stakan yoki CD disk orqali o‘tkazing. Ranglarni to‘lqin uzunligi kamayishi tartibida yozing','t7','o'],
+ ['k7','Nafas zanjiri sxemasi','I–IV komplekslar, ubixinon, sitoxrom c va ATP-sintazani chizing. Elektron va protonlar yo‘nalishini strelkalar bilan ko‘rsating','t4','y'],
+ ['k8','EKG va ta’sir potensiali','Yurak muskuli ta’sir potensiali fazalarini EKG tishchalari (P, QRS, T) bilan solishtirib jadval tuzing','t5','y']
+];
+let taskSt=store.get('tasks',{}), cool=store.get('cool',{});
+const COOL=45000;
+/* Tekshiruv: q – savollar [savol, variantlar, to‘g‘ri indeks]; n – sonli javob; auto – sayt holatidan */
+const VER={
+ d1:{type:'q',go:'t5',qs:[
+  ['Neyron tetrodotoksin (Na⁺ kanallarini bloklovchi zahar) bilan ishlov berildi. Nima kuzatiladi?',['Ta’sir potensiali hosil bo‘lmaydi, tinchlik potensiali deyarli o‘zgarmaydi','Tinchlik potensiali +60 mV ga o‘tadi','Repolyarizatsiya to‘xtab, hujayra depolyarizatsiyada qoladi','Giperpolyarizatsiya kuchayadi va impulslar tezlashadi'],0],
+  ['Nima uchun tinchlik potensiali (−70 mV) K⁺ ning muvozanat potensialiga (≈ −89 mV) aniq teng emas?',['Na⁺/K⁺-nasos tinch holatda ishlamaydi','Tinch membrana Na⁺ ni ham oz miqdorda o‘tkazadi','K⁺ hujayradan umuman chiqmaydi','Cl⁻ ionlari musbat zaryadlangan'],1],
+  ['Stimul chegaradan 2 marta kuchli bo‘lsa, ta’sir potensialining amplitudasi qanday bo‘ladi?',['2 marta ortadi','4 marta ortadi','O‘zgarmaydi','Yarmiga kamayadi'],2]]},
+ d2:{type:'auto',go:'blkQuiz',need:4,cur:()=>QUIZ.filter(x=>x.l==='o'&&quizSt[x.id]===x.a).length},
+ d3:{type:'n',go:'t5',q:'37 °C da Cl⁻ uchun muvozanat potensiali necha mV? Ishorasini ham yozing.',a:-64.05,tol:1.5,unit:'mV'},
+ w1:{type:'q',go:'t3',qs:[
+  ['Lipid qo‘sh qavatning gidrofob qismi qayerda joylashgan?',['Membrananing tashqi yuzasida','Sitoplazmaga qaragan ichki yuzada','Ikki qavat orasida – yog‘ kislota «dumlari»','Faqat oqsil molekulalari ichida'],2],
+  ['Suyuq-mozaik modeldagi «suyuq» so‘zi nimani bildiradi?',['Membrana asosan suvdan iborat','Lipid va oqsillar membrana tekisligida harakatlana oladi','Membrana faqat suyuq muhitda yashovchi hujayralarda bor','Membrana harorat ko‘tarilganda eriydi'],1],
+  ['Na⁺ ioni lipid qo‘sh qavatdan nima uchun erkin o‘ta olmaydi?',['Zaryadli va gidratlangan ion gidrofob qavatdan o‘tolmaydi','Na⁺ juda katta molekula','Na⁺ lipidlarga kovalent bog‘lanib qoladi','Membranada umuman teshik yo‘q'],0]]},
+ w2:{type:'auto',go:'blkQuiz',need:8,cur:()=>QUIZ.filter(x=>x.l==='b'&&quizSt[x.id]===x.a).length},
+ w3:{type:'auto',go:'blkMatch',need:8,cur:()=>matched.size},
+ w4:{type:'q',go:'t7',qs:[
+  ['Qaysi foton energiyasi kattaroq: qizil (700 nm) yoki ko‘k (450 nm)?',['Qizil, taxminan 1,6 marta','Ko‘k, taxminan 1,6 marta','Ikkalasi teng','Ko‘k, taxminan 250 marta'],1],
+  ['Kyuveta qalinligi 2 marta oshirilsa, optik zichlik A qanday o‘zgaradi?',['2 marta ortadi','4 marta ortadi','O‘zgarmaydi','2 marta kamayadi'],0],
+  ['Fluoressensiyada chiqarilgan nur nima uchun yutilgan nurdan uzunroq to‘lqinli bo‘ladi?',['Molekula fotonni ikkiga bo‘ladi','Energiyaning bir qismi qo‘zg‘algan holatda issiqlikka aylanadi','Molekula muhitdan qo‘shimcha energiya oladi','Yorug‘lik tezligi eritmada ortadi'],1]]},
+ w5:{type:'q',go:'newsList',qs:[
+  ['2026-yilgi fiziologiya yoki tibbiyot bo‘yicha Nobel mukofoti nima uchun berildi?',['Oqsil tuzilishini kompyuterda bashorat qilish','Asimmetrik organik sintez','Yorug‘lik bilan boshqariladigan ion kanallari va optogenetika','Issiqlik va teginishni sezuvchi kanallar'],2],
+  ['Neyrondagi kanalrodopsin yorug‘lik ta’sirida ochilsa, nima sodir bo‘ladi?',['Kationlar ichkariga kirib, hujayra depolyarizatsiyalanadi','Hujayra giperpolyarizatsiyalanadi','ATP sintezi to‘xtaydi','DNK replikatsiyasi boshlanadi'],0],
+  ['Kimyo bo‘yicha 2026-yilgi mukofot molekulalarning qaysi xossasiga bog‘liq?',['Radioaktivlik','Xirallik – «o‘ng» va «chap» shakllar','Elektr o‘tkazuvchanlik','Magnit xossalari'],1]]},
+ w6:{type:'auto',go:'blkProb',need:2,cur:()=>PROBS.filter(x=>x.l==='y'&&probSt[x.id]).length},
+ w7:{type:'n',go:'blkSim',q:'Simulyatsiyada ta’sir potensiali hosil bo‘ladigan eng kichik stimul necha mV?',a:15,tol:0.4,unit:'mV'},
+ k1:{type:'q',go:'t1',qs:[
+  ['Ratsion 2200 kkal. Bu necha MJ? (1 kkal = 4,184 kJ)',['≈ 0,92 MJ','≈ 9,2 MJ','≈ 92 MJ','≈ 526 MJ'],1],
+  ['Kattalar organizmi statsionar holatda bo‘lsa, kunlik olingan energiyaning asosiy qismi oxir-oqibat nimaga aylanadi?',['Atrofga chiqariladigan issiqlikka','Butunlay ATP zahirasiga','Har kuni tana massasining ortishiga','Hech narsaga – energiya yo‘qoladi'],0]]},
+ k2:{type:'q',go:'t3',qs:[
+  ['Sho‘r suvdagi kartoshka bo‘lagining massasi qanday o‘zgaradi va nima uchun?',['Ortadi: tuz hujayraga kiradi','Kamayadi: suv hujayradan konsentratsiyasi yuqori tashqi eritmaga chiqadi','Kamayadi: kraxmal suvda eriydi','O‘zgarmaydi: membrana suv o‘tkazmaydi'],1],
+  ['Toza suvdagi kartoshka hujayralari eritrotsitdan farqli ravishda nima uchun yorilmaydi?',['Kartoshkada suv yo‘q','O‘simlik hujayrasida qattiq hujayra devori bor','Osmos faqat hayvon hujayralarida bo‘ladi','Kartoshka membranasi suv o‘tkazmaydi'],1]]},
+ k3:{type:'q',go:'t6',qs:[
+  ['Puls-oksimetr qonning kislorodga to‘yinganligini qanday aniqlaydi?',['Qonning elektr qarshiligini o‘lchab','Ultratovush aks-sadosi orqali','Oksigemoglobin va gemoglobin qizil va infraqizil nurni turlicha yutishi orqali','Barmoq haroratini o‘lchab'],2],
+  ['Mexanik tonometr bilan bosim o‘lchanganda stetoskopda nima eshitiladi?',['Qisilgan arteriyadan qon turbulent oqib o‘tganda hosil bo‘ladigan tovushlar','Yurak klapanlarining elektr signali','O‘pkadagi havo shovqini','Manjetdan chiqayotgan havo ovozi'],0]]},
+ k4:{type:'q',go:'t2',qs:[
+  ['Tuxum oqi qizdirilganda oqsillarda asosan qaysi bog‘lar uziladi?',['Peptid (kovalent) bog‘lar','Vodorod bog‘lar va boshqa kuchsiz ta’sirlar','Fosfodiefir bog‘lar','Glikozid bog‘lar'],1],
+  ['Denaturatsiyada oqsilning qaysi tuzilishi saqlanib qoladi?',['Birlamchi – aminokislotalar ketma-ketligi','Ikkilamchi','Uchlamchi','To‘rtlamchi'],0]]},
+ k5:{type:'q',go:'t5',qs:[
+  ['37 °C da [K⁺]tash 5 mM dan 10 mM ga oshsa ([K⁺]ich = 140 mM), K⁺ ning muvozanat potensiali qanday o‘zgaradi?',['≈ 18,5 mV ga manfiyroq bo‘ladi','≈ 18,5 mV ga musbat tomonga siljiydi (depolyarizatsiya)','≈ 61,5 mV ga musbat tomonga siljiydi','O‘zgarmaydi'],1],
+  ['Giperkaliyemiya yurak uchun nima uchun xavfli?',['Membrana giperpolyarizatsiyalanib, yurak tezlashadi','K⁺ yurak muskulini eritadi','Doimiy depolyarizatsiyada Na⁺ kanallari inaktivatsiyalanib, qo‘zg‘alish va o‘tkazuvchanlik buziladi','Qon quyuqlashib, tomirlar tiqiladi'],2]]},
+ k6:{type:'q',go:'t7',qs:[
+  ['Ranglar to‘lqin uzunligi kamayishi tartibida to‘g‘ri yozilgan qatorni tanlang.',['Binafsha, ko‘k, havorang, yashil, sariq, to‘q sariq, qizil','Qizil, to‘q sariq, sariq, yashil, havorang, ko‘k, binafsha','Yashil, qizil, ko‘k, sariq, binafsha, to‘q sariq, havorang','Qizil, yashil, ko‘k, sariq, to‘q sariq, binafsha, havorang'],1],
+  ['Prizma yoki suv tomchisida oq yorug‘lik nima uchun ranglarga ajraladi?',['Sindirish ko‘rsatkichi to‘lqin uzunligiga bog‘liq (dispersiya)','Prizma ranglarni o‘zi hosil qiladi','Yorug‘lik faqat qaytadi (aks etadi)','Shisha fluoressensiya qiladi'],0]]},
+ k7:{type:'q',go:'t4',qs:[
+  ['Nafas zanjirining qaysi kompleksi protonlarni membranalararo bo‘shliqqa haydamaydi?',['I kompleks','II kompleks (suksinatdegidrogenaza)','III kompleks','IV kompleks'],1],
+  ['Elektron tashish zanjirida elektronlarning oxirgi qabul qiluvchisi nima?',['NAD⁺','ATP','Kislorod (O₂) – suv hosil bo‘ladi','CO₂'],2],
+  ['Sianid nafas zanjirining qaysi qismini bloklaydi?',['I kompleks','II kompleks','IV kompleks (sitoxrom c oksidaza)','ATP-sintaza'],2]]},
+ k8:{type:'q',go:'t5',qs:[
+  ['EKG dagi QRS kompleksi nimani aks ettiradi?',['Bo‘lmachalar depolyarizatsiyasini','Qorinchalar depolyarizatsiyasini','Qorinchalar repolyarizatsiyasini','Bo‘lmachalar repolyarizatsiyasini'],1],
+  ['Yurak muskuli ta’sir potensialidagi «plato» fazasi asosan qaysi ion oqimi hisobiga bo‘ladi?',['Na⁺ ning tashqariga chiqishi','Cl⁻ ning tashqariga chiqishi','Ca²⁺ ning hujayra ichiga kirishi','K⁺ ning hujayra ichiga kirishi'],2]]}
+};
+const CHECK='<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.3 4.7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+let openT={}, pick={}, order={};
+const now=()=>Date.now();
+function goLink(go){
+  if(go[0]==='t'&&go.length<4) return `<button type="button" class="linkbtn" data-topic="${go}">«${TOPICS.find(x=>x.id===go).t}» mavzusini ochish →</button>`;
+  const lbl={newsList:'Yangiliklarni qayta o‘qish →',blkSim:'Simulyatsiyani ochish →',blkQuiz:'Testlarga o‘tish →',blkProb:'Masalalarga o‘tish →',blkMatch:'O‘yinga o‘tish →'}[go];
+  return `<button type="button" class="linkbtn" data-go="${go}">${lbl}</button>`;
+}
+function panel(id,k){
+  const v=VER[id], left=(cool[id]||0)-now();
+  if(left>0) return `<div class="vpanel"><p class="lock">Javobda xato bor edi. Materialni qayta o‘qing va <b data-cd="${id}">${Math.ceil(left/1000)}</b> soniyadan keyin yana urinib ko‘ring. Savollar va variantlar tartibi har safar o‘zgaradi.</p>${goLink(v.go)}</div>`;
+  if(v.type==='n') return `<div class="vpanel"><p class="vqt">${v.q}</p><div class="ansrow"><input id="vn_${k}" inputmode="decimal" placeholder="Javob" aria-label="Javob"><span class="unit">${v.unit}</span><button class="btn btn-primary btn-sm" type="button" data-checkn="${k}">Javobni tekshirish</button></div><p class="fb" id="vf_${k}" aria-live="polite"></p></div>`;
+  if(!order[k]) order[k]=shuffle(v.qs.map((_,i)=>i)).map(qi=>[qi,shuffle(v.qs[qi][1].map((_,j)=>j))]);
+  const sel=pick[k]||{};
+  return `<div class="vpanel"><p class="vnote">Topshiriq bajarilgan deb hisoblanishi uchun barcha ${v.qs.length} ta savolga to‘g‘ri javob bering. Bitta xato bo‘lsa ham, 45 soniya kutasiz.</p>
+   ${order[k].map(([qi,os],n)=>`<div class="vq"><p>${n+1}. ${v.qs[qi][0]}</p><div class="opts">${os.map((oi,m)=>`<button type="button" class="opt ${sel[qi]===oi?'sel':''}" data-pick="${k}|${qi}|${oi}"><span class="k">${'ABCD'[m]}</span><span>${v.qs[qi][1][oi]}</span></button>`).join('')}</div></div>`).join('')}
+   <div class="ansrow"><button class="btn btn-primary btn-sm" type="button" data-checkq="${k}">Javoblarni tekshirish</button></div><p class="fb" id="vf_${k}" aria-live="polite"></p></div>`;
+}
+function taskItem([id,title,small],sfx,extra=''){
+  const v=VER[id], k=id+'_'+sfx, done=!!taskSt[id];
+  let right;
+  if(done) right='<span class="tag g">Tasdiqlandi</span>';
+  else if(v.type==='auto') right=`<button class="btn btn-ghost btn-sm" type="button" data-go="${v.go}">${Math.min(v.cur(),v.need)} / ${v.need} · Bajarish</button>`;
+  else right=`<button class="btn ${openT[k]?'btn-ghost':'btn-primary'} btn-sm" type="button" data-open="${k}">${openT[k]?'Yopish':'Tekshiruvdan o‘tish'}</button>`;
+  return `<li class="ti ${done?'done':''}"><div class="ti-row"><span class="st">${done?CHECK:''}</span><span class="ti-txt"><span>${title}</span><small>${small}</small>${extra}</span>${right}</div>${!done&&openT[k]?panel(id,k):''}</li>`;
+}
+const tlist=(items,sfx)=>`<ul class="tlist">${items.map(i=>taskItem(i,sfx)).join('')}</ul>`;
+function todayHTML(sfx,compact){
+  const n=TODAY.items.length, done=TODAY.items.filter(i=>taskSt[i[0]]).length;
+  return `<div class="tags"><span class="tag t">Bugungi topshiriq</span><span class="tag ${LVL[TODAY.lvl][1]}">${LVL[TODAY.lvl][0]}</span><span class="tag">${TODAY.time}</span></div>
+   <div style="display:grid;gap:4px"><small style="color:var(--muted)">${TODAY.date}</small><h3>${TODAY.title}</h3></div>
+   ${tlist(TODAY.items,sfx)}
+   <div style="display:grid;gap:6px"><div style="display:flex;justify-content:space-between;font-size:.86rem"><span>${done===n?'<span class="done-msg">Barakalla! Bugungi topshiriq to‘liq tasdiqlandi.</span>':'Tasdiqlandi'}</span><span>${done} / ${n}</span></div><div class="bar g"><i style="width:${done/n*100}%"></i></div></div>
+   ${compact?'<a class="btn btn-primary btn-sm" href="#yangiliklar" style="justify-self:start">Barcha topshiriqlar</a>':''}`;
+}
+function renderTasks(){
+  $('#homeToday').innerHTML=todayHTML('h',true);
+  $('#pageToday').innerHTML=todayHTML('p',false);
+  const n=WEEK.items.length, wd=WEEK.items.filter(i=>taskSt[i[0]]).length;
+  $('#weekly').innerHTML=`<div class="tags"><span class="tag b">Haftalik topshiriqlar</span></div>
+   <div style="display:grid;gap:4px"><small style="color:var(--muted)">${WEEK.range}</small><h3>Bu haftaning ${n} ta vazifasi</h3></div>
+   ${tlist(WEEK.items,'w')}
+   <div style="display:grid;gap:6px"><div style="display:flex;justify-content:space-between;font-size:.86rem"><span>Tasdiqlandi</span><span>${wd} / ${n}</span></div><div class="bar b"><i style="width:${wd/n*100}%"></i></div></div>`;
+}
+function renderBank(){
+  const done=BANK.filter(b=>taskSt[b[0]]).length;
+  $('#bankCount').textContent=done+' / '+BANK.length;$('#bankBar').style.width=done/BANK.length*100+'%';
+  $('#bank').innerHTML=BANK.map(([id,a,b,t,l])=>taskItem([id,a,b],'k',`<span class="tags" style="margin-top:6px"><span class="tag ${LVL[l][1]}">${LVL[l][0]}</span><button type="button" class="linkbtn" data-topic="${t}" style="font-size:.82rem">${TOPICS.find(x=>x.id===t).t} →</button></span>`)).join('');
+}
+function renderAllTasks(){renderTasks();renderBank()}
+function syncAuto(){let ch=false;for(const id in VER){const v=VER[id];if(v.type==='auto'&&!taskSt[id]&&v.cur()>=v.need){taskSt[id]=true;ch=true;setTimeout(()=>sendEvent({type:'topshiriq',task:id,title:titleOf(id),ok:true}),0)}}if(ch)store.set('tasks',taskSt);renderAllTasks()}
+function goTo(id){const el=document.getElementById(id),pg=el.closest('.page').dataset.page,sc=()=>el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+  if(location.hash.slice(1)!==pg){location.hash=pg;setTimeout(sc,120)}else sc()}
+function pass(id,k){sendEvent({type:'topshiriq',task:id,title:titleOf(id),ok:true});taskSt[id]=true;store.set('tasks',taskSt);delete openT[k];delete pick[k];delete order[k];renderAllTasks();updateProg()}
+function fail(id,k){sendEvent({type:'topshiriq',task:id,title:titleOf(id),ok:false});cool[id]=now()+COOL;store.set('cool',cool);delete pick[k];delete order[k];renderAllTasks()}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('.tlist [data-topic]');if(t){openTopic(t.dataset.topic);return}
+  const g=e.target.closest('.tlist [data-go]');if(g){goTo(g.dataset.go);return}
+  const o=e.target.closest('[data-open]');if(o){const k=o.dataset.open;openT[k]=!openT[k];renderAllTasks();return}
+  const pk=e.target.closest('[data-pick]');if(pk){const [k,qi,oi]=pk.dataset.pick.split('|');(pick[k]=pick[k]||{})[qi]=+oi;pk.parentElement.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===pk));return}
+  const cq=e.target.closest('[data-checkq]');if(cq){const k=cq.dataset.checkq,id=k.split('_')[0],v=VER[id],sel=pick[k]||{},fb=document.getElementById('vf_'+k);
+    if(Object.keys(sel).length<v.qs.length){fb.className='fb no';fb.textContent='Avval barcha savollarga javob tanlang.';return}
+    v.qs.every((q,i)=>sel[i]===q[2])?pass(id,k):fail(id,k);return}
+  const cn=e.target.closest('[data-checkn]');if(cn){const k=cn.dataset.checkn,id=k.split('_')[0],v=VER[id],fb=document.getElementById('vf_'+k);
+    const x=parseFloat(document.getElementById('vn_'+k).value.trim().replace(',','.').replace('−','-'));
+    if(isNaN(x)){fb.className='fb no';fb.textContent='Iltimos, son kiriting.';return}
+    Math.abs(x-v.a)<=v.tol?pass(id,k):fail(id,k)}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input[id^="vn_"]'))document.querySelector(`[data-checkn="${e.target.id.slice(3)}"]`).click()});
+setInterval(()=>{let re=false;$$('[data-cd]').forEach(el=>{const l=(cool[el.dataset.cd]||0)-now();if(l<=0)re=true;else el.textContent=Math.ceil(l/1000)});if(re)renderAllTasks()},1000);
+
+/* ---------- yangiliklar ---------- */
+const NEWS=[
+{d:'29-oktabr, 2026',c:'Fotobiologiya',t:'Kunduzgi yorug‘lik kamligi va demensiya xavfi',
+ p:'Guanchjou tibbiyot universiteti (Xitoy) olimlari 87 577 kishi bilagiga taqilgan qurilmalar yordamida kun va tun davomida tushgan yorug‘likni o‘lchab, ularni o‘rtacha 8,1 yil kuzatdi. Kunduzgi o‘rtacha yoritilganlik 1000 lyuksdan (bulutli kundagi ochiq havo) yuqori bo‘lganlarda demensiya xavfi 16% past chiqdi, kuniga 42 daqiqadan kam yorqin yorug‘lik olish esa xavfning kuchli belgisi bo‘ldi, tungi yorug‘lik bilan esa sezilarli bog‘liqlik topilmadi. Mualliflar bu faqat bog‘liqlik ekanini, ko‘proq yorug‘lik demensiyaning oldini olishi hali isbotlanmaganini ta’kidlaydi.',
+ w:'Biofizikaga aloqasi: yoritilganlik (lyuks) va yorug‘likning organizmga ta’siri «Optik biofizika» mavzusidagi fotobiologik jarayonlarga bevosita bog‘liq.',u:'https://www.sciencedaily.com/releases/2026/10/261028232707.htm',s:'ScienceDaily (General Psychiatry jurnali)'},
+{d:'28-oktabr, 2026',c:'Bioenergetika',t:'Kardiolipin va qarishda muskullarning zaiflashuvi',
+ p:'Kopengagen universiteti olimlari mitoxondriya ichki membranasidagi kardiolipin lipidi yosh o‘tishi bilan sichqon va odam muskullarida kamayishini aniqladi. Yosh sichqonlarda kardiolipin kamaytirilganda mitoxondriyalar ko‘proq faol kislorod shakllari hosil qildi va muskul tolalari tez qisqaruvchi turdan sekin turga o‘tdi – xuddi qarishdagidek. Kardiolipin me’yorning taxminan uchdan ikki qismigacha tiklanganda muskul yo‘qolishi orqaga qaytdi va sichqonlarning erta nobud bo‘lishining oldi to‘liq olindi.',
+ w:'Biofizikaga aloqasi: elektron tashish zanjiri va ATP-sintaza joylashgan mitoxondriya ichki membranasining lipid tarkibi «Bioenergetika» mavzusidagi energiya hosil bo‘lishiga ta’sir qiladi.',u:'https://www.sciencedaily.com/releases/2026/10/261027063704.htm',s:'ScienceDaily (Nature Aging jurnali)'},
+{d:'5-oktabr, 2026',c:'Fiziologiya yoki tibbiyot',t:'Optogenetika uchun Nobel mukofoti',
+ p:'2026-yilgi fiziologiya yoki tibbiyot bo‘yicha Nobel mukofoti Karl Deisseroth (Stenford universiteti), Peter Hegemann (Berlin Gumboldt universiteti) va Georg Nagel (Vyursburg universiteti)ga berildi. Ular yorug‘lik bilan boshqariladigan ion kanallarini o‘rganib, optogenetika usulini yaratishdi. Bu usulda olimlar alohida nerv hujayralarini yorug‘lik bilan «yoqib-o‘chirib», miyaning ishlashini o‘rganadi.',
+ w:'Biofizikaga aloqasi: kanalrodopsin – yorug‘lik yutganda ochiladigan ion kanali. Bu kashfiyotda optik biofizika va bioelektrik hodisalar birlashadi.',u:'https://www.nobelprize.org/prizes/medicine/2026/summary/',s:'nobelprize.org'},
+{d:'7-oktabr, 2026',c:'Kimyo',t:'Molekulalarning «o‘ng» va «chap» shakllari uchun Nobel',
+ p:'Kimyo bo‘yicha 2026-yilgi Nobel mukofoti Henri Kagan va Kenso Soaiga asimmetrik organik sintezdagi nochiziqli effektlar va avtokatalizni kashf etgani uchun berildi. Ularning ishlari dori moddalarining kerakli «qo‘l» shaklini olish yo‘llarini tushunishga yordam beradi.',
+ w:'Biofizikaga aloqasi: tirik organizmdagi aminokislotalar deyarli faqat L-shaklda, qandlar esa D-shaklda uchraydi. Bunday xiral molekulalar qutblangan yorug‘lik tekisligini buradi – polyarimetriya usuli shunga asoslanadi.',u:'https://www.nobelprize.org/prizes/chemistry/2026/summary/',s:'nobelprize.org'},
+{d:'2024',c:'Ilm-fan xronikasi',t:'Oqsil tuzilishini kompyuterda bashorat qilish',
+ p:'2024-yilda kimyo bo‘yicha Nobel mukofoti oqsillarni kompyuterda loyihalagani uchun David Bakerga, oqsil tuzilishini AlphaFold dasturi yordamida bashorat qilgani uchun Demis Hassabis va John Jumperga berilgan.',
+ w:'Biofizikaga aloqasi: oqsil funksiyasi uning fazoviy shakliga bog‘liq – bu molekulyar biofizikaning markaziy g‘oyasi.',u:'https://www.nobelprize.org/prizes/chemistry/2024/summary/',s:'nobelprize.org'},
+{d:'2021',c:'Ilm-fan xronikasi',t:'Harorat va bosimni sezuvchi ion kanallari',
+ p:'2021-yilda fiziologiya yoki tibbiyot bo‘yicha Nobel mukofoti David Julius va Ardem Patapoutianga issiqlik va teginishni sezuvchi retseptorlarni (TRPV1 va Piezo ion kanallarini) kashf etgani uchun berilgan.',
+ w:'Biofizikaga aloqasi: mexanik va issiqlik ta’sirlari ion kanallari orqali elektr signaliga aylanadi.',u:'https://www.nobelprize.org/prizes/medicine/2021/summary/',s:'nobelprize.org'}
+];
+const newsHTML=n=>`<article><div class="tags"><span class="tag t">${n.c}</span><time>${n.d}</time></div><h3>${n.t}</h3><p>${n.p}</p><p class="why">${n.w}</p><a class="src" href="${n.u}" target="_blank" rel="noopener">Manba: ${n.s} ↗</a></article>`;
+$('#newsList').innerHTML=NEWS.map(newsHTML).join('');
+$('#homeNews').innerHTML=NEWS.slice(0,2).map(n=>`<article><div class="tags"><span class="tag t">${n.c}</span><time>${n.d}</time></div><h3>${n.t}</h3><p style="color:var(--muted)">${n.w}</p><a class="src" href="#yangiliklar">Batafsil →</a></article>`).join('');
+
+const ARCH=[
+['30.10.2026','Puazeyl qonuni: tomir radiusi va qon oqimi','y','t6'],
+['29.10.2026','Foton energiyasini hisoblash','b','t7'],
+['28.10.2026','Na⁺/K⁺-nasos qanday ishlaydi?','o','t3'],
+['27.10.2026','Fik qonuni va diffuziya','o','t3'],
+['26.10.2026','Membrananing suyuq-mozaik modeli','b','t3'],
+['25.10.2026','Buger–Lambert–Ber qonuni','y','t7'],
+['24.10.2026','Termodinamikaning birinchi qonuni','b','t1']];
+$('#archive').innerHTML=ARCH.map(a=>`<tr><td>${a[0]}</td><td>${a[1]}</td><td><span class="tag ${LVL[a[2]][1]}">${LVL[a[2]][0]}</span></td><td><button class="linkbtn" type="button" data-topic="${a[3]}">Mavzuni ochish →</button></td></tr>`).join('');
+$('#archive').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(b)openTopic(b.dataset.topic)});
+
+/* ---------- progress ---------- */
+function updateProg(){
+  syncAuto();
+  const q=QUIZ.filter(x=>quizSt[x.id]===x.a).length, p=PROBS.filter(x=>probSt[x.id]).length, m=matched.size, t=TODAY.items.filter(i=>taskSt[i[0]]).length;
+  const set=(id,b,v,max)=>{$(id).textContent=v+' / '+max;$(b).style.width=v/max*100+'%'};
+  const nq=QUIZ.length,np=PROBS.length,nm=PAIRS.length,nt=TODAY.items.length;
+  set('#pQuiz','#bQuiz',q,nq);set('#pProb','#bProb',p,np);set('#pMatch','#bMatch',m,nm);set('#pTask','#bTask',t,nt);
+  const pct=Math.round((q/nq+p/np+m/nm+t/nt)/4*100);
+  $('#ringVal').textContent=pct+'%';$('#ringFg').style.strokeDashoffset=289.03*(1-pct/100);
+  $('#progMsg').textContent=pct===0?'Birinchi testni yeching – yo‘l shu yerdan boshlanadi.':pct<40?'Yaxshi boshlanish! Har bir to‘g‘ri javob sizni oldinga siljitadi.':pct<80?'Zo‘r ketyapsiz! Yarim yo‘ldan o‘tdingiz.':pct<100?'Oz qoldi! Oxirgi qadamlarni tashlang.':'Ajoyib! Barcha mashqlar bajarildi. Siz haqiqiy biofiziksiz!';
+}
+
+/* ---------- aloqa ---------- */
+$('#cForm').addEventListener('submit',e=>{e.preventDefault();const out=$('#cOut');out.hidden=false;
+  const n=$('#cName').value.trim(),m=$('#cMail').value.trim(),t=$('#cMsg').value.trim();
+  if(!n||!t||!/^\S+@\S+\.\S+$/.test(m)){out.className='formmsg no';out.textContent='Iltimos, ismingizni, to‘g‘ri elektron pochtani va xabarni kiriting.';return}
+  out.className='formmsg ok';out.textContent=`Rahmat, ${n}! Forma to‘g‘ri to‘ldirildi. Eslatma: bu namuna forma, xabar hozircha hech qayerga yuborilmaydi. Saytni joylaganda uni Google Forms yoki pochta xizmatiga ulang.`});
+$$('[data-copy]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.copy,ok=()=>{b.textContent='Nusxa olindi';setTimeout(()=>b.textContent='Nusxa olish',1600)};
+  try{navigator.clipboard.writeText(v).then(ok,()=>{selectTxt(b)})}catch(e){selectTxt(b)}}));
+function selectTxt(b){const c=b.parentElement.querySelector('code'),r=document.createRange();r.selectNodeContents(c);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+
+/* ---------- motivatsiya ---------- */
+const QUOTES=['Har bir katta kashfiyot kichik savoldan boshlanadi.','Xato – o‘rganishning bir qismi. Yana urinib ko‘ring!','Bugun bitta formulani tushunsangiz, ertaga butun mavzuni tushunasiz.','Fizika qonunlari sizning hujayralaringizda ham ishlaydi.','Muntazamlik iqtidordan kuchliroq.'];
+$('#footQ').textContent=QUOTES[new Date().getDate()%QUOTES.length];
+
+/* ---------- start ---------- */
+renderQuiz();renderProbs();renderMatch();calc();updateProg();route();initIdentity();
+})();
+</script>
+
+</body>
+</html>
