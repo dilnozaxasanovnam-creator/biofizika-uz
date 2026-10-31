@@ -842,7 +842,13 @@ const collectState=()=>{const o={};SYNC_KEYS.forEach(k=>{const v=store.get(k,nul
 let syncTimer=null;
 window.__bfSync=()=>{if(!ENDPOINT||!session)return;clearTimeout(syncTimer);syncTimer=setTimeout(async()=>{
   try{const r=await api({action:'sync',sid:session.sid,token:session.token,state:collectState()});
-    if(!r.ok&&r.error==='token'){store.del('session');session=null;openReg(false);setAuth('login');errBox('Hisobingizga boshqa qurilmadan kirildi yoki parol yangilandi. Qaytadan kiring.')}}catch(e){}},2500)};
+    if(!r.ok&&(r.error==='token'||r.error==='topilmadi'))kicked(r.error)}catch(e){}},2500)};
+function kicked(why){
+  ['session','profile','outbox',...SYNC_KEYS].forEach(k=>store.del(k));session=null;prof=null;showWho();
+  openReg(false);setAuth(why==='topilmadi'?'reg':'login');
+  errBox(why==='topilmadi'?'Hisobingiz ustoz tomonidan o‘chirildi. Kerak bo‘lsa, qaytadan ro‘yxatdan o‘ting yoki ustozingizga murojaat qiling.':'Hisobingizga boshqa qurilmadan kirildi yoki parol yangilandi. Qaytadan kiring.')}
+async function checkSession(){if(!ENDPOINT||!session)return;
+  try{const r=await api({action:'sync',sid:session.sid,token:session.token,state:collectState()});if(!r.ok&&(r.error==='token'||r.error==='topilmadi'))kicked(r.error)}catch(e){}}
 function setAuth(m){authMode=m;
   $('#tabReg').setAttribute('aria-selected',m==='reg');$('#tabLogin').setAttribute('aria-selected',m==='login');
   $('#regFields').hidden=m!=='reg';$('#loginFields').hidden=m!=='login';
@@ -937,7 +943,7 @@ async function initIdentity(){
     try{const u=await Promise.race([window.claude.use('user'),new Promise(r=>setTimeout(()=>r(null),4000))]);
       if(u&&u.isOwner&&u.isOwner()){isTeacher=true;$('#reg').hidden=true;showWho();return}}catch(e){}
   }
-  if(!prof||(ENDPOINT&&!session)) openReg(false); else {showWho();flush()}
+  if(!prof||(ENDPOINT&&!session)) openReg(false); else {showWho();flush();checkSession()}
 }
 const titleOf=id=>{const all=[...TODAY.items,...WEEK.items,...BANK];const f=all.find(x=>x[0]===id);return f?f[1]:id};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;

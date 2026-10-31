@@ -83,6 +83,7 @@ function doPost(e) {
     if (d.action === 'ustoz_login') return ustozLogin_(d);
     if (d.action === 'ustoz_parol') return ustozParol_(d);
     if (d.action === 'ustoz_royxat') return ustozRoyxat_(d);
+    if (d.action === 'ochirish') return ochirish_(d);
     if (!d.sid) return json_({ ok: false });
     yozish_(d);
     return json_({ ok: true });
@@ -96,6 +97,7 @@ const son_ = v => Math.max(0, Math.min(10000, Number(v) || 0));
 
 /** Faollik jurnaliga yozish va o‘quvchi qatorini yangilash. */
 function yozish_(d) {
+  if ((prop_('OCHIRILGANLAR', []) || []).indexOf(String(d.sid)) >= 0) return;
   const vaqt = new Date();
   const natija = d.ok === true ? 'to‘g‘ri' : d.ok === false ? 'xato' : '';
   varaq_(FAOLLIK, []).appendRow([vaqt, toza_(d.sid), toza_(d.name), toza_(d.group), toza_(d.type),
@@ -301,6 +303,27 @@ function ustozRoyxat_(d) {
   }
   propSet_('USTOZLAR', list.slice(0, 50));
   return json_({ ok: true, teachers: ustozlar_() });
+}
+
+/** Ustoz o‘quvchi akkauntini o‘chiradi: hisob, natijalar va faollik yozuvlari. */
+function ochirish_(d) {
+  if (!ustozOk_(d)) return json_({ ok: false, error: 'kalit' });
+  const sid = String(d.sid || '');
+  if (!sid) return json_({ ok: false, error: 'topilmadi' });
+  const ss = jadval_();
+  let n = 0;
+  [[HISOBLAR, 4], [OQUVCHILAR, 1], [FAOLLIK, 2]].forEach(([nom, col]) => {
+    const sh = ss.getSheetByName(nom);
+    if (!sh || sh.getLastRow() < 2) return;
+    const vals = sh.getRange(2, col, sh.getLastRow() - 1, 1).getValues();
+    for (let i = vals.length - 1; i >= 0; i--) {
+      if (String(vals[i][0]) === sid) { sh.deleteRow(i + 2); n++; }
+    }
+  });
+  const ochir = (prop_('OCHIRILGANLAR', []) || []).filter(x => x !== sid);
+  ochir.push(sid);
+  propSet_('OCHIRILGANLAR', ochir.slice(-500));
+  return json_({ ok: true, deleted: n });
 }
 
 /** Ustoz o‘quvchi parolini tiklaydi: vaqtinchalik 6 xonali parol qaytaradi. */

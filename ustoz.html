@@ -278,6 +278,13 @@ function detail(id){
       b.disabled=true;try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:'reset',sid:s.id},cred()))}).then(x=>x.json());
         o.hidden=false;if(r.ok){o.className='msg';o.style.background='var(--good-soft)';o.style.color='var(--good)';o.innerHTML='Yangi parol: <b style="font-size:1.2rem;letter-spacing:.08em">'+esc(r.password)+'</b> · hisob: <b>'+esc(r.login)+'</b>. Buni o‘quvchiga ayting – u shu parol bilan kiradi.'}else{o.className='msg no';o.textContent='Parolni tiklab bo‘lmadi. Qaytadan urinib ko‘ring.'}}
       catch(e){o.hidden=false;o.className='msg no';o.textContent='Ulanib bo‘lmadi.'}finally{b.disabled=false}}}
+  if(ENDPOINT){$('#dlgBody').insertAdjacentHTML('beforeend',`<div style="display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost" type="button" id="delAcc" style="color:var(--bad);border-color:var(--bad)">Akkauntni o‘chirish</button><span class="note">O‘quvchi saytdan chiqarib yuboriladi, hisobi va barcha natijalari o‘chadi. Buni qaytarib bo‘lmaydi.</span></div><p class="msg" id="delOut" hidden></p></div>`);
+    $('#delAcc').onclick=async()=>{const b=$('#delAcc'),o=$('#delOut');
+      if(!b.dataset.sure){b.dataset.sure='1';b.textContent='Ha, «'+s.name+'» akkauntini butunlay o‘chirish';b.style.background='var(--bad)';b.style.color='#fff';o.hidden=false;o.className='msg no';o.textContent='Ishonchingiz komilmi? Yana bir marta bosing.';return}
+      b.disabled=true;try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:'ochirish',sid:s.id},cred()))}).then(x=>x.json());
+        if(r.ok){o.hidden=false;o.className='msg';o.style.background='var(--good-soft)';o.style.color='var(--good)';o.textContent='Akkaunt o‘chirildi.';setTimeout(()=>{$('#dlg').close();refresh()},900)}
+        else{o.hidden=false;o.className='msg no';o.textContent='O‘chirib bo‘lmadi. Qaytadan urinib ko‘ring.';b.disabled=false}}
+      catch(e){o.hidden=false;o.className='msg no';o.textContent='Ulanib bo‘lmadi.';b.disabled=false}}}
   const d=$('#dlg');d.showModal();$('#dlgX').onclick=()=>d.close();
 }
 async function refresh(){
