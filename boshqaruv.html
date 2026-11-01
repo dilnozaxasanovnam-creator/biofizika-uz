@@ -178,7 +178,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 <div class="wrap">
   <form class="login" id="login" hidden>
     <h1 style="font-size:1.6rem">Saytni boshqarish</h1>
-    <p class="note" style="font-size:.92rem">Bu sahifa faqat sayt egasi uchun. Bu yerdan yangilik, topshiriq, test, masala va e’lon qo‘shasiz, o‘quvchilarning xabarlarini o‘qiysiz.</p>
+    <p class="note" style="font-size:.92rem">Bu sahifa faqat sayt egasi uchun. Bu yerdan yangilik, topshiriq, test, masala va e’lon qo‘shasiz, talabalarning xabarlarini o‘qiysiz.</p>
     <div id="gBtn" style="min-height:44px;display:flex;justify-content:center"></div>
     <div class="orline"><span>yoki</span></div>
     <label for="uLogin" class="note">Gmail</label>
@@ -261,7 +261,7 @@ const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 const SECS=[
   ['umumiy','Bosh sahifa','home'],['yangilik','Yangiliklar','news'],['topshiriq','Topshiriqlar','task'],['test','Testlar','test'],['masala','Masalalar','calc'],
   ['elon','E’lonlar','bell'],['aloqa','Aloqa ma’lumotlari','phone'],'-',['mavzu','Mavzular navbati','list'],['sorov','Claude’ga so‘rov','spark'],['xabar','Xabarlar','mail'],'-',
-  ['oquvchi','O‘quvchilar','users'],['yordam','Yordam','help']];
+  ['oquvchi','Talabalar','users'],['yordam','Yordam','help']];
 const items=t=>(D?.items||[]).filter(x=>x.turi===t);
 const newMsgs=()=>(D?.xabarlar||[]).filter(x=>x.holat!=='o‘qildi').length;
 const openReq=()=>items('sorov').filter(x=>x.holat!=='bajarildi').length;
@@ -296,9 +296,9 @@ umumiy(){
   const s=D.stat||{}, added=(D.items||[]).filter(x=>['yangilik','test','masala','topshiriq','elon'].includes(x.turi)&&!x.asl).length;
   const recent=(D.items||[]).slice().sort((a,b)=>String(b.yangilangan).localeCompare(String(a.yangilangan))).slice(0,6);
   const tn={yangilik:'Yangilik',test:'Test',masala:'Masala',topshiriq:'Topshiriq',elon:'E’lon',sozlama:'Sozlama',mavzu:'Mavzu',sorov:'So‘rov'};
-  return head('Assalomu alaykum, Dilnoza Xasanovna!','Saytni shu yerdan boshqarasiz. Qo‘shgan narsangiz o‘quvchilar saytida taxminan 1 daqiqada paydo bo‘ladi.')+
+  return head('Assalomu alaykum, Dilnoza Xasanovna!','Saytni shu yerdan boshqarasiz. Qo‘shgan narsangiz talabalar saytida taxminan 1 daqiqada paydo bo‘ladi.')+
   `<div class="tiles">
-    <button class="tile" type="button" data-go="oquvchi"><strong>${s.oquvchilar||0}</strong><span>Ro‘yxatdagi o‘quvchilar</span></button>
+    <button class="tile" type="button" data-go="oquvchi"><strong>${s.oquvchilar||0}</strong><span>Ro‘yxatdagi talabalar</span></button>
     <button class="tile" type="button" data-go="oquvchi"><strong>${s.bugunFaol||0}</strong><span>Bugun faol bo‘lganlar</span></button>
     <button class="tile" type="button" data-go="xabar"><strong>${newMsgs()}</strong><span>Yangi xabarlar</span></button>
     <button class="tile" type="button" data-go="sorov"><strong>${openReq()}</strong><span>Claude’dagi so‘rovlar</span></button>
@@ -311,7 +311,7 @@ umumiy(){
     ${recent.length?`<ul class="list">${recent.map(x=>row(esc(x.sarlavha||x.data?.t||x.data?.q||x.data?.matn||'—'),`<span class="pill">${tn[x.turi]||x.turi}</span>${x.yangilangan?new Date(x.yangilangan).toLocaleString('uz-UZ',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}${x.muallif?' · '+esc(x.muallif):''}`,'')).join('')}</ul>`:'<p class="note">Hali hech narsa qo‘shilmagan. Yuqoridagi tugmalardan boshlang.</p>'}
     <p class="note">Jami qo‘shilgan: ${added} ta. Hammasi «Biofizika.uz o‘quvchilar» Google jadvalining «Kontent» varag‘ida saqlanadi.</p>
   </div>
-  <div class="links"><a class="btn btn-ghost" href="./" target="_blank" rel="noopener">O‘quvchilar sayti ↗</a><a class="btn btn-ghost" href="ustoz.html" target="_blank" rel="noopener">Ustoz paneli (reyting) ↗</a>${D.jadval?`<a class="btn btn-ghost" href="${esc(D.jadval)}" target="_blank" rel="noopener">Google jadval ↗</a>`:''}</div>`;
+  <div class="links"><a class="btn btn-ghost" href="./" target="_blank" rel="noopener">Talabalar sayti (BioFiz Lab) ↗</a><a class="btn btn-ghost" href="ustoz.html" target="_blank" rel="noopener">Ustoz paneli (reyting) ↗</a>${D.jadval?`<a class="btn btn-ghost" href="${esc(D.jadval)}" target="_blank" rel="noopener">Google jadval ↗</a>`:''}</div>`;
 },
 yangilik(only){
   const own=items('yangilik'), ov={};own.filter(x=>x.asl).forEach(x=>ov[x.asl]=x);
@@ -331,7 +331,7 @@ topshiriq(only){
     <h2 style="font-size:1.05rem">Saytdagi topshiriqlar</h2><p class="note">Bugungi topshiriqni Claude har kuni ertalab mavzular navbatidan tayyorlaydi. Ularni yashirishingiz mumkin.</p>
     ${bi.length?`<ul class="list">${bi.map(([i,w])=>{const x=ov[i[0]];return row(esc(i[1]),`${stat(x,true)}<span>${w}</span>`,x&&x.holat==='yashirin'?`<button class="btn btn-ghost btn-sm" type="button" data-del="${esc(x.id)}">Ko‘rsatish</button>`:`<button class="btn btn-ghost btn-sm" type="button" data-hide="topshiriq" data-asl="${esc(i[0])}">Yashirish</button>`,x?.holat==='yashirin')}).join('')}</ul>`:''}`;
   if(only)return list;
-  return head('Topshiriqlar','O‘quvchi topshiriqni faqat qiyin tekshiruv savollariga to‘g‘ri javob bersa bajargan hisoblanadi. Xato qilsa, 10 daqiqaga yopiladi.',addBtn('topshiriq','Topshiriq qo‘shish'))+
+  return head('Topshiriqlar','Talaba topshiriqni faqat qiyin tekshiruv savollariga to‘g‘ri javob bersa bajargan hisoblanadi. Xato qilsa, 10 daqiqaga yopiladi.',addBtn('topshiriq','Topshiriq qo‘shish'))+
     `<div class="toolbar" id="flt"><input type="search" id="fq" placeholder="Qidirish" aria-label="Qidirish"></div><div id="lst">${list}</div>`;
 },
 test(only){
@@ -341,7 +341,7 @@ test(only){
     .filter(r=>match(r.q)&&(!lv||r.l===lv)&&(!tp||r.m===tp));
   const list=rows.length?`<ul class="list">${rows.map(r=>row(esc(r.q),`${stat(r.x,!!r.asl)}<span>${LVL[r.l]||''}</span>${r.m?`<span>· ${esc(topicName(r.m))}</span>`:''}`,actBtns('test',r.x,r.asl),r.x?.holat==='yashirin')).join('')}</ul>`:'<p class="empty">Test topilmadi.</p>';
   if(only)return list;
-  return head('Testlar',`Saytda jami ${(B.quiz||[]).length+own.filter(x=>!x.asl&&x.holat!=='yashirin').length} ta test. Xato javob bergan o‘quvchi uchun savol 10 daqiqaga yopiladi.`,addBtn('test','Test qo‘shish'))+
+  return head('Testlar',`Saytda jami ${(B.quiz||[]).length+own.filter(x=>!x.asl&&x.holat!=='yashirin').length} ta test. Xato javob bergan talaba uchun savol 10 daqiqaga yopiladi.`,addBtn('test','Test qo‘shish'))+
     `<div class="toolbar" id="flt"><input type="search" id="fq" placeholder="Savol bo‘yicha qidirish" aria-label="Qidirish"><select id="fl" aria-label="Daraja"><option value="">Barcha darajalar</option>${Object.entries(LVL).map(([k,n])=>`<option value="${k}">${n}</option>`).join('')}</select><select id="ft" aria-label="Mavzu"><option value="">Barcha mavzular</option>${TOPICS.map(([i,n])=>`<option value="${i}">${esc(n)}</option>`).join('')}</select></div><div id="lst">${list}</div>`;
 },
 masala(only){
@@ -349,13 +349,13 @@ masala(only){
   const rows=[...own.filter(x=>!x.asl).map(x=>({x,t:x.data.t,q:x.data.q,l:x.data.l})),...(B.probs||[]).map(p=>({x:ov[p.id],asl:p.id,t:ov[p.id]?.data?.t||p.t,q:ov[p.id]?.data?.q||p.q,l:ov[p.id]?.data?.l||p.l}))].filter(r=>match(r.t+' '+r.q));
   const list=rows.length?`<ul class="list">${rows.map(r=>row(esc(r.t),`${stat(r.x,!!r.asl)}<span>${LVL[r.l]||''}</span><span>· ${esc(String(r.q).slice(0,90))}${String(r.q).length>90?'…':''}</span>`,actBtns('masala',r.x,r.asl),r.x?.holat==='yashirin')).join('')}</ul>`:'<p class="empty">Masala topilmadi.</p>';
   if(only)return list;
-  return head('Masalalar','O‘quvchi javobni son bilan yozadi, sayt uni avtomatik tekshiradi.',addBtn('masala','Masala qo‘shish'))+
+  return head('Masalalar','Talaba javobni son bilan yozadi, sayt uni avtomatik tekshiradi.',addBtn('masala','Masala qo‘shish'))+
     `<div class="toolbar" id="flt"><input type="search" id="fq" placeholder="Qidirish" aria-label="Qidirish"></div><div id="lst">${list}</div>`;
 },
 elon(){
   const own=items('elon').sort((a,b)=>String(b.sana).localeCompare(String(a.sana))), t=todayISO();
   const st=x=>x.holat==='yashirin'?'<span class="pill hid">Yashirilgan</span>':x.data.tugash&&x.data.tugash<t?'<span class="pill">Muddati tugagan</span>':x.sana&&x.sana>t?'<span class="pill edit">Kutilmoqda</span>':'<span class="pill new">Saytda ko‘rinyapti</span>';
-  return head('E’lonlar','E’lon o‘quvchilar saytining eng yuqorisida chiqadi: imtihon sanasi, dars ko‘chirilgani, muhim eslatma.',addBtn('elon','E’lon berish'))+
+  return head('E’lonlar','E’lon talabalar saytining eng yuqorisida chiqadi: imtihon sanasi, dars ko‘chirilgani, muhim eslatma.',addBtn('elon','E’lon berish'))+
     (own.length?`<ul class="list">${own.map(x=>row(esc(x.data.t),`${st(x)}${x.data.rang==='muhim'?'<span class="pill bad">Muhim</span>':''}<span>${x.sana?isoUz(x.sana):'darhol'}${x.data.tugash?' – '+isoUz(x.data.tugash):''}</span>`,actBtns('elon',x),x.holat==='yashirin')).join('')}</ul>`:'<p class="empty">E’lon yo‘q.</p>');
 },
 aloqa(){
@@ -392,20 +392,20 @@ xabar(){
 },
 oquvchi(){
   const s=D.stat||{};
-  return head('O‘quvchilar','O‘quvchilar reytingi, o‘zlashtirish foizi, guruhlar, parolni tiklash va akkauntni o‘chirish – Ustoz panelida.')+
-    `<div class="tiles" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))"><div class="tile"><strong>${s.oquvchilar||0}</strong><span>Ro‘yxatdagi o‘quvchilar</span></div><div class="tile"><strong>${s.bugunFaol||0}</strong><span>Bugun faol</span></div><div class="tile"><strong>${(D.groups||[]).length}</strong><span>Guruhlar</span></div></div>
+  return head('Talabalar','Talabalar reytingi, o‘zlashtirish foizi, guruhlar, parolni tiklash va akkauntni o‘chirish – Ustoz panelida.')+
+    `<div class="tiles" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))"><div class="tile"><strong>${s.oquvchilar||0}</strong><span>Ro‘yxatdagi talabalar</span></div><div class="tile"><strong>${s.bugunFaol||0}</strong><span>Bugun faol</span></div><div class="tile"><strong>${(D.groups||[]).length}</strong><span>Guruhlar</span></div></div>
     <div class="links"><a class="btn btn-primary" href="ustoz.html" target="_blank" rel="noopener">Ustoz panelini ochish ↗</a>${D.jadval?`<a class="btn btn-ghost" href="${esc(D.jadval)}" target="_blank" rel="noopener">Google jadvalni ochish ↗</a>`:''}</div>
     <p class="note">Har kuni soat 20:00 da pochtangizga kunlik hisobot keladi: kim qancha topshiriq bajargani.</p>`;
 },
 yordam(){
   const q=(t,a)=>`<details class="card"><summary style="cursor:pointer;font-weight:500">${t}</summary><p class="note" style="font-size:.9rem">${a}</p></details>`;
   return head('Yordam','Eng ko‘p beriladigan savollar.')+
-  q('Qo‘shgan narsam qachon saytda chiqadi?','Saqlaganingizdan keyin taxminan 1 daqiqada. O‘quvchi sahifani yangilasa ko‘radi.')+
+  q('Qo‘shgan narsam qachon saytda chiqadi?','Saqlaganingizdan keyin taxminan 1 daqiqada. Talaba sahifani yangilasa ko‘radi.')+
   q('Saytdagi asl yangilik yoki testni qanday o‘zgartiraman?','Ro‘yxatda «Tahrirlash» tugmasini bosing. O‘zgartirilgan nusxa saqlanadi, asli esa o‘zgarmay qoladi. «Aslini tiklash» tugmasi bilan asl holatiga qaytarasiz.')+
   q('«Yashirish» va «O‘chirish» farqi nima?','Yashirilgan narsa saytda ko‘rinmaydi, lekin istalgan vaqt «Ko‘rsatish» bilan qaytarasiz. O‘chirilgani butunlay yo‘qoladi.')+
   q('Claude bu saytga qanday ulangan?','Hamma narsa sizning «Biofizika.uz o‘quvchilar» Google jadvalingizning «Kontent» varag‘ida saqlanadi. Claude shu jadvalga ulangan: «Claude’ga so‘rov» va «Mavzular navbati»ni o‘qiydi, yangilik, test va topshiriqlarni o‘sha yerga yozadi. Siz Claude bilan suhbatda ham «saytga … qo‘sh» deb yozishingiz mumkin.')+
-  q('Topshiriqqa nechta tekshiruv savoli qo‘yish kerak?','Kamida bitta, yaxshisi 2–3 ta qiyin savol. O‘quvchi hammasiga to‘g‘ri javob berishi kerak, aks holda topshiriq 10 daqiqaga yopiladi va savollar aralashtiriladi.')+
-  q('Bu sahifaga kim kira oladi?','Faqat siz (sayt egasi). Boshqa ustozlar Ustoz paneliga kiradi, lekin saytni o‘zgartira olmaydi. O‘quvchilar bu yerga umuman kira olmaydi.');
+  q('Topshiriqqa nechta tekshiruv savoli qo‘yish kerak?','Kamida bitta, yaxshisi 2–3 ta qiyin savol. Talaba hammasiga to‘g‘ri javob berishi kerak, aks holda topshiriq 10 daqiqaga yopiladi va savollar aralashtiriladi.')+
+  q('Bu sahifaga kim kira oladi?','Faqat siz (sayt egasi). Boshqa ustozlar Ustoz paneliga kiradi, lekin saytni o‘zgartira olmaydi. Talabalar bu yerga umuman kira olmaydi.');
 }
 };
 
@@ -463,7 +463,7 @@ test(x,asl){
     ${fld('fQ','Savol *',d.q,{type:'textarea',full:1,rows:3,ph:'Masalan: Tinch holatdagi neyron membrana potensiali taxminan qancha?'})}
     ${optsBlock('oa',d.o,d.a??0)}
     ${fld('fX','Izoh (to‘g‘ri javobdan keyin chiqadi)',d.x,{type:'textarea',full:1,rows:3,ph:'Nima uchun aynan shu javob to‘g‘ri'})}
-    ${fld('fL','Daraja','',{type:'select',opts:lvlSel(d.l)})}${fld('fM','Mavzu','',{type:'select',opts:topicSel(d.m||'',true),hint:'Xato qilgan o‘quvchiga shu mavzuni qayta o‘qish taklif qilinadi'})}
+    ${fld('fL','Daraja','',{type:'select',opts:lvlSel(d.l)})}${fld('fM','Mavzu','',{type:'select',opts:topicSel(d.m||'',true),hint:'Xato qilgan talabaga shu mavzuni qayta o‘qish taklif qilinadi'})}
   </div>${foot(x,asl)}</form>`);
   $('#frm').onsubmit=e=>{e.preventDefault();const q=fval('#fQ').trim(),o=readOpts('oa'),a=readA('oa');
     if(q.length<8)return ferr('Savolni yozing.');if(o.some(v=>!v))return ferr('To‘rtta variantning hammasini yozing.');if(new Set(o).size<4)return ferr('Variantlar bir xil bo‘lmasin.');if(a<0)return ferr('To‘g‘ri javobni belgilang.');
@@ -491,7 +491,7 @@ topshiriq(x){
   let qs=(d.qs&&d.qs.length?d.qs:[['',['','','',''],0]]).map(q=>[q[0],[0,1,2,3].map(i=>(q[1]||[])[i]||''),q[2]||0]);
   let tek=d.tek==='n'?'n':'q', joy=d.joy==='bank'?'bank':'bugun';
   const qsHTML=()=>qs.map((q,i)=>`<div class="vq" data-vq="${i}"><div class="vq-head"><span>${i+1}-tekshiruv savoli</span>${qs.length>1?`<button class="btn btn-ghost btn-sm" type="button" data-rmq="${i}">Olib tashlash</button>`:''}</div>
-    <div class="f"><textarea data-qt="${i}" style="min-height:60px" placeholder="Matnni o‘qigan o‘quvchigina javob bera oladigan savol">${esc(q[0])}</textarea></div>${optsBlock('q'+i,q[1],q[2])}</div>`).join('');
+    <div class="f"><textarea data-qt="${i}" style="min-height:60px" placeholder="Matnni o‘qigan talabagina javob bera oladigan savol">${esc(q[0])}</textarea></div>${optsBlock('q'+i,q[1],q[2])}</div>`).join('');
   const body=()=>`<form id="frm">${dHead(x?'Topshiriqni tahrirlash':'Yangi topshiriq')}<div class="form">
     <div class="f full"><span class="lbl">Qayerda chiqadi?</span><div class="seg" id="joySeg"><button type="button" data-joy="bugun" aria-pressed="${joy==='bugun'}">Kunlik – belgilangan sanada</button><button type="button" data-joy="bank" aria-pressed="${joy==='bank'}">Doimiy topshiriqlar bankida</button></div></div>
     ${joy==='bugun'?fld('fDate','Sana',x?.sana||todayISO(),{type:'date',hint:'Shu kuni «Bugungi topshiriq»ga qo‘shiladi. Bo‘sh qoldirsangiz – har kuni chiqadi.'}):''}
