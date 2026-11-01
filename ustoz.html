@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Ustoz paneli · Biofizika.uz</title>
+<title>Ustoz paneli · BioFiz Lab</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -155,7 +155,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 <div class="wrap">
   <form class="login" id="login" hidden>
     <h1 style="font-size:1.6rem">Ustozlar uchun kirish</h1>
-    <p class="note" style="font-size:.92rem">Bu sahifa faqat ustozlar uchun. Bu yerga faqat ruxsat berilgan ustozlarning Gmail hisoblari bilan kirish mumkin, o‘quvchilar kira olmaydi.</p>
+    <p class="note" style="font-size:.92rem">Bu sahifa faqat ustozlar uchun. Bu yerga faqat ruxsat berilgan ustozlarning Gmail hisoblari bilan kirish mumkin, talabalar kira olmaydi.</p>
     <div id="gBtnU" style="min-height:44px;display:flex;justify-content:center"></div>
     <div class="orline"><span>yoki</span></div>
     <label for="uLogin" style="font-size:.85rem;color:var(--muted)">Gmail</label>
@@ -171,9 +171,9 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
   </form>
 
   <main id="panel" hidden>
-    <p class="demo" id="demo" hidden>Google jadval hali ulanmagan. Ulangandan keyin bu yerda faqat saytda ro‘yxatdan o‘tgan o‘quvchilarning ismlari va natijalari chiqadi.</p>
+    <p class="demo" id="demo" hidden>Google jadval hali ulanmagan. Ulangandan keyin bu yerda faqat saytda ro‘yxatdan o‘tgan talabalarning ismlari va natijalari chiqadi.</p>
     <div class="tiles">
-      <div class="tile"><strong id="tStudents">0</strong><span>Ro‘yxatdagi o‘quvchilar</span><em id="tGroups"></em></div>
+      <div class="tile"><strong id="tStudents">0</strong><span>Ro‘yxatdagi talabalar</span><em id="tGroups"></em></div>
       <div class="tile"><strong id="tActive">0</strong><span>Bugun faol bo‘lganlar</span><em id="tActivePct"></em></div>
       <div class="tile"><strong id="tTasks">0</strong><span>Bugun tasdiqlangan topshiriqlar</span><em id="tErr"></em></div>
       <div class="tile"><strong id="tAvg">0%</strong><span>O‘rtacha o‘zlashtirish</span><em id="tTop"></em></div>
@@ -191,7 +191,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
         <div class="tablewrap">
           <table>
             <thead><tr>
-              <th data-k="rank" class="num">O‘rin</th><th data-k="name">O‘quvchi</th><th data-k="pct" class="num">O‘zlashtirish</th><th data-k="ball" class="num" aria-sort="descending">Ball</th>
+              <th data-k="rank" class="num">O‘rin</th><th data-k="name">Talaba</th><th data-k="pct" class="num">O‘zlashtirish</th><th data-k="ball" class="num" aria-sort="descending">Ball</th>
               <th data-k="topshiriq" class="num">Topshiriqlar</th><th data-k="test" class="num">Testlar</th><th data-k="masala" class="num">Masalalar</th>
               <th data-k="xato" class="num">Xato</th><th data-k="last">Oxirgi faollik</th>
             </tr></thead>
@@ -261,7 +261,7 @@ function render(){
     <td class="num">${bar(s.test,s.testN)}</td><td class="num">${bar(s.masala,s.masalaN)}</td>
     <td class="num">${s.xato?`<span class="pill bad">${s.xato}</span>`:'0'}</td>
     <td>${isToday(s.last)?'<span class="pill on">bugun</span> ':''}${ago(s.last)}</td></tr>`).join(''):
-    `<tr><td colspan="9" class="empty">${data.students.length?'Filtrga mos o‘quvchi yo‘q.':'Hali hech kim ro‘yxatdan o‘tmagan. O‘quvchilarga sayt havolasini yuboring – ular ro‘yxatdan o‘tishi bilan shu yerda paydo bo‘ladi.'}</td></tr>`;
+    `<tr><td colspan="9" class="empty">${data.students.length?'Filtrga mos talaba yo‘q.':'Hali hech kim ro‘yxatdan o‘tmagan. Talabalarga sayt havolasini yuboring – ular ro‘yxatdan o‘tishi bilan shu yerda paydo bo‘ladi.'}</td></tr>`;
   document.querySelectorAll('th[data-k]').forEach(th=>{th.removeAttribute('aria-sort');if(th.dataset.k===sortK)th.setAttribute('aria-sort',sortDir<0?'descending':'ascending')});
   const ev=data.events.filter(e=>isToday(e.ts)&&(!g||e.group===g));
   $('#feedCount').textContent=ev.length+' ta';
@@ -284,12 +284,12 @@ function detail(id){
       b.disabled=true;try{const r=await api(Object.assign({action:'guruh_ozgartir',sid:s.id,group:g},cred()));o.hidden=false;
         if(r.ok){o.className='msg';o.style.background='var(--good-soft)';o.style.color='var(--good)';o.textContent='«'+g+'» guruhiga o‘tkazildi.';s.group=g;const st=data.students.find(x=>String(x.id)===String(s.id));if(st)st.group=g;render()}
         else{o.className='msg no';o.textContent='O‘tkazib bo‘lmadi. Qaytadan urinib ko‘ring.'}}catch(e){o.hidden=false;o.className='msg no';o.textContent='Ulanib bo‘lmadi.'}finally{b.disabled=false}}}
-  if(ENDPOINT&&s.login){$('#dlgBody').insertAdjacentHTML('beforeend',`<div style="display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost" type="button" id="resetPw">Parolni tiklash</button><span class="note">O‘quvchi parolini unutgan bo‘lsa, yangi vaqtinchalik parol beriladi.</span></div><p class="msg" id="resetOut" hidden></p></div>`);
+  if(ENDPOINT&&s.login){$('#dlgBody').insertAdjacentHTML('beforeend',`<div style="display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost" type="button" id="resetPw">Parolni tiklash</button><span class="note">Talaba parolini unutgan bo‘lsa, yangi vaqtinchalik parol beriladi.</span></div><p class="msg" id="resetOut" hidden></p></div>`);
     $('#resetPw').onclick=async()=>{const b=$('#resetPw'),o=$('#resetOut');if(!b.dataset.sure){b.dataset.sure='1';b.textContent='Tasdiqlash – eski parol ishlamay qoladi';return}
       b.disabled=true;try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:'reset',sid:s.id},cred()))}).then(x=>x.json());
-        o.hidden=false;if(r.ok){o.className='msg';o.style.background='var(--good-soft)';o.style.color='var(--good)';o.innerHTML='Yangi parol: <b style="font-size:1.2rem;letter-spacing:.08em">'+esc(r.password)+'</b> · hisob: <b>'+esc(r.login)+'</b>. Buni o‘quvchiga ayting – u shu parol bilan kiradi.'}else{o.className='msg no';o.textContent='Parolni tiklab bo‘lmadi. Qaytadan urinib ko‘ring.'}}
+        o.hidden=false;if(r.ok){o.className='msg';o.style.background='var(--good-soft)';o.style.color='var(--good)';o.innerHTML='Yangi parol: <b style="font-size:1.2rem;letter-spacing:.08em">'+esc(r.password)+'</b> · hisob: <b>'+esc(r.login)+'</b>. Buni talabaga ayting – u shu parol bilan kiradi.'}else{o.className='msg no';o.textContent='Parolni tiklab bo‘lmadi. Qaytadan urinib ko‘ring.'}}
       catch(e){o.hidden=false;o.className='msg no';o.textContent='Ulanib bo‘lmadi.'}finally{b.disabled=false}}}
-  if(ENDPOINT){$('#dlgBody').insertAdjacentHTML('beforeend',`<div style="display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost" type="button" id="delAcc" style="color:var(--bad);border-color:var(--bad)">Akkauntni o‘chirish</button><span class="note">O‘quvchi saytdan chiqarib yuboriladi, hisobi va barcha natijalari o‘chadi. Buni qaytarib bo‘lmaydi.</span></div><p class="msg" id="delOut" hidden></p></div>`);
+  if(ENDPOINT){$('#dlgBody').insertAdjacentHTML('beforeend',`<div style="display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost" type="button" id="delAcc" style="color:var(--bad);border-color:var(--bad)">Akkauntni o‘chirish</button><span class="note">Talaba saytdan chiqarib yuboriladi, hisobi va barcha natijalari o‘chadi. Buni qaytarib bo‘lmaydi.</span></div><p class="msg" id="delOut" hidden></p></div>`);
     $('#delAcc').onclick=async()=>{const b=$('#delAcc'),o=$('#delOut');
       if(!b.dataset.sure){b.dataset.sure='1';b.textContent='Ha, «'+s.name+'» akkauntini butunlay o‘chirish';b.style.background='var(--bad)';b.style.color='#fff';o.hidden=false;o.className='msg no';o.textContent='Ishonchingiz komilmi? Yana bir marta bosing.';return}
       b.disabled=true;try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:'ochirish',sid:s.id},cred()))}).then(x=>x.json());
@@ -322,7 +322,7 @@ function gInitU(){
 async function onGoogleU(resp){errL('');
   try{const r=await api({action:'ustoz_google',credential:resp.credential});
     if(r.ok){saveAuth(r);showPanel();if(!r.hasPassword)setTimeout(openPw,600);return}
-    errL(r.error==='ustoz_emas'?(r.email||'Bu hisob')+' ustozlar ro‘yxatida yo‘q. Bu sahifa faqat ustozlar uchun – o‘quvchilar asosiy saytdan foydalanadi.':'Google orqali kirib bo‘lmadi. Qayta urinib ko‘ring.');
+    errL(r.error==='ustoz_emas'?(r.email||'Bu hisob')+' ustozlar ro‘yxatida yo‘q. Bu sahifa faqat ustozlar uchun – talabalar asosiy saytdan foydalanadi.':'Google orqali kirib bo‘lmadi. Qayta urinib ko‘ring.');
   }catch(e){errL('Ulanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.')}}
 $('#login').addEventListener('submit',async e=>{e.preventDefault();
   const login=$('#uLogin').value.trim().toLowerCase(),pass=$('#uPass').value;
@@ -355,12 +355,12 @@ async function openTeachers(){
   $('#tList').onclick=e=>{const b=e.target.closest('[data-rm]');if(b)call('remove',b.dataset.rm)};
 }
 function renderGroups(list){const cnt={};(data?.students||[]).forEach(x=>{cnt[x.group]=(cnt[x.group]||0)+1});
-  return list.length?list.map(g=>`<li style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)"><span><b style="font-weight:600">${esc(g)}</b> <span class="pill">${cnt[g]||0} o‘quvchi</span></span><button class="btn btn-ghost" type="button" data-rm="${esc(g)}" style="padding:.4em .8em">Olib tashlash</button></li>`).join(''):'<li class="note" style="padding:8px 0">Hali guruh qo‘shilmagan. Guruh qo‘shmaguningizcha o‘quvchilar guruh nomini o‘zlari yozadi.</li>'}
+  return list.length?list.map(g=>`<li style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)"><span><b style="font-weight:600">${esc(g)}</b> <span class="pill">${cnt[g]||0} talaba</span></span><button class="btn btn-ghost" type="button" data-rm="${esc(g)}" style="padding:.4em .8em">Olib tashlash</button></li>`).join(''):'<li class="note" style="padding:8px 0">Hali guruh qo‘shilmagan. Guruh qo‘shmaguningizcha talabalar guruh nomini o‘zlari yozadi.</li>'}
 async function openGroups(){
-  const d=dlgOpen(`<div class="dlg-head"><div><h2 style="font-size:1.3rem">Guruhlar</h2><p class="note">O‘quvchilar ro‘yxatdan o‘tayotganda shu guruhlardan birini tanlaydi. Guruh nomini to‘liq yozing, masalan: «Biologiya, 2-kurs, 201-guruh».</p></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
+  const d=dlgOpen(`<div class="dlg-head"><div><h2 style="font-size:1.3rem">Guruhlar</h2><p class="note">Talabalar ro‘yxatdan o‘tayotganda shu guruhlardan birini tanlaydi. Guruh nomini to‘liq yozing, masalan: «Biologiya, 2-kurs, 201-guruh».</p></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
     <ul id="gList" style="list-style:none;margin:0;padding:0"><li class="note">Yuklanmoqda…</li></ul>
     <form id="gForm" style="display:flex;gap:8px;flex-wrap:wrap"><input id="gNew" maxlength="60" placeholder="Yangi guruh nomi" style="flex:1 1 220px;font:400 .95rem var(--f-body);padding:.6em .75em;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)"><button class="btn btn-primary" type="submit">Qo‘shish</button></form>
-    <p class="note">Guruhni olib tashlasangiz, undagi o‘quvchilar o‘chmaydi – faqat yangi o‘quvchilar uni tanlay olmaydi.</p>
+    <p class="note">Guruhni olib tashlasangiz, undagi talabalar o‘chmaydi – faqat yangi talabalar uni tanlay olmaydi.</p>
     <p class="msg no" id="gOut" hidden></p>`);
   const call=async(op,name)=>{const o=$('#gOut');o.hidden=true;try{const r=await api(Object.assign({action:'guruh_royxat',op,name},cred()));
     if(r.ok){if(data)data.groups=r.groups;$('#gList').innerHTML=renderGroups(r.groups);if(data)render()}
