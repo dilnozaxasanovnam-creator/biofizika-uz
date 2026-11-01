@@ -1,10 +1,11 @@
 /**
- * Biofizika.uz — o‘quvchilar ro‘yxati, reyting va kunlik hisobot.
+ * BioFiz Lab — talabalar ro‘yxati, reyting va kunlik hisobot.
  * Mustaqil Apps Script loyihasi; jadvalga JADVAL_ID orqali ulanadi.
  * Ma’lumotlar faqat sizning Google jadvalingizda saqlanadi.
  */
 
-const OQUVCHILAR = 'O‘quvchilar';
+const OQUVCHILAR = 'Talabalar';
+const ESKI_OQUVCHILAR = 'O‘quvchilar'; // eski nom: birinchi ishga tushganda varaq avtomatik «Talabalar» deb qayta nomlanadi
 const FAOLLIK = 'Faollik';
 const HISOBOT_SOATI = 20; // har kuni soat 20:00 da hisobot
 const TZ = 'Asia/Tashkent';
@@ -39,7 +40,7 @@ function sozlash() {
     to: Session.getEffectiveUser().getEmail(),
     subject: 'Biofizika.uz — ustoz sahifasi kaliti',
     htmlBody: '<p style="font-family:sans-serif">Ustoz sahifasiga kirish kaliti: <b style="font-size:18px">' + kalit +
-      '</b></p><p style="font-family:sans-serif">Bu kalitni o‘quvchilarga bermang.</p>'
+      '</b></p><p style="font-family:sans-serif">Bu kalitni talabalarga bermang.</p>'
   });
   Logger.log('Ustoz kaliti: ' + kalit);
 }
@@ -50,9 +51,19 @@ function kalitniYangilash() {
   sozlash();
 }
 
+/** Varaqni nomi bo‘yicha topadi; «Talabalar» yo‘q bo‘lsa, eski «O‘quvchilar» varag‘ini qayta nomlaydi (ma’lumotlar saqlanadi). */
+function varaqTop_(ss, nom) {
+  let sh = ss.getSheetByName(nom);
+  if (!sh && nom === OQUVCHILAR) {
+    const eski = ss.getSheetByName(ESKI_OQUVCHILAR);
+    if (eski) { eski.setName(OQUVCHILAR); sh = eski; }
+  }
+  return sh;
+}
+
 function varaq_(nom, sarlavhalar) {
   const ss = jadval_();
-  let sh = ss.getSheetByName(nom);
+  let sh = varaqTop_(ss, nom);
   if (!sh) sh = ss.insertSheet(nom);
   if (sh.getLastRow() === 0 && sarlavhalar.length) {
     sh.appendRow(sarlavhalar);
@@ -327,7 +338,7 @@ function ochirish_(d) {
   const ss = jadval_();
   let n = 0;
   [[HISOBLAR, 4], [OQUVCHILAR, 1], [FAOLLIK, 2]].forEach(([nom, col]) => {
-    const sh = ss.getSheetByName(nom);
+    const sh = varaqTop_(ss, nom);
     if (!sh || sh.getLastRow() < 2) return;
     const vals = sh.getRange(2, col, sh.getLastRow() - 1, 1).getValues();
     for (let i = vals.length - 1; i >= 0; i--) {
@@ -561,10 +572,10 @@ function kunlikHisobot() {
   const sana = Utilities.formatDate(new Date(), TZ, 'dd.MM.yyyy');
   const td = 'style="border:1px solid #DCE8E1;padding:6px 8px;vertical-align:top"';
   let html = '<h2 style="font-family:sans-serif">Biofizika.uz — kunlik hisobot, ' + sana + '</h2>' +
-    '<p style="font-family:sans-serif">Ro‘yxatdagi o‘quvchilar: <b>' + jami + '</b>. Oxirgi 24 soatda faol bo‘lganlar: <b>' + faol + '</b>.</p>';
+    '<p style="font-family:sans-serif">Ro‘yxatdagi talabalar: <b>' + jami + '</b>. Oxirgi 24 soatda faol bo‘lganlar: <b>' + faol + '</b>.</p>';
   if (faol) {
     html += '<h3 style="font-family:sans-serif">Bugun kim nima qildi</h3><table style="border-collapse:collapse;font-family:sans-serif;font-size:14px"><tr>' +
-      ['O‘quvchi', 'Guruh', 'Tasdiqlangan topshiriqlar', 'Xato urinish', 'Testlar (to‘g‘ri / xato)', 'Masalalar'].map(h => '<th ' + td + '>' + h + '</th>').join('') + '</tr>';
+      ['Talaba', 'Guruh', 'Tasdiqlangan topshiriqlar', 'Xato urinish', 'Testlar (to‘g‘ri / xato)', 'Masalalar'].map(h => '<th ' + td + '>' + h + '</th>').join('') + '</tr>';
     Object.keys(kim).map(id => kim[id]).sort((a, b) => b.topshiriq.length - a.topshiriq.length).forEach(k => {
       html += '<tr><td ' + td + '>' + esc_(k.ism) + (k.yangi ? ' <i>(yangi)</i>' : '') + '</td><td ' + td + '>' + esc_(k.guruh) + '</td><td ' + td + '>' +
         k.topshiriq.length + (k.topshiriq.length ? '<br><small>' + k.topshiriq.map(esc_).join('; ') + '</small>' : '') + '</td><td ' + td + '>' + k.xatoT +
@@ -574,7 +585,7 @@ function kunlikHisobot() {
   }
   if (reyting.length) {
     html += '<h3 style="font-family:sans-serif">Umumiy reyting (TOP-10)</h3><table style="border-collapse:collapse;font-family:sans-serif;font-size:14px"><tr>' +
-      ['O‘rin', 'O‘quvchi', 'Guruh', 'Ball'].map(h => '<th ' + td + '>' + h + '</th>').join('') + '</tr>';
+      ['O‘rin', 'Talaba', 'Guruh', 'Ball'].map(h => '<th ' + td + '>' + h + '</th>').join('') + '</tr>';
     reyting.forEach((r, i) => {
       html += '<tr><td ' + td + '>' + (i + 1) + '</td><td ' + td + '>' + esc_(r[1]) + '</td><td ' + td + '>' + esc_(r[2]) + '</td><td ' + td + '>' + (Number(r[13]) || 0) + '</td></tr>';
     });
