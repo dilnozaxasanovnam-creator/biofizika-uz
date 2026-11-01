@@ -23,7 +23,6 @@
 <noscript><h1>Biofizika.uz – biofizika o‘zbek tilida</h1><p>Biofizikani o‘zbek tilida o‘rganish uchun bepul o‘quv sayti. Mavzular: biofizikaning asoslari, molekulyar biofizika, hujayra biofizikasi (membrana, diffuziya, ion nasoslari), bioenergetika (ATP, mitoxondriya), bioelektrik hodisalar (tinchlik va ta’sir potensiali, Nernst tenglamasi), tibbiy biofizika (EKG, UTT, rentgen, MRT) va optik biofizika. Saytda testlar, formula masalalari, Nernst kalkulyatori, simulyatsiya va kundalik topshiriqlar bor. Saytdan foydalanish uchun brauzerda JavaScript’ni yoqing.</p></noscript>
 <title>Biofizika.uz</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' rx='8' fill='%234ADE80'/%3E%3Cpath d='M3.5 17.5h6l2-4 2.5 9 3-17 2.5 12h7' fill='none' stroke='%230B1D15' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Lexend:wght@300;400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
@@ -1405,10 +1404,10 @@ const IDEAS=[
 $('#ideas').innerHTML=IDEAS.map(i=>`<div class="idea"><h3>${i[0]}</h3><p>${i[1]}</p><div class="tags"><span class="tag ${LVL[i[2]][1]}">${LVL[i[2]][0]}</span><span class="tag">G‘oya</span></div></div>`).join('');
 
 /* ---------- topshiriqlar ---------- */
-const TODAY={date:'31-oktabr, 2026 · shanba',title:'Nernst tenglamasi: ionlar muvozanat potensiali',lvl:'o',time:'≈ 25 daqiqa',
- items:[['d1','«Bioelektrik hodisalar» mavzusini o‘qing','O‘rganish → 5-mavzu, 10 daqiqa'],
-        ['d2','O‘rta darajadagi testlardan kamida 4 tasiga to‘g‘ri javob bering','Amaliyot → Testlar → O‘rta. Avtomatik tekshiriladi'],
-        ['d3','Cl⁻ uchun muvozanat potensialini hisoblang','37 °C, [Cl⁻]tash = 110 mM, [Cl⁻]ich = 10 mM. Qo‘lda hisoblang, kalkulyatordan faqat tekshirish uchun foydalaning']]};
+const TODAY={date:'1-noyabr, 2026 · yakshanba',title:'Biologik jarayonlar termodinamikasi: statsionar holat va dissipativ strukturalar',lvl:'o',time:'≈ 30 daqiqa',
+ items:[['d1101a','«Biologik jarayonlar termodinamikasi» mavzusini o‘qing','O‘rganish → 8-mavzu, 15 daqiqa. Onsager munosabatlari va Prigojin teoremasiga alohida e’tibor bering'],
+        ['d1101b','Statsionar holat va termodinamik muvozanatni solishtiring','Daftaringizda jadval tuzing: oqimlar, entropiya o‘zgarishi, tizim parametrlari va bittadan misol'],
+        ['d1101c','Organizmda entropiya hosil bo‘lish tezligini hisoblang','Prigojin tenglamasi va ΔS = Q/T formulasidan foydalanib, qo‘lda hisoblang']]};
 const WEEK={range:'26-oktabr – 1-noyabr',items:[
  ['w1','Membrana tuzilishi sxemasini daftaringizga chizing','Kamida 5 ta qismini belgilang'],
  ['w2','Boshlang‘ich darajadagi barcha testlarga to‘g‘ri javob bering','Amaliyot bo‘limi. Avtomatik tekshiriladi'],
@@ -1431,12 +1430,16 @@ let taskSt=store.get('tasks',{}), cool=store.get('cool',{});
 const COOL=10*60*1000;
 /* Tekshiruv: q – savollar [savol, variantlar, to‘g‘ri indeks]; n – sonli javob; auto – sayt holatidan */
 const VER={
- d1:{type:'q',go:'t5',qs:[
-  ['Neyron tetrodotoksin (Na⁺ kanallarini bloklovchi zahar) bilan ishlov berildi. Nima kuzatiladi?',['Ta’sir potensiali hosil bo‘lmaydi, tinchlik potensiali deyarli o‘zgarmaydi','Tinchlik potensiali +60 mV ga o‘tadi','Repolyarizatsiya to‘xtab, hujayra depolyarizatsiyada qoladi','Giperpolyarizatsiya kuchayadi va impulslar tezlashadi'],0],
-  ['Nima uchun tinchlik potensiali (−70 mV) K⁺ ning muvozanat potensialiga (≈ −89 mV) aniq teng emas?',['Na⁺/K⁺-nasos tinch holatda ishlamaydi','Tinch membrana Na⁺ ni ham oz miqdorda o‘tkazadi','K⁺ hujayradan umuman chiqmaydi','Cl⁻ ionlari musbat zaryadlangan'],1],
-  ['Stimul chegaradan 2 marta kuchli bo‘lsa, ta’sir potensialining amplitudasi qanday bo‘ladi?',['2 marta ortadi','4 marta ortadi','O‘zgarmaydi','Yarmiga kamayadi'],2]]},
+ d1101a:{type:'q',go:'t8',qs:[
+  ['Prigojin teoremasiga ko‘ra, muvozanatga yaqin sohadagi statsionar holat nima uchun barqaror?',['Unda entropiya hosil bo‘lish tezligi maksimal bo‘ladi','Unda modda va energiya oqimlari butunlay to‘xtaydi','Unda tizim termodinamik muvozanatga aylanib qoladi','Unda entropiya hosil bo‘lish tezligi minimal bo‘ladi va kichik og‘ishdan keyin tizim shu holatga qaytadi'],3],
+  ['Onsager munosabatlaridagi L<sub>ik</sub> = L<sub>ki</sub> tengligi nimani bildiradi?',['Har bir oqim faqat o‘zining termodinamik kuchiga bog‘liq bo‘ladi','k-kuchning i-oqimga ta’siri i-kuchning k-oqimga ta’siri bilan bir xil koeffitsiyentga ega (kesishgan koeffitsiyentlar simmetrik)','Oqimlar kuchlarning kvadratiga proporsional','Muvozanatga yaqin sohada barcha fenomenologik koeffitsiyentlar nolga teng'],1],
+  ['Belousov–Jabotinskiy reaksiyasida rangning davriy almashinuvi qanday sharoitda yuzaga keladi?',['Tizim muvozanatga yaqin bo‘lib, oqimlar kuchlarga chiziqli bog‘langanda','Tizim yopiq bo‘lib, uning entropiyasi kamayganda','Tizim muvozanatdan uzoqda bo‘lib, oqim va kuchlar orasidagi bog‘liqlik nochiziqli bo‘lganda','Reaksiya termodinamik muvozanatga yetgan zahoti'],2]]},
+ d1101b:{type:'q',go:'t8',qs:[
+  ['Kattalar organizmi bir kun davomida statsionar holatda. Uning entropiyasi haqida qaysi fikr to‘g‘ri?',['dᵢS = 0, chunki statsionar holatda organizmda jarayonlar bormaydi','dᵢS < 0, chunki tirik organizm o‘z tartibini saqlaydi','dS = 0: ichki jarayonlarda hosil bo‘lgan entropiya (dᵢS > 0) atrofga chiqarilgan entropiya bilan qoplanadi (dₑS = −dᵢS)','dₑS > 0 va dS > 0, chunki organizm entropiyani to‘plab boradi'],2],
+  ['Quyidagilardan qaysi biri dissipativ struktura EMAS?',['Yurak muskulidagi qo‘zg‘alish to‘lqinlari','Belousov–Jabotinskiy reaksiyasidagi spiral to‘lqinlar','Doimiy modda oqimi bilan saqlanib turadigan kimyoviy tebranishlar','Osh tuzi kristalining tartibli panjarasi'],3],
+  ['Nima uchun tirik organizmni muvozanat termodinamikasi bilan to‘liq tavsiflab bo‘lmaydi?',['Organizmda energiyaning saqlanish qonuni bajarilmaydi','Organizm ochiq tizim: u atrof bilan doimo modda va energiya almashadi va muvozanatdan tashqarida turadi','Organizmda entropiya umuman hosil bo‘lmaydi','Tana harorati doimiy bo‘lgani uchun organizm atrof bilan issiqlik almashmaydi'],1]]},
+ d1101c:{type:'n',go:'t8',q:'Tinch holatdagi odam statsionar holatda atrofga 100 W issiqlik chiqaradi, tana harorati 37 °C (T = 310 K). Entropiya tashqariga faqat shu issiqlik bilan chiqadi deb hisoblang. Organizm ichida entropiya hosil bo‘lish tezligi dᵢS/dt necha mW/K?',a:322.6,tol:2,unit:'mW/K'},
  d2:{type:'auto',go:'blkQuiz',need:4,cur:()=>QUIZ.filter(x=>x.l==='o'&&quizSt[x.id]===x.a).length},
- d3:{type:'n',go:'t5',q:'37 °C da Cl⁻ uchun muvozanat potensiali necha mV? Ishorasini ham yozing.',a:-64.05,tol:1.5,unit:'mV'},
  w1:{type:'q',go:'t3',qs:[
   ['Lipid qo‘sh qavatning gidrofob qismi qayerda joylashgan?',['Membrananing tashqi yuzasida','Sitoplazmaga qaragan ichki yuzada','Ikki qavat orasida – yog‘ kislota «dumlari»','Faqat oqsil molekulalari ichida'],2],
   ['Suyuq-mozaik modeldagi «suyuq» so‘zi nimani bildiradi?',['Membrana asosan suvdan iborat','Lipid va oqsillar membrana tekisligida harakatlana oladi','Membrana faqat suyuq muhitda yashovchi hujayralarda bor','Membrana harorat ko‘tarilganda eriydi'],1],
@@ -1554,6 +1557,12 @@ setInterval(()=>{let re=false;$$('[data-cd]').forEach(el=>{const l=(cool[el.data
 
 /* ---------- yangiliklar ---------- */
 const NEWS=[
+{d:'31-oktabr, 2026',c:'Fotobiologiya',t:'Ko‘zning eng aniq ko‘ruvchi markazi qanday shakllanadi',
+ p:'Jons Xopkins universiteti olimlari inson to‘r pardasi organoidlarini bir necha oy kuzatib, foveola – eng aniq ko‘rishni ta’minlovchi markaziy soha – qanday hosil bo‘lishini o‘rgandi. Homila rivojlanishining 10–12-haftalarida foveolada oz sonli ko‘k kolbachalar bo‘ladi, 14-haftaga kelib ular qizil va yashil kolbachalarga aylanadi: A vitamini hosilasi retinoy kislotaning parchalanishi ko‘k kolbachalar hosil bo‘lishini cheklaydi, qalqonsimon bez gormonlari esa qolganlarini boshqa turga o‘tkazadi. Natija ko‘k kolbachalar markazdan chetga ko‘chadi degan qariyb 30 yillik tasavvurga zid keladi; mualliflar bu A vitamini qo‘shimchalari kattalar ko‘rishini yaxshilaydi degani emasligini ta’kidlaydi.',
+ w:'Biofizikaga aloqasi: kolbachalar yorug‘likni turli to‘lqin uzunliklarida yutuvchi fotoretseptorlar; bu «Optik biofizika» mavzusidagi ko‘rish va yorug‘lik yutilishiga bevosita bog‘liq.',u:'https://www.sciencedaily.com/releases/2026/10/261028234813.htm',s:'ScienceDaily (PNAS jurnali)'},
+{d:'31-oktabr, 2026',c:'Membranalar',t:'Bakteriyalarning «o‘z-o‘zini yo‘q qilish» himoyasi teskari ishlaydi',
+ p:'Gladstone institutlari olimlari bakteriyalarning virus (faglar)ga qarshi VI tipdagi retron tizimini o‘rgandi. Sog‘lom hujayrada bu tizim juda oz bir zanjirli DNK hosil qiladi va zahar oqsili sezilmaydi; fag kirganda DNK miqdori keskin ortadi, u zahar sintezini to‘sib turgan RNK bilan ta’sirlashadi va hujayra tezda zahar oqsilini ishlab chiqaradi. Bu juda kichik oqsil hujayra membranasiga kirib, uni beqarorlashtiradi: zararlangan hujayra halok bo‘ladi va virus qo‘shni bakteriyalarga tarqalmaydi. Tadqiqot Molecular Cell jurnalida chop etilgan.',
+ w:'Biofizikaga aloqasi: membranaga kirib uning yaxlitligini buzuvchi oqsillar «Biologik membranalarning tuzilishi va funksiyasi» mavzusidagi lipid qo‘sh qavatning to‘siq vazifasi bilan bog‘liq.',u:'https://www.sciencedaily.com/releases/2026/10/261029072123.htm',s:'ScienceDaily (Molecular Cell jurnali)'},
 {d:'29-oktabr, 2026',c:'Fotobiologiya',t:'Kunduzgi yorug‘lik kamligi va demensiya xavfi',
  p:'Guanchjou tibbiyot universiteti (Xitoy) olimlari 87 577 kishi bilagiga taqilgan qurilmalar yordamida kun va tun davomida tushgan yorug‘likni o‘lchab, ularni o‘rtacha 8,1 yil kuzatdi. Kunduzgi o‘rtacha yoritilganlik 1000 lyuksdan (bulutli kundagi ochiq havo) yuqori bo‘lganlarda demensiya xavfi 16% past chiqdi, kuniga 42 daqiqadan kam yorqin yorug‘lik olish esa xavfning kuchli belgisi bo‘ldi, tungi yorug‘lik bilan esa sezilarli bog‘liqlik topilmadi. Mualliflar bu faqat bog‘liqlik ekanini, ko‘proq yorug‘lik demensiyaning oldini olishi hali isbotlanmaganini ta’kidlaydi.',
  w:'Biofizikaga aloqasi: yoritilganlik (lyuks) va yorug‘likning organizmga ta’siri «Optik biofizika» mavzusidagi fotobiologik jarayonlarga bevosita bog‘liq.',u:'https://www.sciencedaily.com/releases/2026/10/261028232707.htm',s:'ScienceDaily (General Psychiatry jurnali)'},
@@ -1578,6 +1587,7 @@ function renderNews(){$('#newsList').innerHTML=NEWS.map(newsHTML).join('');
 $('#homeNews').innerHTML=NEWS.slice(0,2).map(n=>`<article><div class="tags"><span class="tag t">${n.c}</span><time>${n.d}</time></div><h3>${n.t}</h3><p style="color:var(--muted)">${n.w}</p><a class="src" href="#yangiliklar">Batafsil →</a></article>`).join('')}
 
 const ARCH=[
+['31.10.2026','Nernst tenglamasi: ionlar muvozanat potensiali','o','t5'],
 ['30.10.2026','Puazeyl qonuni: tomir radiusi va qon oqimi','y','t6'],
 ['29.10.2026','Foton energiyasini hisoblash','b','t7'],
 ['28.10.2026','Na⁺/K⁺-nasos qanday ishlaydi?','o','t3'],
@@ -1692,5 +1702,6 @@ try{applyKontent(store.get('kontent',null))}catch(e){}
 renderNews();renderQuiz();renderProbs();renderMatch();calc();updateProg();route();initIdentity();loadKontent();
 })();
 </script>
+
 </body>
 </html>
