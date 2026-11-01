@@ -354,7 +354,7 @@ function ochirish_(d) {
 /* ---------- Guruhlar: ustoz qo‘shadi, o‘quvchi ro‘yxatdan tanlaydi ---------- */
 function guruhlar_() { return (prop_('GURUHLAR', []) || []).filter(Boolean); }
 /** Ustoz hali guruh qo‘shmagan bo‘lsa, istalgan nom qabul qilinadi. */
-function guruhBormi_(g) { const l = guruhlar_(); return !l.length || l.indexOf(g) >= 0; }
+function guruhBormi_(g) { const l = guruhlar_(); return l.indexOf(g) >= 0; } // guruhlarni faqat ustoz qo‘shadi; talaba faqat ro‘yxatdan tanlaydi
 function guruhRoyxat_(d) {
   if (!ustozOk_(d)) return json_({ ok: false, error: 'kalit' });
   const nom = String(d.name || '').replace(/\s+/g, ' ').trim().slice(0, 60);

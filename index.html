@@ -753,7 +753,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
     <div class="fields" id="regFields">
       <div class="field"><label for="rIsm">Ism</label><input id="rIsm" autocomplete="given-name" placeholder="Aziza"></div>
       <div class="field"><label for="rFam">Familiya</label><input id="rFam" autocomplete="family-name" placeholder="Karimova"></div>
-      <div class="field full"><label for="rGr" id="rGrLbl">Guruh</label><select id="rGrSel" hidden><option value="">Guruhingizni tanlang</option></select><input id="rGr" placeholder="Masalan: Biologiya, 2-kurs, 201-guruh"><small class="grhint" id="grHint" hidden>Guruhlar ro‘yxatini ustozingiz kiritgan. O‘z guruhingizni topa olmasangiz, ustozingizga ayting.</small></div>
+      <div class="field full"><label for="rGr" id="rGrLbl">Guruh</label><select id="rGrSel" hidden><option value="">Guruhingizni tanlang</option></select><input id="rGr" placeholder="Masalan: Biologiya, 2-kurs, 201-guruh"><small class="grhint" id="grHint" hidden>Guruhlarni faqat ustozingiz qo‘shadi.</small></div>
       <div class="field full" data-acc><label for="rLogin">Gmail yoki nik</label><input id="rLogin" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="aziza@gmail.com yoki aziza_k"></div>
       <div class="field" data-acc><label for="rPass">Parol</label><input id="rPass" type="password" autocomplete="new-password" placeholder="Kamida 6 belgi"></div>
       <div class="field" data-acc><label for="rPass2">Parolni takrorlang</label><input id="rPass2" type="password" autocomplete="new-password"></div>
@@ -849,23 +849,27 @@ function finishLogin(r){
   location.reload();
 }
 const errBox=m=>{const e=$('#regErr');e.hidden=!m;e.textContent=m||''};
-/* Guruhlar ro‘yxatini ustoz kiritadi; o‘quvchi undan tanlaydi. Ro‘yxat bo‘sh bo‘lsa – o‘zi yozadi. */
+/* Guruhlarni faqat ustoz qo‘shadi; talaba faqat ro‘yxatdan tanlaydi (o‘zi guruh yoza olmaydi).
+   ENDPOINT bo‘lmasa (claude.ai ko‘rinishi) – guruh qo‘lda yoziladi. */
 let GROUPS=store.get('groups',[]);
 const grList=()=>Array.isArray(GROUPS)&&GROUPS.length>0;
-const grEl=()=>grList()?$('#rGrSel'):$('#rGr');
-const grGet=()=>grList()?$('#rGrSel').value:$('#rGr').value.trim();
+const grSelMode=()=>!!ENDPOINT||grList();
+const grEl=()=>grSelMode()?$('#rGrSel'):$('#rGr');
+const grGet=()=>grSelMode()?(grList()&&GROUPS.includes($('#rGrSel').value)?$('#rGrSel').value:''):$('#rGr').value.trim();
 function grSet(v){$('#rGr').value=v||'';if(grList())$('#rGrSel').value=GROUPS.includes(v)?v:''}
 function grDraw(){
-  const on=grList(), cur=grGet()||$('#rGr').value||prof?.gr||'';
+  const sel=grSelMode(), on=grList(), cur=(sel?$('#rGrSel').value:$('#rGr').value.trim())||prof?.gr||'';
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  $('#rGrSel').innerHTML='<option value="">Guruhingizni tanlang</option>'+(on?GROUPS.map(g=>'<option>'+esc(g)+'</option>').join(''):'');
-  $('#rGrSel').hidden=!on;$('#rGr').hidden=on;$('#grHint').hidden=!on;
-  $('#rGrLbl').htmlFor=on?'rGrSel':'rGr';$('#rGrLbl').textContent=on?'Guruhingiz':'Guruh';
+  $('#rGrSel').innerHTML=on?'<option value="">Guruhingizni tanlang</option>'+GROUPS.map(g=>'<option>'+esc(g)+'</option>').join(''):'<option value="">Guruhlar hali qo‘shilmagan</option>';
+  $('#rGrSel').disabled=sel&&!on;
+  $('#rGrSel').hidden=!sel;$('#rGr').hidden=sel;$('#grHint').hidden=!sel;
+  $('#grHint').textContent=on?'Guruhlarni faqat ustozingiz qo‘shadi. O‘z guruhingizni topa olmasangiz, ustozingizga ayting.':'Ustozingiz hali guruh qo‘shmagan. U guruh qo‘shgach, shu yerdan tanlaysiz.';
+  $('#rGrLbl').htmlFor=sel?'rGrSel':'rGr';$('#rGrLbl').textContent=sel?'Guruhingiz':'Guruh';
   grSet(cur);
 }
-function setGroups(g){if(!Array.isArray(g))return;GROUPS=g.map(String);store.set('groups',GROUPS);grDraw()}
+function setGroups(g){if(!Array.isArray(g))return;GROUPS=g.map(String).filter(Boolean);store.set('groups',GROUPS);grDraw()}
 async function loadGroups(){if(!ENDPOINT)return;try{const r=await api({action:'guruhlar'});if(r&&r.ok)setGroups(r.groups||[])}catch(e){}}
-const grMissing=()=>grList()?'Iltimos, ism va familiyani yozing hamda ro‘yxatdan guruhingizni tanlang.':'Iltimos, ism, familiya va guruhni to‘liq yozing.';
+const grMissing=()=>grSelMode()&&!grList()?'Ustozingiz hali guruh qo‘shmagan. Guruh qo‘shilgach, ro‘yxatdan o‘ta olasiz – ustozingizga ayting.':grSelMode()?'Iltimos, ism va familiyani yozing hamda ro‘yxatdan guruhingizni tanlang.':'Iltimos, ism, familiya va guruhni to‘liq yozing.';
 async function api(body){
   const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
   return await r.json();
@@ -925,7 +929,7 @@ $('#regForm').addEventListener('submit',async e=>{e.preventDefault();
   const btn=$('#regBtn');
   if(editMode){
     const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=grGet();
-    if(ism.length<2||fam.length<2||gr.length<2){errBox(grMissing());return}
+    if(ism.length<2||fam.length<2||gr.length<(grSelMode()?1:2)){errBox(grMissing());return}
     prof=Object.assign({},prof,{ism,fam,gr});store.set('profile',prof);$('#reg').hidden=true;showWho();
     if(session&&ENDPOINT)api({action:'sync',sid:session.sid,token:session.token,state:collectState(),name:ism+' '+fam,group:gr}).catch(()=>{});
     sendEvent({type:'profil'});return}
@@ -942,7 +946,7 @@ $('#regForm').addEventListener('submit',async e=>{e.preventDefault();
     finally{btn.disabled=false}
     return}
   const ism=$('#rIsm').value.trim(),fam=$('#rFam').value.trim(),gr=grGet();
-  if(ism.length<2||fam.length<2||gr.length<2){errBox(grMissing());return}
+  if(ism.length<2||fam.length<2||gr.length<(grSelMode()?1:2)){errBox(grMissing());return}
   if(gCred&&authMode==='reg'&&$('#rLogin').closest('.field').hidden&&ENDPOINT){
     btn.disabled=true;errBox('');
     try{const r=await api({action:'google',credential:gCred,name:ism+' '+fam,group:gr,sid:prof?.id||'',state:collectState(),snap:snapshot()});
