@@ -137,7 +137,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 <body>
 <header>
   <div class="wrap">
-    <a class="brand" href="./"><svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#4ADE80"/><path d="M4 18h6l2-4 2.5 9 3-17 2.5 12h6" fill="none" stroke="#0B1D15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Biofizika<b>.uz</b></span></a>
+    <a class="brand" href="./"><svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#4ADE80"/><path d="M4 18h6l2-4 2.5 9 3-17 2.5 12h6" fill="none" stroke="#0B1D15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>BioFiz <b>Lab</b></span></a>
     <span class="badge">Ustoz paneli</span>
     <div class="hd-actions" id="hdActions" hidden>
       <span class="updated" id="updated"></span>
@@ -381,7 +381,7 @@ $('#rows').addEventListener('keydown',e=>{if(e.key==='Enter'){const tr=e.target.
 $('#csv').onclick=()=>{if(!data)return;const head=['O‘rin','Ism familiya','Guruh','O‘zlashtirish %','Ball','Topshiriqlar','Testlar','Masalalar','O‘yin','Xato urinishlar','Oxirgi faollik'];
   const rows=ranked().map(s=>[s.rank,s.name,s.group,s.pct,s.ball,s.topshiriq,s.test+'/'+s.testN,s.masala+'/'+s.masalaN,s.oyin+'/'+s.oyinN,s.xato,s.last?new Date(s.last).toLocaleString('uz-UZ'):'']);
   const csv='﻿'+[head,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='biofizika-reyting-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='biofizlab-reyting-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
 if(auth) showPanel(); else logout();
 })();
 </script>
