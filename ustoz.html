@@ -53,7 +53,7 @@ a{color:var(--teal)}
 
 header{background:var(--deep);color:var(--on-deep);padding-top:env(safe-area-inset-top,0px)}
 header .wrap{display:flex;align-items:center;gap:14px;min-height:64px;flex-wrap:wrap;padding-block:10px}
-.brand{cursor:default;display:flex;align-items:center;gap:10px;color:var(--on-deep);text-decoration:none;font:800 1.15rem var(--f-display)}
+.brand{cursor:pointer;display:flex;align-items:center;gap:10px;color:var(--on-deep);text-decoration:none;font:800 1.15rem var(--f-display)}
 .brand b{color:var(--bright)}
 .badge{background:var(--bright);color:var(--deep);font:600 .78rem var(--f-body);padding:.35em .8em;border-radius:999px;letter-spacing:.03em}
 .hd-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -137,7 +137,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 <body>
 <header>
   <div class="wrap">
-    <div class="brand"><svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#4ADE80"/><path d="M4 18h6l2-4 2.5 9 3-17 2.5 12h6" fill="none" stroke="#0B1D15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>BioFiz <b>Lab</b></span></div>
+    <a class="brand" href="#" id="brandHome" title="Bosh sahifa" aria-label="Bosh sahifa"><svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#4ADE80"/><path d="M4 18h6l2-4 2.5 9 3-17 2.5 12h6" fill="none" stroke="#0B1D15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>BioFiz <b>Lab</b></span></a>
     <span class="badge">Ustoz paneli</span>
     <div class="hd-actions" id="hdActions" hidden>
       <span class="updated" id="updated"></span>
@@ -384,6 +384,7 @@ $('#csv').onclick=()=>{if(!data)return;const head=['O‘rin','Ism familiya','Gur
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='biofizlab-reyting-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
 if(auth) showPanel(); else logout();
 })();
+document.getElementById('brandHome').addEventListener('click',e=>{e.preventDefault();scrollTo({top:0,behavior:'smooth'})});
 </script>
 </body>
 </html>
