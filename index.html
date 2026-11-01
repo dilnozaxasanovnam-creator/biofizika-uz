@@ -223,7 +223,7 @@ details[open] .chev{transform:rotate(180deg)}
 .tcol h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-family:var(--f-body);font-weight:500;margin-top:6px}
 .tcol>p{max-width:66ch}
 .tcol,.tside,.tbody,.topic{min-width:0}
-@media (max-width:480px){#teacherBadge{font-size:0;padding:.45em .7em}#teacherBadge::after{content:"Ustoz ×";font-size:.75rem}}
+@media (max-width:480px){#teacherBadge{font-size:0;padding:.45em .7em}#teacherBadge::after{content:"Talaba";font-size:.75rem}}
 .formula{font-family:var(--f-math);font-size:1.32rem;padding:14px 18px;border-radius:12px;background:var(--surface-2);overflow-x:auto;white-space:nowrap;line-height:1.5}
 .formula i{font-style:italic}
 .formula sub,.formula sup{font-size:.62em}
@@ -354,7 +354,7 @@ aside.tside{display:grid;gap:12px;align-content:start;min-width:0}
 .linkbtn:hover{text-decoration:underline}
 
 /* About / contact */
-.aud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.aud{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 @media (max-width:820px){.aud{grid-template-columns:1fr}}
 .aud div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:8px;align-content:start}
 .aud h3{font-size:1.12rem}
@@ -427,7 +427,7 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
       <a href="#haqida">Haqida</a>
       <a href="#aloqa">Aloqa</a>
     </nav>
-    <button class="teacher" id="teacherBadge" type="button" hidden title="Talaba sifatida ko‘rish uchun bosing" style="border:0;cursor:pointer">O‘qituvchi · chiqish</button>
+    <button class="teacher" id="teacherBadge" type="button" hidden title="Ustoz rejimidan chiqib, saytni talaba sifatida ko‘rish" style="border:0;cursor:pointer">Talaba sifatida ko‘rish</button>
     <button id="who" class="who" type="button" hidden aria-label="Profil"><i id="whoI"></i><span id="whoN"></span></button>
     <button id="themeBtn" class="icon-btn" aria-label="Tungi rejimni yoqish" title="Kunduzgi / tungi rejim">
       <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 12.6A7 7 0 0 1 7.4 3.5a7 7 0 1 0 9.1 9.1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
@@ -679,7 +679,6 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
       <div class="aud">
         <div><span class="tag t">Bakalavriat</span><h3>OTM talabalari</h3><p>Biologiya, tibbiyot, biofizika va fizika yo‘nalishi talabalari uchun: ma’ruza mavzularini takrorlash, seminar, nazorat ishi va imtihonga tayyorgarlik.</p></div>
         <div><span class="tag b">Magistratura</span><h3>Magistrantlar va yosh tadqiqotchilar</h3><p>Biofizika bo‘yicha chuqurroq bilim, formulalar va zamonaviy ilmiy yangiliklar bilan tanishish uchun.</p></div>
-        <div><span class="tag w">Kasbiy</span><h3>O‘qituvchilar</h3><p>Darsda foydalanish uchun tayyor misollar, testlar va kundalik topshiriqlar.</p></div>
       </div>
     </div>
     <div class="section">
