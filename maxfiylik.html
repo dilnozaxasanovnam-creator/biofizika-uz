@@ -18,6 +18,16 @@ h1{font-size:2rem;line-height:1.2;margin:0 0 8px}
 h2{font-size:1.2rem;margin:28px 0 6px}
 p,li{color:var(--ink)} small{color:var(--muted)}
 a{color:var(--teal)}
+/* Telefon va kattalashtirish (zoom) uchun barqarorlik */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{max-width:100%;overflow-x:clip}
+.wrap>*,.reg-card,.reg-card>*{min-width:0}
+.levels{min-width:0}
+h1,h2,h3,p,li,b,strong,span,label,a,td,th{overflow-wrap:break-word}
+img,svg,canvas,video,iframe{max-width:100%}
+table{max-width:100%}
+pre{max-width:100%;overflow-x:auto}
+@media (max-width:760px),(pointer:coarse){input,select,textarea{font-size:16px!important}}
 </style>
 </head>
 <body>

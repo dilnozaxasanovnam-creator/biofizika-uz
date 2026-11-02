@@ -408,6 +408,17 @@ footer q{font-family:var(--f-display);font-weight:600;color:var(--on-deep);font-
 .role span{font-size:.85rem;color:var(--muted);line-height:1.4}
 .teacher{display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;background:var(--bright);color:var(--deep);font:600 .85rem var(--f-body);flex:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* Telefon va kattalashtirish (zoom) uchun barqarorlik */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{max-width:100%;overflow-x:clip}
+.wrap>*,.reg-card,.reg-card>*{min-width:0}
+.levels{min-width:0}
+h1,h2,h3,p,li,b,strong,span,label,a,td,th{overflow-wrap:break-word}
+img,svg,canvas,video,iframe{max-width:100%}
+table{max-width:100%}
+pre{max-width:100%;overflow-x:auto}
+@media (max-width:760px),(pointer:coarse){input,select,textarea{font-size:16px!important}}
+@media (max-width:420px){.stat{padding:14px 12px}.stat strong{font-size:1.15rem;white-space:normal}}
 </style>
 
 <header class="top">

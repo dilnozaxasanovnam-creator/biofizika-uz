@@ -160,6 +160,16 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 .toast.no{background:var(--bad)}
 .loading{color:var(--muted);padding:20px 0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Telefon va kattalashtirish (zoom) uchun barqarorlik */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{max-width:100%;overflow-x:clip}
+.wrap>*,.reg-card,.reg-card>*{min-width:0}
+.levels{min-width:0}
+h1,h2,h3,p,li,b,strong,span,label,a,td,th{overflow-wrap:break-word}
+img,svg,canvas,video,iframe{max-width:100%}
+table{max-width:100%}
+pre{max-width:100%;overflow-x:auto}
+@media (max-width:760px),(pointer:coarse){input,select,textarea{font-size:16px!important}}
 </style>
 </head>
 <body>
