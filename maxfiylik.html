@@ -2,7 +2,13 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style>html{touch-action:manipulation}</style>
+<script>/* Sayt kattalashtirilmasin (pinch, Ctrl+g‘ildirak, Ctrl +/−) */(function(){var o={passive:false},n=function(e){e.preventDefault()};
+document.addEventListener('gesturestart',n,o);document.addEventListener('gesturechange',n,o);
+document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault()},o);
+window.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault()},o);
+window.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&['+','=','-','_','0'].indexOf(e.key)>-1)e.preventDefault()});})();</script>
 <title>Maxfiylik siyosati · BioFiz Lab</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">

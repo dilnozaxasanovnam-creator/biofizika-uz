@@ -2,7 +2,13 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<style>html{touch-action:manipulation}</style>
+<script>/* Sayt kattalashtirilmasin (pinch, Ctrl+g‘ildirak, Ctrl +/−) */(function(){var o={passive:false},n=function(e){e.preventDefault()};
+document.addEventListener('gesturestart',n,o);document.addEventListener('gesturechange',n,o);
+document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault()},o);
+window.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault()},o);
+window.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&['+','=','-','_','0'].indexOf(e.key)>-1)e.preventDefault()});})();</script>
 <title>BioFiz Lab – OTM talabalari uchun biofizika fanidan maxsus o‘quv sayti</title>
 <meta name="description" content="BioFiz Lab – OTM talabalari uchun biofizika fanidan maxsus bepul o‘quv sayti (o‘zbek tilida): membrana potensiali, Nernst tenglamasi, bioenergetika, mitoxondriya, tibbiy va optik biofizika. Testlar, formula masalalari, simulyatsiya va kundalik topshiriqlar.">
 <meta name="keywords" content="biofizika, biofizika o‘zbek tilida, biofizika testlar, membrana potensiali, ta’sir potensiali, Nernst tenglamasi, bioenergetika, mitoxondriya, tibbiy biofizika, optik biofizika, biofizika masalalar">
