@@ -208,13 +208,19 @@ section.page{padding-top:8px}
 .topics{display:grid;gap:12px}
 details.topic{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:border-color .2s,box-shadow .2s}
 details.topic[open]{border-color:color-mix(in srgb,var(--teal) 40%,var(--line));box-shadow:var(--shadow)}
-details.topic summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:18px 22px}
+details.topic summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto auto;gap:16px;align-items:center;padding:18px 22px}
 details.topic summary::-webkit-details-marker{display:none}
 details.topic summary:hover{background:var(--surface-2)}
 .tnum{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:700 1rem var(--f-display);background:var(--teal-soft);color:var(--teal);font-variant-numeric:tabular-nums}
 .ttl{display:grid;gap:2px;min-width:0}
 .ttl b{font:700 1.18rem var(--f-display)}
 .ttl small{color:var(--muted);font-size:.86rem}
+.tpct{display:grid;justify-items:end;gap:4px;min-width:64px;font:700 1rem var(--f-display);color:var(--teal);font-variant-numeric:tabular-nums;line-height:1}
+.tpct small{font:400 .72rem var(--f-body);color:var(--muted);white-space:nowrap}
+.tpct i{display:block;width:64px;height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.tpct i::after{content:"";display:block;height:100%;width:var(--p,0%);background:var(--teal);border-radius:99px;transition:width .4s ease}
+.tpct.full{color:var(--good)}.tpct.full i::after{background:var(--good)}
+@media (max-width:520px){details.topic summary{gap:10px;padding:16px 14px}.tpct{min-width:48px}.tpct i{width:48px}.tpct small{display:none}}
 .chev{transition:transform .25s ease;color:var(--muted)}
 details[open] .chev{transform:rotate(180deg)}
 .tbody{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;padding:6px 22px 24px 78px}
@@ -1174,7 +1180,7 @@ const TOPICS=[
 const chev='<svg class="chev" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 $('#topics').innerHTML=TOPICS.map((t,i)=>`
 <details class="topic" id="${t.id}" ${i===0?'open':''}>
-  <summary><span class="tnum">${i+1}</span><span class="ttl"><b>${t.t}</b><small>${t.s}</small></span>${chev}</summary>
+  <summary><span class="tnum">${i+1}</span><span class="ttl"><b>${t.t}</b><small>${t.s}</small></span><span class="tpct" data-tp="${t.id}" hidden></span>${chev}</summary>
   <div class="tbody">
     <div class="tcol">
       <p>${t.p}</p>
@@ -1620,8 +1626,21 @@ $('#archive').innerHTML=ARCH.map(a=>`<tr><td>${a[0]}</td><td>${a[1]}</td><td><sp
 $('#archive').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(b)openTopic(b.dataset.topic)});
 
 /* ---------- progress ---------- */
+/* ---------- har bir mavzu bo‘yicha bajarilgan foiz ---------- */
+function taskTopic(it,def){const v=VER[it[0]];if(v&&okTopic(v.go))return v.go;if(def&&okTopic(def))return def;
+  const m=/(\d+)-mavzu/.exec(String(it[1])+' '+String(it[2]||''));return m&&TOPICS[+m[1]-1]?TOPICS[+m[1]-1].id:''}
+function updateTopicPct(){const c={};const add=(t,ok)=>{if(!t)return;c[t]=c[t]||[0,0];c[t][1]++;if(ok)c[t][0]++};
+  QUIZ.forEach(q=>add(QTOPIC[q.id],quizSt[q.id]===q.a));
+  PROBS.forEach(p=>add(PTOPIC[p.id],!!probSt[p.id]));
+  BANK.forEach(b=>add(taskTopic(b,b[3]),!!taskSt[b[0]]));
+  const seen=new Set(BANK.map(b=>b[0]));
+  [...TODAY.items,...WEEK.items].forEach(it=>{if(seen.has(it[0]))return;seen.add(it[0]);add(taskTopic(it),!!taskSt[it[0]])});
+  $$('.tpct').forEach(el=>{const v=c[el.dataset.tp];el.hidden=false;if(!v){el.classList.remove('full');el.innerHTML='—<small>topshiriq yo‘q</small>';el.title='Bu mavzu bo‘yicha hali topshiriq yo‘q';el.removeAttribute('aria-label');return}
+    const p=Math.round(v[0]/v[1]*100);el.hidden=false;el.classList.toggle('full',p===100);
+    el.innerHTML=`${p}%<i style="--p:${p}%"></i><small>${v[0]} / ${v[1]} bajarildi</small>`;
+    el.title=`${v[1]} ta topshiriqdan ${v[0]} tasi bajarildi`;el.setAttribute('aria-label',`Bajarildi: ${p}% (${v[0]} / ${v[1]})`)})}
 function updateProg(){
-  syncAuto();
+  syncAuto();updateTopicPct();
   const q=QUIZ.filter(x=>quizSt[x.id]===x.a).length, p=PROBS.filter(x=>probSt[x.id]).length, m=matched.size, t=TODAY.items.filter(i=>taskSt[i[0]]).length;
   const set=(id,b,v,max)=>{$(id).textContent=v+' / '+max;$(b).style.width=v/max*100+'%'};
   const nq=QUIZ.length,np=PROBS.length,nm=PAIRS.length,nt=TODAY.items.length;
