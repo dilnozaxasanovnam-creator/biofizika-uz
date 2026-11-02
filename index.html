@@ -1735,7 +1735,7 @@ $('#clist').addEventListener('click',e=>{const b=e.target.closest('[data-copy]')
 async function loadKontent(){if(!ENDPOINT)return;
   try{const r=await api({action:'kontent'});if(!r||!r.ok)return;const old=store.get('kontent',null);
     if(old&&old.v===r.v)return;store.set('kontent',{v:r.v,items:r.items});applyKontent(r);
-    renderNews();renderQuiz();renderProbs();updateProg()}catch(e){}}
+    renderNews();renderQuiz();renderProbs();try{renderAllTasks()}catch(x){}updateProg()}catch(e){}}
 try{applyKontent(store.get('kontent',null))}catch(e){}
 
 /* ---------- start ---------- */
