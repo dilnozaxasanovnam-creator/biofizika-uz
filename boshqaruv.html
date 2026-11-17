@@ -233,8 +233,9 @@ const LVL={b:'Boshlang‘ich',o:'O‘rta',y:'Yuqori'};
 const OYLAR=['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
 const isoUz=iso=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso||'');return m?(+m[3])+'-'+OYLAR[+m[2]-1]+', '+m[1]:(iso||'')};
 const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
-let TOPICS=[['t1','Biofizikaning asoslari'],['t2','Molekulyar biofizika'],['t3','Hujayra biofizikasi'],['t4','Bioenergetika'],['t5','Bioelektrik hodisalar'],['t6','Tibbiy biofizika'],['t7','Optik biofizika']];
-const topicName=t=>(TOPICS.find(x=>x[0]===t)||[])[1]||'';
+let TOPICS=[['t8','Biologik jarayonlar termodinamikasi'],['t9','Biologik jarayonlar kinetikasi va matematik modellash'],['t10','Molekulyar biofizika asoslari. Makromolekulalar strukturasi va dinamikasi'],['t11','Kvant biofizikasi elementlari. Eksperimental biofizika'],['t12','Biologik membranalarning tuzilishi va funksiyasi'],['t13','Moddalarning membrana orqali passiv tashilishi'],['t19','Moddalarning membrana orqali aktiv tashilishi'],['t14','Bioelektrogenez'],['t15','Sinapslar va sinaptik jarayonlar. Elektr o‘tkazuvchanlik'],['t16','Harakatning muskulli va muskulsiz formalari'],['t17','Fotobiologik jarayonlar biofizikasi. Bioenergetika asoslari'],['t18','Hujayraga signal transduksiya sistemasi haqida asosiy ma’lumotlar']];
+const TAL={t1:'t8',t2:'t10',t3:'t12',t4:'t17',t5:'t14',t6:'t11',t7:'t11'},TID=t=>TAL[t]||t;
+const topicName=t=>(TOPICS.find(x=>x[0]===TID(t))||[])[1]||'';
 const topicSel=(v,none)=>`${none?'<option value="">Tanlanmagan</option>':''}${TOPICS.map(([id,n])=>`<option value="${id}"${id===v?' selected':''}>${esc(n)}</option>`).join('')}`;
 const lvlSel=v=>Object.entries(LVL).map(([k,n])=>`<option value="${k}"${k===(v||'o')?' selected':''}>${n}</option>`).join('');
 
@@ -253,7 +254,7 @@ function grab(src,name){
 }
 async function loadBuiltin(){
   try{const src=await fetch('./index.html',{cache:'no-store'}).then(r=>r.text());
-    const tp=[...src.matchAll(/\{id:'(t\d+)',t:'([^']+)'/g)].map(m=>[m[1],m[2]]);if(tp.length)TOPICS=tp;
+    const ta=src.indexOf('const TOPICS=['),tb=ta<0?-1:src.indexOf('\n];',ta);const tp=ta<0?[]:[...src.slice(ta,tb).matchAll(/\{id:'(t\d+)',t:'([^']+)'/g)].map(m=>[m[1],m[2]]);if(tp.length)TOPICS=tp;
     B={news:grab(src,'NEWS')||[],quiz:grab(src,'QUIZ')||[],probs:grab(src,'PROBS')||[],today:grab(src,'TODAY')||{items:[]},bank:grab(src,'BANK')||[]};
   }catch(e){B={news:[],quiz:[],probs:[],today:{items:[]},bank:[]}}
 }
@@ -513,7 +514,7 @@ topshiriq(x){
     ${joy==='bugun'?fld('fDate','Sana',x?.sana||todayISO(),{type:'date',hint:'Shu kuni «Bugungi topshiriq»ga qo‘shiladi. Bo‘sh qoldirsangiz – har kuni chiqadi.'}):''}
     ${fld('fT','Topshiriq *',d.t,{full:1,ph:'Masalan: «Bioenergetika» mavzusini o‘qing va ATP sintezini tushuntiring'})}
     ${fld('fS','Izoh',d.s,{full:1,ph:'Qayerdan o‘qish kerak, taxminan qancha vaqt'})}
-    ${fld('fL','Daraja','',{type:'select',opts:lvlSel(d.l)})}${fld('fM','Mavzu','',{type:'select',opts:topicSel(d.m||'t1'),hint:'Xato qilsa, shu mavzuni qayta o‘qishga yuboriladi'})}
+    ${fld('fL','Daraja','',{type:'select',opts:lvlSel(d.l)})}${fld('fM','Mavzu','',{type:'select',opts:topicSel(TID(d.m||'t8')),hint:'Xato qilsa, shu mavzuni qayta o‘qishga yuboriladi'})}
     <div class="f full"><span class="lbl">Bajarganini qanday tekshiramiz?</span><div class="seg"><button type="button" data-tek="q" aria-pressed="${tek==='q'}">Variantli savollar</button><button type="button" data-tek="n" aria-pressed="${tek==='n'}">Sonli javob</button></div></div>
     ${tek==='q'?`<div class="f full" style="gap:10px" id="qsBox">${qsHTML()}${qs.length<5?'<button class="btn btn-ghost btn-sm" type="button" id="addQ" style="justify-self:start">+ Yana savol qo‘shish</button>':''}</div>`:
       `${fld('fNQ','Savol *',d.n?.q,{type:'textarea',full:1,rows:2,ph:'Masalan: 37 °C da K⁺ uchun muvozanat potensiali necha mV?'})}${fld('fNA','To‘g‘ri javob *',d.n?.a,{ph:'−89'})}${fld('fNU','Birlik',d.n?.unit,{ph:'mV'})}${fld('fNT','Ruxsat etilgan farq (±)',d.n?.tol,{ph:'1,5',hint:'Bo‘sh qoldirilsa, 2%'})}`}
