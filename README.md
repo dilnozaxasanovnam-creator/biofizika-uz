@@ -1,4 +1,4 @@
-# Biofizika.uz
+# BIOFIZIKA – interaktiv elektron ta’lim platformasi
 
 Biofizikani o‘zbek tilida o‘rganish uchun bepul o‘quv sayti: nazariya, testlar, masalalar, simulyatsiya va kundalik topshiriqlar.
 

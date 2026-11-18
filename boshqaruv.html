@@ -10,7 +10,7 @@ document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length
 window.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault()},o);
 window.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&['+','=','-','_','0'].indexOf(e.key)>-1)e.preventDefault()});})();</script>
 <meta name="robots" content="noindex,nofollow">
-<title>Boshqaruv · BioFiz Lab</title>
+<title>Boshqaruv · BIOFIZIKA</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -181,7 +181,7 @@ pre{max-width:100%;overflow-x:auto}
 <body>
 <header>
   <div class="wrap">
-    <a class="brand" href="#" id="brandHome" title="Bosh sahifa" aria-label="Bosh sahifa"><svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#4ADE80"/><path d="M4 18h6l2-4 2.5 9 3-17 2.5 12h6" fill="none" stroke="#0B1D15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>BioFiz <b>Lab</b></span></a>
+    <a class="brand" href="#" id="brandHome" title="Bosh sahifa" aria-label="Bosh sahifa"><svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#4ADE80"/><path d="M4 18h6l2-4 2.5 9 3-17 2.5 12h6" fill="none" stroke="#0B1D15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>BIO<b>FIZIKA</b></span></a>
     <span class="badge">Boshqaruv</span>
     <div class="hd-actions" id="hdActions" hidden>
       <span class="who" id="who"></span>
@@ -328,7 +328,7 @@ umumiy(){
     ${recent.length?`<ul class="list">${recent.map(x=>row(esc(x.sarlavha||x.data?.t||x.data?.q||x.data?.matn||'—'),`<span class="pill">${tn[x.turi]||x.turi}</span>${x.yangilangan?new Date(x.yangilangan).toLocaleString('uz-UZ',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}${x.muallif?' · '+esc(x.muallif):''}`,'')).join('')}</ul>`:'<p class="note">Hali hech narsa qo‘shilmagan. Yuqoridagi tugmalardan boshlang.</p>'}
     <p class="note">Jami qo‘shilgan: ${added} ta. Hammasi «Biofizika.uz o‘quvchilar» Google jadvalining «Kontent» varag‘ida saqlanadi.</p>
   </div>
-  <div class="links"><a class="btn btn-ghost" href="./" target="_blank" rel="noopener">Talabalar sayti (BioFiz Lab) ↗</a><a class="btn btn-ghost" href="ustoz.html" target="_blank" rel="noopener">Ustoz paneli (reyting) ↗</a>${D.jadval?`<a class="btn btn-ghost" href="${esc(D.jadval)}" target="_blank" rel="noopener">Google jadval ↗</a>`:''}</div>`;
+  <div class="links"><a class="btn btn-ghost" href="./" target="_blank" rel="noopener">Talabalar sayti (BIOFIZIKA) ↗</a><a class="btn btn-ghost" href="ustoz.html" target="_blank" rel="noopener">Ustoz paneli (reyting) ↗</a>${D.jadval?`<a class="btn btn-ghost" href="${esc(D.jadval)}" target="_blank" rel="noopener">Google jadval ↗</a>`:''}</div>`;
 },
 yangilik(only){
   const own=items('yangilik'), ov={};own.filter(x=>x.asl).forEach(x=>ov[x.asl]=x);
@@ -405,7 +405,7 @@ xabar(){
   const xs=D.xabarlar||[];
   return head('Xabarlar',`Saytning «Aloqa» sahifasidan yozilgan xabarlar. ${newMsgs()?newMsgs()+' ta yangi.':'Yangi xabar yo‘q.'}`)+
     (xs.length?`<ul class="list" style="gap:10px">${xs.map(x=>`<li class="msgcard ${x.holat!=='o‘qildi'?'unread':''}"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><span><b>${esc(x.ism)}</b> · <a href="mailto:${esc(x.email)}">${esc(x.email)}</a> ${x.mavzu?`<span class="pill">${esc(x.mavzu)}</span>`:''}</span><span class="note">${x.vaqt?new Date(x.vaqt).toLocaleString('uz-UZ'):''}</span></div><p>${esc(x.matn)}</p>
-      <div class="links"><a class="btn btn-primary btn-sm" href="mailto:${esc(x.email)}?subject=${encodeURIComponent('BioFiz Lab: '+(x.mavzu||'javob'))}">Javob yozish</a>${x.holat!=='o‘qildi'?`<button class="btn btn-ghost btn-sm" type="button" data-read="${esc(x.id)}">O‘qildi</button>`:`<button class="btn btn-ghost btn-sm" type="button" data-unread="${esc(x.id)}">Yangi deb belgilash</button>`}<button class="btn btn-danger btn-sm" type="button" data-mdel="${esc(x.id)}">O‘chirish</button></div></li>`).join('')}</ul>`:'<p class="empty">Hali xabar kelmagan.</p>');
+      <div class="links"><a class="btn btn-primary btn-sm" href="mailto:${esc(x.email)}?subject=${encodeURIComponent('BIOFIZIKA: '+(x.mavzu||'javob'))}">Javob yozish</a>${x.holat!=='o‘qildi'?`<button class="btn btn-ghost btn-sm" type="button" data-read="${esc(x.id)}">O‘qildi</button>`:`<button class="btn btn-ghost btn-sm" type="button" data-unread="${esc(x.id)}">Yangi deb belgilash</button>`}<button class="btn btn-danger btn-sm" type="button" data-mdel="${esc(x.id)}">O‘chirish</button></div></li>`).join('')}</ul>`:'<p class="empty">Hali xabar kelmagan.</p>');
 },
 oquvchi(){
   const s=D.stat||{};
