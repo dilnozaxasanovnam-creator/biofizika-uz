@@ -113,29 +113,39 @@ function doPost(e) {
 }
 
 const toza_ = v => String(v == null ? '' : v).slice(0, 200);
+/** Guruh nomi: jadval «24-07» ni sanaga aylantirgan bo‘lsa ham asl ko‘rinishini qaytaradi. */
+function guruhStr_(v) {
+  if (v instanceof Date) return Utilities.formatDate(v, TZ, 'dd-MM');
+  const s = toza_(v).trim();
+  const m = s.match(/^[A-Z][a-z]{2} ([A-Z][a-z]{2}) (\d{2}) \d{4} \d{2}:\d{2}:\d{2} GMT/);
+  const oy = { Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12' };
+  return m && oy[m[1]] ? m[2] + '-' + oy[m[1]] : s;
+}
+/** Jadvalga yozishda guruh nomi sana bo‘lib ketmasligi uchun matn sifatida yozamiz. */
+const guruhMatn_ = v => { const g = guruhStr_(v); return g ? "'" + g : ''; };
 const son_ = v => Math.max(0, Math.min(10000, Number(v) || 0));
 
 /** Faollik jurnaliga yozish va o‘quvchi qatorini yangilash. */
 function yozish_(d) {
   if ((prop_('OCHIRILGANLAR', []) || []).indexOf(String(d.sid)) >= 0) return;
   const hh = hisobId_(d.sid);
-  if (hh.qator) d.group = String(hh.sh.getRange(hh.qator, 6).getValue() || '') || d.group;
+  if (hh.qator) d.group = guruhStr_(hh.sh.getRange(hh.qator, 6).getValue()) || guruhStr_(d.group);
   const vaqt = new Date();
   const natija = d.ok === true ? 'to‘g‘ri' : d.ok === false ? 'xato' : '';
-  varaq_(FAOLLIK, []).appendRow([vaqt, toza_(d.sid), toza_(d.name), toza_(d.group), toza_(d.type),
+  varaq_(FAOLLIK, []).appendRow([vaqt, toza_(d.sid), toza_(d.name), guruhMatn_(d.group), toza_(d.type),
     toza_(d.task), toza_(d.title), natija]);
   const sh = varaq_(OQUVCHILAR, USTUNLAR);
   const ids = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues().map(r => r[0]) : [];
   let qator = ids.indexOf(toza_(d.sid)) + 2;
   if (qator < 2) {
-    sh.appendRow([toza_(d.sid), toza_(d.name), toza_(d.group), vaqt, vaqt, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    sh.appendRow([toza_(d.sid), toza_(d.name), guruhMatn_(d.group), vaqt, vaqt, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     qator = sh.getLastRow();
   }
   const old = sh.getRange(qator, 1, 1, USTUNLAR.length).getValues()[0];
   const s = d.snap || {};
   const t = son_(s.test), m = son_(s.masala), o = son_(s.oyin), top = son_(s.topshiriq);
   const xato = Number(old[12] || 0) + (d.ok === false ? 1 : 0);
-  sh.getRange(qator, 2, 1, USTUNLAR.length - 1).setValues([[toza_(d.name) || old[1], toza_(d.group) || old[2], old[3] || vaqt, vaqt,
+  sh.getRange(qator, 2, 1, USTUNLAR.length - 1).setValues([[toza_(d.name) || old[1], guruhMatn_(d.group || old[2]), old[3] || vaqt, vaqt,
     t, son_(s.testN), m, son_(s.masalaN), o, son_(s.oyinN), top, xato, ball_(t, m, o, top)]]);
 }
 
@@ -185,7 +195,7 @@ function royxat_(d) {
     's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const salt = Utilities.getUuid(), token = yangiToken_(), vaqt = new Date();
   const holat = JSON.stringify(d.state || {}).slice(0, 45000);
-  h.sh.appendRow([login, salt, xesh_(salt, parol), sid, ism, guruh, vaqt, token, holat, vaqt]);
+  h.sh.appendRow([login, salt, xesh_(salt, parol), sid, ism, guruhMatn_(guruh), vaqt, token, holat, vaqt]);
   yozish_({ sid: sid, name: ism, group: guruh, type: 'royxat', snap: d.snap || {} });
   return json_({ ok: true, sid: sid, token: token, login: login, name: ism, group: guruh });
 }
@@ -202,8 +212,8 @@ function kirish_(d) {
   h.sh.getRange(h.qator, 8).setValue(token);
   let holat = {};
   try { holat = JSON.parse(r[8] || '{}'); } catch (err) { holat = {}; }
-  yozish_({ sid: r[3], name: r[4], group: r[5], type: 'kirish', snap: d.snap || {} });
-  return json_({ ok: true, sid: r[3], token: token, login: r[0], name: r[4], group: r[5], state: holat });
+  yozish_({ sid: r[3], name: r[4], group: guruhStr_(r[5]), type: 'kirish', snap: d.snap || {} });
+  return json_({ ok: true, sid: r[3], token: token, login: r[0], name: r[4], group: guruhStr_(r[5]), state: holat });
 }
 
 function sinx_(d) {
@@ -214,8 +224,8 @@ function sinx_(d) {
   const qiymat = [[JSON.stringify(d.state || {}).slice(0, 45000), new Date()]];
   h.sh.getRange(h.qator, 9, 1, 2).setValues(qiymat);
   const yangiG = d.group && guruhBormi_(toza_(d.group)) ? toza_(d.group) : '';
-  if (d.name || yangiG) h.sh.getRange(h.qator, 5, 1, 2).setValues([[toza_(d.name) || r[4], yangiG || r[5]]]);
-  return json_({ ok: true, name: toza_(d.name) || r[4], group: yangiG || r[5], groups: guruhlar_() });
+  if (d.name || yangiG) h.sh.getRange(h.qator, 5, 1, 2).setValues([[toza_(d.name) || r[4], yangiG ? guruhMatn_(yangiG) : r[5]]]);
+  return json_({ ok: true, name: toza_(d.name) || r[4], group: yangiG || guruhStr_(r[5]), groups: guruhlar_() });
 }
 
 /** Google bilan kirish: ID tokenni Google’da tekshiradi. */
@@ -236,8 +246,8 @@ function google_(d) {
     h.sh.getRange(h.qator, 8).setValue(token);
     let holat = {};
     try { holat = JSON.parse(r[8] || '{}'); } catch (err) { holat = {}; }
-    yozish_({ sid: r[3], name: r[4], group: r[5], type: 'kirish', snap: d.snap || {} });
-    return json_({ ok: true, sid: r[3], token: token, login: r[0], name: r[4], group: r[5], state: holat });
+    yozish_({ sid: r[3], name: r[4], group: guruhStr_(r[5]), type: 'kirish', snap: d.snap || {} });
+    return json_({ ok: true, sid: r[3], token: token, login: r[0], name: r[4], group: guruhStr_(r[5]), state: holat });
   }
   const ism = toza_(d.name) || toza_([info.given_name, info.family_name].filter(Boolean).join(' ')) || toza_(info.name);
   const guruh = toza_(d.group);
@@ -246,7 +256,7 @@ function google_(d) {
   const sid = String(d.sid || '').match(/^s[a-z0-9]{6,30}$/) && !hisobId_(d.sid).qator ? String(d.sid) :
     's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const token = yangiToken_(), vaqt = new Date();
-  h.sh.appendRow([login, 'google', '', sid, ism, guruh, vaqt, token, JSON.stringify(d.state || {}).slice(0, 45000), vaqt]);
+  h.sh.appendRow([login, 'google', '', sid, ism, guruhMatn_(guruh), vaqt, token, JSON.stringify(d.state || {}).slice(0, 45000), vaqt]);
   yozish_({ sid: sid, name: ism, group: guruh, type: 'royxat', snap: d.snap || {} });
   return json_({ ok: true, sid: sid, token: token, login: login, name: ism, group: guruh, state: d.state || {} });
 }
@@ -374,12 +384,12 @@ function guruhOzgartir_(d) {
   const sid = String(d.sid || ''), g = toza_(d.group).trim();
   if (!sid || g.length < 2) return json_({ ok: false, error: 'nom' });
   const h = hisobId_(sid);
-  if (h.qator) h.sh.getRange(h.qator, 6).setValue(g);
+  if (h.qator) h.sh.getRange(h.qator, 6).setValue(guruhMatn_(g));
   const sh = varaq_(OQUVCHILAR, USTUNLAR);
   if (sh.getLastRow() > 1) {
     const ids = sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues().map(r => String(r[0]));
     const i = ids.indexOf(sid);
-    if (i >= 0) sh.getRange(i + 2, 3).setValue(g);
+    if (i >= 0) sh.getRange(i + 2, 3).setValue(guruhMatn_(g));
   }
   return json_({ ok: true, group: g });
 }
@@ -527,14 +537,14 @@ function hisobot_(d) {
   const loginlar = {};
   if (hs.getLastRow() > 1) hs.getRange(2, 1, hs.getLastRow() - 1, 4).getValues().forEach(x => { loginlar[x[3]] = x[0]; });
   const students = rows.map(r => ({
-    id: r[0], login: loginlar[r[0]] || '', name: r[1], group: r[2], joined: r[3] ? new Date(r[3]).toISOString() : '',
+    id: r[0], login: loginlar[r[0]] || '', name: r[1], group: guruhStr_(r[2]), joined: r[3] ? new Date(r[3]).toISOString() : '',
     last: r[4] ? new Date(r[4]).toISOString() : '', test: Number(r[5]) || 0, testN: Number(r[6]) || 0,
     masala: Number(r[7]) || 0, masalaN: Number(r[8]) || 0, oyin: Number(r[9]) || 0, oyinN: Number(r[10]) || 0,
     topshiriq: Number(r[11]) || 0, xato: Number(r[12]) || 0, ball: Number(r[13]) || 0,
     today: kun[r[0]] || { ok: 0, xato: 0, topshiriq: 0 }
   }));
   const events = ev.slice(-400).reverse().map(r => ({
-    ts: new Date(r[0]).toISOString(), id: r[1], name: r[2], group: r[3], type: r[4], task: r[5], title: r[6], result: r[7]
+    ts: new Date(r[0]).toISOString(), id: r[1], name: r[2], group: guruhStr_(r[3]), type: r[4], task: r[5], title: r[6], result: r[7]
   }));
   return json_({ ok: true, generated: new Date().toISOString(), students: students, events: events, groups: guruhlar_() });
 }
@@ -558,7 +568,7 @@ function kunlikHisobot() {
   const kim = {};
   qatorlar.filter(r => r[0] >= chegara).forEach(r => {
     const id = r[1];
-    const k = kim[id] || (kim[id] = { ism: r[2], guruh: r[3], yangi: false, topshiriq: [], xatoT: 0, test: 0, testXato: 0, masala: 0 });
+    const k = kim[id] || (kim[id] = { ism: r[2], guruh: guruhStr_(r[3]), yangi: false, topshiriq: [], xatoT: 0, test: 0, testXato: 0, masala: 0 });
     if (r[4] === 'royxat') k.yangi = true;
     if (r[4] === 'topshiriq') { if (r[7] === 'to‘g‘ri') k.topshiriq.push(r[6]); else k.xatoT++; }
     if (r[4] === 'test') { if (r[7] === 'to‘g‘ri') k.test++; else k.testXato++; }

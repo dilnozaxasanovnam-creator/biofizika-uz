@@ -421,6 +421,11 @@ const isDark=()=>root.getAttribute('data-theme')==='dark'||(!root.getAttribute('
 const themeLbl=()=>{$('#themeLbl').textContent=isDark()?'Kunduzgi rejim':'Tungi rejim'};themeLbl();
 $('#themeBtn').onclick=()=>{const t=isDark()?'light':'dark';root.setAttribute('data-theme',t);store.set('utheme',t);themeLbl()};
 
+/* Jadval «24-07» kabi guruh nomini sanaga aylantirib yuborgan bo‘lsa, asl nomni tiklaymiz. */
+const OYLAR={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+function fixG(g){g=String(g==null?'':g).trim();let m=g.match(/^[A-Z][a-z]{2} ([A-Z][a-z]{2}) (\d{2}) \d{4} \d{2}:\d{2}:\d{2} GMT/);if(m&&OYLAR[m[1]])return m[2]+'-'+OYLAR[m[1]];
+  m=g.match(/^\d{4}-(\d{2})-(\d{2})T\d{2}:\d{2}/);if(m){const d=new Date(g);if(!isNaN(d)){const t=new Date(d.getTime()+5*36e5);return String(t.getUTCDate()).padStart(2,'0')+'-'+String(t.getUTCMonth()+1).padStart(2,'0')}}return g}
+function fixData(r){if(r&&r.ok){(r.students||[]).forEach(x=>x.group=fixG(x.group));(r.events||[]).forEach(x=>x.group=fixG(x.group));r.groups=[...new Set((r.groups||[]).map(fixG).filter(Boolean))]}return r}
 function emptyData(){return {ok:true,generated:new Date().toISOString(),students:[],events:[],groups:[]}}
 const api=b=>fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)}).then(r=>r.json());
 let auth=store.get('ustozAuth',null)||(store.get('ustozKey',null)?{key:store.get('ustozKey','')}:null);
@@ -583,7 +588,7 @@ async function refresh(){
   const b=$('#refresh');b.disabled=true;b.classList.add('spin');
   try{const r=await load();
     if(!r.ok){if(r.error==='kalit'){logout('Kirish muddati tugadi yoki ruxsat olib tashlangan. Qaytadan kiring.');return}throw new Error(r.error||'xato')}
-    data=r;render();
+    data=fixData(r);render();
   }catch(e){$('#updated').textContent='Ulanib bo‘lmadi – «Yangilash»ni bosing'}
   finally{b.disabled=false;b.classList.remove('spin')}
 }
@@ -621,7 +626,7 @@ $('#login').addEventListener('submit',async e=>{e.preventDefault();
   finally{$('#loginBtn').disabled=false}
 });
 $('#keyBtn').addEventListener('click',async()=>{const k=$('#key').value.trim();if(k.length<6){errL('Kalitni to‘liq kiriting.');return}
-  try{const r=await api({action:'report',key:k});if(r.ok){auth={key:k};store.set('ustozKey',k);store.del('ustozAuth');data=r;showPanel()}else errL('Kalit noto‘g‘ri.')}catch(e){errL('Ulanib bo‘lmadi.')}});
+  try{const r=await api({action:'report',key:k});if(r.ok){auth={key:k};store.set('ustozKey',k);store.del('ustozAuth');data=fixData(r);showPanel()}else errL('Kalit noto‘g‘ri.')}catch(e){errL('Ulanib bo‘lmadi.')}});
 
 /* ---------- oynalar ---------- */
 function dlgOpen(html){$('#dlgBody').innerHTML=html;const d=$('#dlg');d.showModal();const x=$('#dlgX');if(x)x.onclick=()=>d.close();return d}
