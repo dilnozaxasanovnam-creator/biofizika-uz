@@ -168,7 +168,14 @@ select,input[type=search],input[type=text],input[type=email],input[type=password
 /* Table */
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .filters input[type=search]{width:220px}
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:auto;scrollbar-color:var(--muted) var(--surface-2)}
+.tablewrap::-webkit-scrollbar{height:12px;width:12px}
+.tablewrap::-webkit-scrollbar-track{background:var(--surface-2);border-radius:0 0 12px 12px}
+.tablewrap::-webkit-scrollbar-thumb{background:var(--muted);border-radius:8px;border:3px solid var(--surface-2)}
+.hbar{display:none;position:relative;height:14px;margin:10px 4px 0;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);touch-action:none;cursor:pointer}
+.hbar b{position:absolute;top:2px;bottom:2px;left:0;border-radius:6px;background:var(--muted);min-width:36px}
+.swipe{display:none;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);margin:0 0 8px}
+.swipe svg{width:18px;height:18px;flex:none}
 table{width:100%;border-collapse:collapse;font-size:.9rem}
 th{text-align:left;font-weight:500;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:10px 12px;background:var(--surface-2);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0}
 th[aria-sort]::after{content:" ▾";color:var(--teal)}
@@ -177,9 +184,11 @@ td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:middle;whit
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 tbody tr{cursor:pointer;transition:background-color .12s}
 tbody tr:hover{background:var(--surface-2)}
-@media (max-width:760px){.hide-m{display:none}td,th{padding:9px 8px}.filters input[type=search]{width:100%}}
+@media (max-width:760px){td,th{padding:9px 8px}.filters input[type=search]{width:100%}.tablewrap table{min-width:780px}.swipe{display:flex}.hbar{display:block}
+  .tablewrap th:nth-child(2),.tablewrap td:nth-child(2){position:sticky;left:0;z-index:1;background:var(--surface);box-shadow:1px 0 0 var(--line)}
+  .tablewrap th:nth-child(2){z-index:2;background:var(--surface-2)}.tablewrap tbody tr:hover td:nth-child(2){background:var(--surface-2)}}
 .sm{display:none}
-@media (max-width:480px){.lg{display:none}.sm{display:inline}.hide-s{display:none}.who{min-width:110px}th{font-size:.66rem;letter-spacing:.03em}}
+@media (max-width:480px){.lg{display:none}.sm{display:inline}.who{min-width:110px;max-width:150px;white-space:normal}th{font-size:.66rem;letter-spacing:.03em}}
 .rank{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font:700 .85rem var(--f-display);background:var(--surface-2);color:var(--muted)}
 .rank.r1{background:var(--gold);color:#fff}.rank.r2{background:var(--silver);color:#fff}.rank.r3{background:var(--bronze);color:#fff}
 .who{display:grid;gap:1px;white-space:normal;min-width:150px}
@@ -242,7 +251,7 @@ dialog::backdrop{background:rgba(4,12,8,.6)}
 .help ol{margin:0;padding-left:1.2em;display:grid;gap:8px;font-size:.9rem}
 .help b{font-weight:600}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{-webkit-text-size-adjust:none;text-size-adjust:none}
 html,body{max-width:100%;overflow-x:clip}
 .wrap>*{min-width:0}
 h1,h2,h3,p,li,b,strong,span,label,a{overflow-wrap:break-word}
@@ -348,6 +357,7 @@ h1,h2,h3,p,li,b,strong,span,label,a{overflow-wrap:break-word}
           </div>
           <p>Ustun nomini bossangiz, shu ustun bo‘yicha saralanadi. Talaba qatorini bossangiz, uning batafsil natijalari ochiladi.</p>
         </div>
+        <p class="swipe"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h14M6 7l-3 3 3 3M14 7l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Jadvalni chapga suring – oxirgi faollik, testlar va masalalar ko‘rinadi</p>
         <div class="tablewrap">
           <table>
             <thead><tr>
@@ -358,6 +368,7 @@ h1,h2,h3,p,li,b,strong,span,label,a{overflow-wrap:break-word}
             <tbody id="rows"></tbody>
           </table>
         </div>
+        <div class="hbar" id="hbar" role="scrollbar" aria-controls="rows" aria-orientation="horizontal" aria-label="Jadvalni surish"><b></b></div>
         <div class="explain">
           <div><b>O‘zlashtirish</b>To‘g‘ri yechilgan testlar, masalalar va o‘yin juftliklari ulushining o‘rtachasi. 80% dan yuqori – yashil, 50–79% – sariq, 50% dan past – qizil.</div>
           <div><b>Ball</b>Tasdiqlangan topshiriq – 10, masala – 5, to‘g‘ri test – 2, o‘yin juftligi – 1 ball.</div>
@@ -426,6 +437,8 @@ const OYLAR={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:
 function fixG(g){g=String(g==null?'':g).trim();let m=g.match(/^[A-Z][a-z]{2} ([A-Z][a-z]{2}) (\d{2}) \d{4} \d{2}:\d{2}:\d{2} GMT/);if(m&&OYLAR[m[1]])return m[2]+'-'+OYLAR[m[1]];
   m=g.match(/^\d{4}-(\d{2})-(\d{2})T\d{2}:\d{2}/);if(m){const d=new Date(g);if(!isNaN(d)){const t=new Date(d.getTime()+5*36e5);return String(t.getUTCDate()).padStart(2,'0')+'-'+String(t.getUTCMonth()+1).padStart(2,'0')}}return g}
 function fixData(r){if(r&&r.ok){(r.students||[]).forEach(x=>x.group=fixG(x.group));(r.events||[]).forEach(x=>x.group=fixG(x.group));r.groups=[...new Set((r.groups||[]).map(fixG).filter(Boolean))]}return r}
+const p2=n=>String(n).padStart(2,'0');
+function sanaVaqt(iso,yil){const d=new Date(iso);if(isNaN(d))return '';return p2(d.getDate())+'.'+p2(d.getMonth()+1)+(yil?'.'+d.getFullYear():'')+' · '+p2(d.getHours())+':'+p2(d.getMinutes())}
 function emptyData(){return {ok:true,generated:new Date().toISOString(),students:[],events:[],groups:[]}}
 const api=b=>fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)}).then(r=>r.json());
 let auth=store.get('ustozAuth',null)||(store.get('ustozKey',null)?{key:store.get('ustozKey','')}:null);
@@ -457,7 +470,7 @@ const msgNo=(o,t)=>{o.hidden=false;o.className='msg no';o.textContent=t};
 /* ---------- bo‘limlar ---------- */
 function setView(v){if(!['umumiy','reyting','faollik','tahlil'].includes(v))v='umumiy';view=v;store.set('ustozView',v);
   $$('.tabs [role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));
-  $$('.view').forEach(s=>s.hidden=s.dataset.view!==v)}
+  $$('.view').forEach(s=>s.hidden=s.dataset.view!==v);setTimeout(()=>window.__hbar&&window.__hbar(),0)}
 $$('.tabs [role=tab]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
 document.addEventListener('click',e=>{const g=e.target.closest('[data-goto]');if(g)setView(g.dataset.goto)});
 
@@ -522,7 +535,7 @@ function renderTable(all,scope){
     <td class="num hide-s">${s.topshiriq}${s.today?.topshiriq?` <span class="pill on">+${s.today.topshiriq}</span>`:''}</td>
     <td class="num hide-m">${bar(s.test,s.testN)}</td><td class="num hide-m">${bar(s.masala,s.masalaN)}</td>
     <td class="num hide-m">${s.xato?`<span class="pill bad">${s.xato}</span>`:'0'}</td>
-    <td class="hide-m">${isToday(s.last)?'<span class="pill on">bugun</span> ':''}${ago(s.last)}</td></tr>`).join(''):
+    <td class="hide-m"><span class="who"><b style="font-weight:500">${isToday(s.last)?'<span class="pill on">bugun</span> ':''}${ago(s.last)}</b><small>${s.last?sanaVaqt(s.last):''}</small></span></td></tr>`).join(''):
     `<tr><td colspan="9" class="empty">${data.students.length?'Tanlangan filtrga mos talaba yo‘q.':'Hali hech kim ro‘yxatdan o‘tmagan. Talabalarga sayt havolasini yuboring – ular ro‘yxatdan o‘tishi bilan shu yerda paydo bo‘ladi.'}</td></tr>`;
   $$('th[data-k]').forEach(th=>{th.removeAttribute('aria-sort');if(th.dataset.k===sortK)th.setAttribute('aria-sort',sortDir<0?'descending':'ascending')});
 }
@@ -552,7 +565,7 @@ function detail(id){
   ev.forEach(e=>{const x=by[dkey(e.ts)];if(x)x.n++});const mx=Math.max(1,...days.map(x=>x.n));
   const pr=(lab,v,n)=>{const p=n?Math.round(Math.min(1,v/n)*100):0;return `<div><div class="row"><span>${lab}</span><span>${v} / ${n||0} · ${p}%</span></div><div class="meter ${lvl(p)}"><b style="width:${p}%"></b></div></div>`};
   const reasons=attnReason(s);
-  $('#dlgBody').innerHTML=`<div class="dlg-head"><div class="dlg-id"><span class="av">${esc(initials(s.name))}</span><div><h2 style="font-size:1.3rem">${esc(s.name)}</h2><p class="note">${esc(s.group)} · ${s.rank}-o‘rin${s.login?' · hisob: <b>'+esc(s.login)+'</b>':''}</p><p class="note">Ro‘yxatdan o‘tgan: ${s.joined?new Date(s.joined).toLocaleDateString('uz-UZ'):'—'} · oxirgi faollik: ${ago(s.last)}</p></div></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
+  $('#dlgBody').innerHTML=`<div class="dlg-head"><div class="dlg-id"><span class="av">${esc(initials(s.name))}</span><div><h2 style="font-size:1.3rem">${esc(s.name)}</h2><p class="note">${esc(s.group)} · ${s.rank}-o‘rin${s.login?' · hisob: <b>'+esc(s.login)+'</b>':''}</p><p class="note">Ro‘yxatdan o‘tgan: ${s.joined?sanaVaqt(s.joined,1):'—'} · oxirgi faollik: ${ago(s.last)}</p></div></div><button class="xbtn" type="button" id="dlgX" aria-label="Yopish">×</button></div>
     ${reasons.length?`<div style="display:flex;gap:6px;flex-wrap:wrap">${reasons.map(x=>`<span class="pill ${x[0]}">${esc(x[1])}</span>`).join('')}</div>`:''}
     <div class="stats"><div><b>${s.pct}%</b><span>O‘zlashtirish</span></div><div><b>${s.ball}</b><span>Ball</span></div><div><b>${s.topshiriq}</b><span>Topshiriqlar</span></div><div><b>${s.xato}</b><span>Xato urinishlar</span></div></div>
     <div class="prog">${pr('Testlar (to‘g‘ri javob)',s.test,s.testN)}${pr('Formula masalalari',s.masala,s.masalaN)}${pr('Moslashtirish o‘yini',s.oyin,s.oyinN)}</div>
@@ -581,6 +594,13 @@ function detail(id){
 }
 document.addEventListener('click',e=>{const r=e.target.closest('[data-id]');if(r&&!e.target.closest('dialog'))detail(r.dataset.id)});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const r=e.target.closest&&e.target.closest('[data-id]');if(r&&!e.target.closest('dialog'))detail(r.dataset.id)}});
+/* Telefonda jadval ostida doim ko‘rinadigan surish chizig‘i */
+(()=>{const w=$('.tablewrap'),bar=$('#hbar'),th=bar.firstElementChild;
+  const upd=()=>{const W=w.scrollWidth,C=w.clientWidth,T=bar.clientWidth;if(!T)return;const tw=Math.max(36,T*C/W);th.style.width=tw+'px';th.style.left=(W>C?(T-tw)*w.scrollLeft/(W-C):0)+'px';bar.style.visibility=W>C+2?'visible':'hidden'};
+  w.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);new MutationObserver(upd).observe($('#rows'),{childList:true});
+  const go=e=>{const r=bar.getBoundingClientRect(),tw=th.offsetWidth,x=Math.min(1,Math.max(0,(e.clientX-r.left-tw/2)/(r.width-tw)));w.scrollLeft=x*(w.scrollWidth-w.clientWidth)};
+  bar.addEventListener('pointerdown',e=>{bar.setPointerCapture(e.pointerId);go(e);bar.onpointermove=go});
+  bar.addEventListener('pointerup',()=>{bar.onpointermove=null});window.__hbar=upd;})();
 $('#groups').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;$('#grp').value=b.dataset.g===grp()?'':b.dataset.g;render();window.scrollTo({top:0,behavior:'smooth'})});
 
 /* ---------- yangilash, kirish, chiqish ---------- */
